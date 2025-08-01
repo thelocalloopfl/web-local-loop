@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --main-orange: #f97316;
 }
 
 @theme inline {
@@ -24,3 +26,78 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.site-logo {
+    width: 60px;
+    height: 60px;
+}
+.main-header {
+    background: linear-gradient(90deg, var(--main-orange) 0%, #FACC15 100%);
+    width: 100%;
+}
+
+
+.main-header-inner,
+.main-content,
+.main-footer-inner {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+
+.main-footer {
+    background: #20293a;
+}
+.hero-bg-image{
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 70vh;
+  border-radius: 10px;
+}
+
+.btn-orange, .filter-orange, .link-orange {
+  background-color: var(--main-orange) !important;
+  color: #fff !important;
+  border-color: var(--main-orange) !important;
+}
+
+.text-orange, .filter-orange-text, .link-orange-text {
+  color: var(--main-orange) !important;
+}
+
+
+/* Responsive layout for header, content, and footer */
+@media (max-width: 640px) {
+  .main-header-inner,
+  .main-content,
+  .main-footer {
+    max-width: 640px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .main-header-inner,
+  .main-content,
+  .main-footer {
+    max-width: 768px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+@media (max-width: 1024px) {
+  .main-header-inner,
+  .main-content,
+  .main-footer {
+    max-width: 1024px;
+  }
+}
+
+
+
+
