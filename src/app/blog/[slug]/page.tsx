@@ -3,7 +3,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-export default async function BlogDetailPage({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string;
+  };
+};
+
+export default async function BlogDetailPage({ params }: Props) {
   const allBlogs = await fetchBlogs();
   const blog = allBlogs.find(b => b.slug?.current === params.slug);
 
