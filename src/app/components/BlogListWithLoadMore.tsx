@@ -111,14 +111,7 @@ export default function BlogListWithLoadMore({ allBlogs, categories = [] }: { al
                 <p className="text-xs md:text-sm text-gray-700 my-4">
                   {blog.description}
                 </p>
-              <Link
-                href={blog.slug?.current ? `/blog/${blog.slug.current}` : '#'}
-                className="hover:underline text-xs md:text-sm mb-2 inline-block"
-                style={{ color: '#f97316' }}
-                prefetch={false}
-              >
-                Read More
-              </Link>
+              {/* Blog detail page removed: no detail link */}
               </div>
             </div>
           ))
