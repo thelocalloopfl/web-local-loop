@@ -9,13 +9,13 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const blog = await fetchBlogById(id);
 
   if (!blog) {
-    return <div className="main-content mx-auto px-5 text-center text-3xl py-16 text-black max-w-7xl">Blog not found</div>;
+    return <div className="main-content mx-auto px-5 text-center text-3xl pb-16 text-black max-w-7xl">Blog not found</div>;
   }
 
   return (
-    <div className="main-content mx-auto py-16 text-black max-w-7xl">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="text-center flex flex-col justify-center">
+    <div className="main-content mx-auto pb-16 text-black max-w-7xl">
+      <div className="grid grid-cols-1  lg:grid-cols-2 gap-3 mb-3 lg:mb-10">
+        <div className="text-center flex flex-col justify-center order-2 lg:order-1">
         <h1 className="text-3xl text-orange-500 md:text-4xl font-bold mb-4 capitalize">{blog.title}</h1>
        <span>
          <p className="text-gray-600 text-[12px] mb-4 inline-block">
@@ -30,15 +30,12 @@ export default async function BlogPage({ params }: BlogPageProps) {
           </p>
        </span>
         </div>
-        <div className="flex-shrink-0 w-full lg:max-w-md">
+        <div className="flex-shrink-0 w-full lg:max-w-md order-1 lg:order-2">
             <img
               src={blog.imageUrl}
               alt={blog.title}
               className="w-full h-80 object-cover rounded-lg shadow"
             />
-        </div>
-        <div>
-
         </div>
       </div>
       <div className="flex flex-col lg:flex-row lg:items-start gap-8">
