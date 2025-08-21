@@ -3,6 +3,7 @@ import React from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import NewsletterBox from "./NewsLetterBox";
 import { IoNewspaper } from "react-icons/io5";
+import PrevNewsletter from "./PrevNewsletter";
 
 const Newsletter: React.FC = () => {
   return (
@@ -41,8 +42,9 @@ const Newsletter: React.FC = () => {
             </div>
 
             {/* Subscription iframe component */}
-            <NewsletterBox iframeHeight="10px" />
+            <NewsletterBox/>
           </div>
+           <PrevNewsletter />
 
           {/* What You'll Get Section */}
           <div className="mt-12">

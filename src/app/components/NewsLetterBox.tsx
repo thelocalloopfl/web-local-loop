@@ -1,44 +1,25 @@
-import Script from "next/script";
 import React from "react";
 
-export interface NewsletterProps {
-  iframeWidth?: string;
-  iframeHeight?: string;
-}
-
-const NewsletterBox: React.FC<NewsletterProps> = ({
-  iframeWidth = "100%",
-  iframeHeight = "",
-}) => {
+const NewsletterBox: React.FC = () => {
   return (
-    <>
-      {/* Subscription iframe */}
-      <div className="main-content mx-auto px-5 flex justify-center items-center">
-        <iframe
-          src="https://subscribe-forms.beehiiv.com/28008b0c-4344-46cb-9c32-c2ec0316231e"
-          className="beehiiv-embed"
-          data-test-id="beehiiv-embed"
-          frameBorder={0}
-          scrolling="no"
-          style={{
-            width: iframeWidth,
-            height: iframeHeight,
-            maxHeight: "60px",
-            margin: 0,
-            borderRadius: "0px",
-            backgroundColor: "transparent",
-            boxShadow: "0 0 #0000",
-            maxWidth: "100%",
-          }}
-        />
-      </div>
-
-      {/* Beehiiv embed script */}
-      <Script
-        src="https://subscribe-forms.beehiiv.com/embed.js"
-        strategy="lazyOnload"
+    <div className="main-content mx-auto px-5 flex justify-center items-center">
+      <iframe
+        src="https://subscribe-forms.beehiiv.com/d19f9421-f52f-4437-ad64-04de5ce26ee2"
+        className="beehiiv-embed"
+        data-test-id="beehiiv-embed"
+        frameBorder="0"
+        scrolling="no"
+        style={{
+          margin: "0",
+          borderRadius: "0",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          width: "100%",
+          maxWidth: "100%",
+        }}
       />
-    </>
+      <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+    </div>
   );
 };
 
