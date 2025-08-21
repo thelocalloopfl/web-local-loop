@@ -23,7 +23,7 @@ export default function SuccessInvoice() {
 
   useEffect(() => {
     clearCart();
-  }, [clearCart]);
+  }, []);
 
   useEffect(() => {
     if (sessionId) {
@@ -142,6 +142,7 @@ export default function SuccessInvoice() {
       <div className="mt-12 flex justify-center">
         <Link
           href="/"
+          onClick={() => console.log("Back to Home clicked")}
           className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-medium 
                      rounded-full shadow-md hover:bg-orange-600 hover:shadow-lg 
                      transition-all duration-200"
