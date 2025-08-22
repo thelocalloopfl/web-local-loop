@@ -22,5 +22,5 @@ export async function fetchSiteLogo(): Promise<SiteLogo> {
     }
   `;
 
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }

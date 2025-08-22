@@ -18,5 +18,5 @@ export async function fetchDirectory(): Promise<Directory[]> {
     link,
     category->{_id, title}
   }`;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }
