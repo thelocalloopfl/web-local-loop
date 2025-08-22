@@ -24,5 +24,5 @@ export async function fetchShopItems(): Promise<ShopItem[]> {
     }
   `;
   
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }

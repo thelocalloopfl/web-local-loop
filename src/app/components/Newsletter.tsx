@@ -44,7 +44,7 @@ const Newsletter: React.FC = () => {
             {/* Subscription iframe component */}
             <NewsletterBox/>
           </div>
-           <PrevNewsletter />
+            <PrevNewsletter />
 
           {/* What You'll Get Section */}
           <div className="mt-12">

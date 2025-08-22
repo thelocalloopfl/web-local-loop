@@ -14,10 +14,10 @@ export async function fetchEvents() {
       title
     }
   }`;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }
 
 export async function fetchCategories() {
   const query = `*[_type == "category"]{ _id, title }`;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }

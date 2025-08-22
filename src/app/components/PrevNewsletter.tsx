@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 
@@ -17,25 +17,29 @@ export default function PrevNewsletter() {
   const [visibleCount, setVisibleCount] = useState(3);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("/api/newsletters")
       .then((res) => res.json())
       .then((data: Newsletter[]) => {
         setNewsletters(data || []);
       })
-      .catch(() => setNewsletters([]));
+      .catch(() => setNewsletters([]))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleLoadMore = () => {
     startTransition(() => setVisibleCount((prev) => prev + 3));
   };
 
-  const filtered = newsletters.filter(
-    (n) =>
-      n.title?.toLowerCase().includes(search.toLowerCase()) ||
-      (n.date && n.date.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = Array.isArray(newsletters)
+    ? newsletters.filter(
+        (n) =>
+          n.title?.toLowerCase().includes(search.toLowerCase()) ||
+          (n.date && n.date.toLowerCase().includes(search.toLowerCase()))
+      )
+    : [];
 
   const visibleNewsletters = filtered.slice(0, visibleCount);
   const allLoaded = visibleCount >= filtered.length;
@@ -54,27 +58,31 @@ export default function PrevNewsletter() {
           }}
           className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
         />
-         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-              />
-            </svg>
-          </span>
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+            />
+          </svg>
+        </span>
       </div>
 
       {/* Newsletter Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-        {visibleNewsletters.length === 0 ? (
+        {loading ? (
+          <div className="col-span-full text-center text-orange-500 py-12">
+            Loading...
+          </div>
+        ) : visibleNewsletters.length === 0 ? (
           <div className="col-span-full text-center text-gray-500 py-12">
             No newsletters found.
           </div>
@@ -125,7 +133,7 @@ export default function PrevNewsletter() {
       </div>
 
       {/* Load More */}
-      {!allLoaded && (
+      {!loading && !allLoaded && (
         <div className="flex justify-center">
           <button
             onClick={handleLoadMore}

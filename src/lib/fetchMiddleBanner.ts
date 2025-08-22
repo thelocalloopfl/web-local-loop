@@ -18,5 +18,5 @@ export async function fetchMiddleBanner(): Promise<MiddleBanner> {
       }
   `;
   
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }

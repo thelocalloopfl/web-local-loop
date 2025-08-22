@@ -7,5 +7,5 @@ export type SpotlightCategory = {
 
 export async function fetchSpotlightCategories(): Promise<SpotlightCategory[]> {
   const query = `*[_type == "spotlightCategory"]{_id, title}`;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }

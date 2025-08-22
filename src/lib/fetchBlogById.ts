@@ -26,5 +26,5 @@ export async function fetchBlogById(id: string): Promise<Blog | null> {
       }
     }
   `;
-  return await client.fetch(query, { id });
+  return await client.fetch (query, {id}, { next: { revalidate: 30 } });
 }

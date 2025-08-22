@@ -45,7 +45,7 @@ async function getBannerData(): Promise<BannerData> {
     buttonTwoText,
     buttonTwoLink
   }`;
-  return await client.fetch(query);
+  return await client.fetch(query, {}, { next: { revalidate: 30 } });
 }
 
 export default async function HomePage() {
