@@ -7,6 +7,7 @@ export type Blog = {
   publishedAt: string;
   category?: { _id: string; title: string };
   description: string;
+  author: string;
   slug: { current: string };
 };
 
@@ -17,6 +18,7 @@ export async function fetchBlogs(): Promise<Blog[]> {
     "image": image.asset->url,
     publishedAt,
     description,
+    author,
     slug,
     category->{_id, title}
   }`;
