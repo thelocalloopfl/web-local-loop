@@ -1,4 +1,6 @@
 import { fetchBlogById } from "@/lib/fetchBlogById";
+import BlogContent from "../../../components/BlogContent";
+import type { PortableTextBlock } from "@portabletext/types";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
@@ -9,46 +11,51 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const blog = await fetchBlogById(id);
 
   if (!blog) {
-    return <div className="main-content mx-auto px-5 text-center text-3xl pb-16 text-black max-w-7xl">Blog not found</div>;
+    return (
+      <div className="main-content mx-auto px-5 text-center text-3xl pb-16 text-black max-w-7xl">
+        Blog not found
+      </div>
+    );
   }
 
   return (
-    <div className="main-content mx-auto pb-16 text-black max-w-7xl">
-      <div className="grid grid-cols-1  lg:grid-cols-2 gap-3 mb-3 lg:mb-10">
-        <div className="text-center flex flex-col justify-center order-2 lg:order-1">
-        <h1 className="text-3xl text-orange-500 md:text-4xl font-bold mb-4 capitalize">{blog.title}</h1>
-       <span>
-         <p className="text-gray-600 text-[12px] mb-4 inline-block">
+    <article className="main-content mx-auto pb-16 text-black max-w-4xl">
+      {/* 🟠 Header Section */}
+      <header className="mb-10">
+        <h1 className="text-3xl md:text-5xl font-bold text-orange-600 mb-3 capitalize">
+          {blog.title}
+        </h1>
+        <div className="mb-4  mt-8 ">
+           {blog.category?.title && (
+            <span className="px-3 py-1 rounded-full border bg-gray-100 border-gray-300">
+              {blog.category.title}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-4 text-sm text-gray-500">
+          <time>
             {new Date(blog.publishedAt).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
-          </p>
-          <p className="mx-3 text-gray-700 text-[12px] mb-4 p-1 px-2 inline-block rounded-2xl border bg-gray-100 border-gray-500">
-            {blog.category?.title}
-          </p>
-       </span>
-        </div>
-        <div className="flex-shrink-0 w-full lg:max-w-md order-1 lg:order-2">
-            <img
-              src={blog.imageUrl}
-              alt={blog.title}
-              className="w-full h-80 object-cover rounded-lg shadow"
-            />
-        </div>
-      </div>
-      <div className="flex flex-col lg:flex-row lg:items-start gap-8">
-        
-        {/* Left Side - Text */}
-        <div className="flex-1">
-          <p className="text-lg leading-relaxed text-gray-800">
-            {blog.description}
-          </p>
-        </div>
-      </div>
-    </div>
+          </time>
+        <span>
+            By <span className="text-orange-500 font-semibold">{blog.author || "Unknown"}</span>
+        </span>
 
+        </div>
+        <img
+          src={blog.imageUrl}
+          alt={blog.title}
+          className="w-full h-96 object-cover rounded-xl shadow mt-6"
+        />
+      </header>
 
+      {/* 🟠 Body Section */}
+      <section>
+        <BlogContent value={blog.body as PortableTextBlock[]} />
+      </section>
+    </article>
   );
 }

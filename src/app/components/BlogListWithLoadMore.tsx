@@ -160,6 +160,18 @@ export default function BlogListWithLoadMore({
                     {blog.category.title}
                   </span>
                 )}
+                <div className=" flex gap-3 text-orange-500 text-xs mb-2">
+                  <p>
+                    {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <p >
+                    By {blog.author || "Unknown"}
+                  </p>
+                </div>
                 <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">
                   {blog.title}
                 </h3>
