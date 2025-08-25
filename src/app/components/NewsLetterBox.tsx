@@ -1,6 +1,6 @@
 import React from "react";
 
-const subscribe_form_key = process.env.SUBSCRIBE_FORM_KEY;
+const subscribe_form_key = process.env.NEXT_PUBLIC_SUBSCRIBE_FORM_KEY;;
 
 const NewsletterBox: React.FC = () => {
   return (
