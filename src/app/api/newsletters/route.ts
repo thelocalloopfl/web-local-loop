@@ -20,41 +20,42 @@ export async function GET() {
       );
     }
 
+    const baseURL = new URL(BEEHIIV_URL).origin;
     const { data } = await axios.get(BEEHIIV_URL);
     const $ = cheerio.load(data);
-    const newsletters: Newsletter[] = [];
 
-    $('a[href^="/p/"]').each((_, element) => {
-      const link = $(element).attr("href") || "";
-      const title =
-        $(element).find("h2, h3").text().trim() ||
-        $(element).text().trim();
+    const seen = new Map<string, Newsletter>();
 
-      const snippet =
-        $(element).find("p").text().trim() ||
-        $(element).parent().find("p").first().text().trim();
+    $('a[href^="/p/"]').each((_, el) => {
+      const anchor = $(el);
+      const card = anchor.closest("div.space-y-2, div.rounded-lg, div[class*='space-y']");
 
-      const image =
-        $(element).find("img").attr("src") ||
-        $(element).parent().find("img").attr("src");
+      const link = anchor.attr("href") || "";
+      const fullLink = link.startsWith("http") ? link : `${baseURL}${link}`;
 
-      const date =
-        $(element).find("time").text().trim() ||
-        $(element).parent().find("time").text().trim();
+      const title = card.find("h2").text().trim();
+      const snippet = card.find("p").text().trim();
+      const date = card.find("time").text().trim();
+      const image = card.find("img").attr("src");
+
+      const isDefaultImage = image?.includes("profile_picture.png");
 
       if (title && link) {
-        newsletters.push({
-          title,
-          link: link.startsWith("http") ? link : `${BEEHIIV_URL}${link}`,
-          date: date || undefined,
-          snippet: snippet || undefined,
-          image: image || undefined,
-        });
+        const existing = seen.get(fullLink);
+        if (!existing || (existing.image?.includes("profile_picture.png") && !isDefaultImage)) {
+          seen.set(fullLink, {
+            title,
+            link: fullLink,
+            date: date || undefined,
+            snippet: snippet || undefined,
+            image: image || undefined,
+          });
+        }
       }
     });
 
-    return NextResponse.json(newsletters);
-  } catch (error) {
+    return NextResponse.json(Array.from(seen.values()));
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch newsletters" },
       { status: 500 }
