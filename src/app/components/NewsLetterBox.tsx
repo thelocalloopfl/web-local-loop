@@ -1,10 +1,12 @@
 import React from "react";
 
+const subscribe_form_key = process.env.SUBSCRIBE_FORM_KEY;
+
 const NewsletterBox: React.FC = () => {
   return (
     <div className="main-content mx-auto px-5 flex justify-center items-center">
       <iframe
-        src="https://subscribe-forms.beehiiv.com/d19f9421-f52f-4437-ad64-04de5ce26ee2"
+        src={`https://subscribe-forms.beehiiv.com/${subscribe_form_key}`}
         className="beehiiv-embed"
         data-test-id="beehiiv-embed"
         frameBorder="0"
