@@ -3,7 +3,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 export const config = {
-  projectId: 'n7w5gf77',      
+  projectId: 'h0p4hnwf',      
   dataset: 'production',
   apiVersion: '2025-07-31',
   useCdn: true,
