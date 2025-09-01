@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
 
+// Normalize base64url → base64
+function normalizeBase64Url(sig: string): string {
+  return sig
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(sig.length + (4 - (sig.length % 4)) % 4, "=");
+}
+
 export async function POST(req: NextRequest) {
   const secret = process.env.SANITY_WEBHOOK_SECRET;
 
@@ -11,44 +19,52 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Raw body is needed for signature validation
   const bodyText = await req.text();
-
-  // Example header: "t=1756733179073,v1=0Kp_xxqxZJW6SSjoz3WbrURxSSIM0lVGcJt69SEJEuE"
   const sigHeader = req.headers.get("sanity-webhook-signature") || "";
-  const parts = Object.fromEntries(sigHeader.split(",").map((p) => p.split("=")));
 
-  const timestamp = parts.t;
-  const receivedSig = parts.v1;
+  let timestamp: string | undefined;
+  let receivedSigRaw: string | undefined;
 
-  if (!timestamp || !receivedSig) {
+  if (sigHeader.includes("v1=")) {
+    // Format: "t=...,v1=..."
+    const parts = Object.fromEntries(
+      sigHeader.split(",").map((p) => p.split("="))
+    );
+    timestamp = parts.t;
+    receivedSigRaw = parts.v1;
+  } else {
+    // Format: just raw signature
+    receivedSigRaw = sigHeader;
+  }
+
+  if (!receivedSigRaw) {
     return NextResponse.json(
-      { message: "❌ Missing signature header parts" },
+      { message: "❌ Missing signature" },
       { status: 401 }
     );
   }
 
-  // Build signing input: "<timestamp>.<body>"
-  const signingInput = `${timestamp}.${bodyText}`;
+  const receivedSig = normalizeBase64Url(receivedSigRaw);
+  const signingInput = timestamp ? `${timestamp}.${bodyText}` : bodyText;
 
-  // Compute HMAC (digest in base64 to match v1)
   const computedSig = createHmac("sha256", secret)
     .update(signingInput)
     .digest("base64");
 
-  // Compare securely
   const valid =
     receivedSig.length === computedSig.length &&
     timingSafeEqual(Buffer.from(receivedSig), Buffer.from(computedSig));
 
   if (!valid) {
     console.error("❌ Invalid signature");
-    console.error("Received:", receivedSig);
+    console.error("Received (raw):", receivedSigRaw);
+    console.error("Normalized:", receivedSig);
     console.error("Expected:", computedSig);
     return NextResponse.json({ message: "Invalid signature" }, { status: 401 });
   }
 
   console.log("✅ Signature verified");
+
 
    // Parse the body after verification
   interface WebhookBody {
