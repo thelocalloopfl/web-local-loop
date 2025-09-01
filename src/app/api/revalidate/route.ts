@@ -3,26 +3,34 @@ import { createHmac } from 'crypto';
 
 export async function POST(req: NextRequest) {
   const secret = process.env.SANITY_WEBHOOK_SECRET;
+
   if (!secret) {
-    return NextResponse.json({ message: 'Server configuration error: SANITY_WEBHOOK_SECRET missing' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Server configuration error: SANITY_WEBHOOK_SECRET missing' },
+      { status: 500 }
+    );
   }
 
-  // Get the raw request body as string
+  // Get the raw request body
   const bodyText = await req.text();
+
+  // Get signature sent by Sanity
   const signature = req.headers.get('sanity-webhook-signature') || '';
 
-  // Compute HMAC using the raw text
+  // Compute HMAC from raw body
   const computedSignature = createHmac('sha256', secret)
     .update(bodyText)
     .digest('hex');
 
-  if (signature !== `sha256=${computedSignature}`) {
-    console.log('Received signature:', signature);
-    console.log('Computed signature:', `sha256=${computedSignature}`);
+  // Verify signature
+  if (signature !== computedSignature) {
+    console.log('❌ Invalid signature');
+    console.log('Received:', signature);
+    console.log('Expected:', computedSignature);
     return NextResponse.json({ message: 'Invalid signature' }, { status: 401 });
   }
 
-  // Parse JSON after verifying the signature
+  // Signature valid → parse body
   const body = JSON.parse(bodyText);
 
   try {
@@ -80,22 +88,31 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        console.warn(`Unknown content type: ${_type}`);
+        console.warn(`⚠️ Unknown content type: ${_type}`);
         break;
     }
 
     // Trigger revalidation
-    await Promise.all(pathsToRevalidate.map(async (path) => {
-      try {
-        await fetch(`${process.env.NEXT_PUBLIC_URL}/api/revalidate?path=${encodeURIComponent(path)}&secret=${secret}`);
-      } catch (err) {
-        console.error(`Failed to revalidate ${path}`, err);
-      }
-    }));
+    await Promise.all(
+      pathsToRevalidate.map(async (path) => {
+        try {
+          await fetch(
+            `${process.env.NEXT_PUBLIC_URL}/api/revalidate?path=${encodeURIComponent(
+              path
+            )}&secret=${secret}`
+          );
+        } catch (err) {
+          console.error(`Failed to revalidate ${path}`, err);
+        }
+      })
+    );
 
-    return NextResponse.json({ message: 'Revalidation triggered', paths: pathsToRevalidate });
+    return NextResponse.json({
+      message: '✅ Revalidation triggered',
+      paths: pathsToRevalidate,
+    });
   } catch (error) {
-    console.error('Revalidation failed:', error);
+    console.error('❌ Revalidation failed:', error);
     return NextResponse.json({ message: 'Revalidation failed' }, { status: 500 });
   }
 }
