@@ -1,7 +1,5 @@
 
 import { client } from '../../lib/sanity';
-import Image from 'next/image';
-import Link from 'next/link';
 import { fetchEvents } from '../../lib/queries';
 import { EventItem } from '../../types/event';
 import EventSection from "./components/EventSection";
@@ -20,6 +18,64 @@ import { fetchTopBanner } from '@/lib/fetchTopBanner';
 import { fetchMiddleBanner } from '@/lib/fetchMiddleBanner';
 import { fetchSideBar } from '@/lib/fetchSidebar';
 import NewsletterBox from './components/NewsLetterBox';
+import type { Metadata } from 'next';
+import { fetchSiteLogo } from "@/lib/fetchLogo";
+import { urlFor } from '@/lib/sanity.image';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const logo = await fetchSiteLogo();
+  const logoUrl = logo.logo ? urlFor(logo.logo).width(1200).height(630).url() : 'https://thelocalloopfl.com/default-logo.png';
+  return {
+    
+    description:
+      "Discover the best local events, stories, and businesses in Florida. Stay connected with blogs, spotlights, and community highlights on The Local Loop FL.",
+    keywords: [
+      "Florida events",
+      "local blogs",
+      "community news",
+      "The Local Loop FL",
+      "local businesses",
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    openGraph: {
+      title: "The Local Loop FL | Local Events, Blogs & Spotlights",
+      description:
+        "Discover the best local events, stories, and businesses in Florida. Stay connected with blogs, spotlights, and community highlights.",
+      url: "https://thelocalloopfl.com",
+      siteName: "The Local Loop FL",
+      images: [
+        {
+          url: logoUrl,
+          width: 1200,
+          height: 630,
+          alt: "The Local Loop FL Logo",
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "The Local Loop FL | Local Events, Blogs & Spotlights",
+      description: "Discover the best local events, stories, and businesses in Florida.",
+      images: [logoUrl],
+    },
+    alternates: {
+      canonical: "https://thelocalloopfl.com",
+    },
+  };
+}
+
 
 type BannerData = {
   backgroundImage?: {
@@ -68,9 +124,7 @@ export default async function HomePage() {
   const middleBannerTitle = middleBanner?.text || '';
   const middleBannerImg = middleBanner?.imageUrl || '';
   const middleBannerlink = middleBanner?.buttonLink || '';
-  
-  // Hydrate events on client for pagination
-  // Use a wrapper ClientComponent for event list
+
   return (
     <div className="main-content-area">
 

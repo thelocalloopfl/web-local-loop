@@ -1,9 +1,80 @@
 import { fetchBlogById } from "@/lib/fetchBlogById";
 import BlogContent from "../../../components/BlogContent";
 import type { PortableTextBlock } from "@portabletext/types";
+import type { Metadata } from "next";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata(
+  { params }: BlogPageProps
+): Promise<Metadata> {
+  const { id } = await params;
+  const blog = await fetchBlogById(id);
+
+  if (!blog) {
+    return {
+      title: "Blog Not Found | The Local Loop FL",
+      description: "The requested blog post could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const title = `${blog.title}`;
+
+  const description =
+    blog.description ||
+    `Read "${blog.title}" on The Local Loop FL — your source for Winter Garden community stories, restaurant reviews, and local events.`;
+
+  const imageUrl =
+    blog.imageUrl || "https://thelocalloopfl.com/default-logo.png";
+
+  const url = `https://thelocalloopfl.com/blog/${id}`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      blog.title,
+      blog.category?.title || "Winter Garden blog",
+      "Winter Garden community",
+      "local news Winter Garden",
+      "The Local Loop blog",
+    ],
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "The Local Loop FL",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
@@ -25,13 +96,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <h1 className="text-3xl md:text-5xl font-bold text-orange-600 mb-3 capitalize">
           {blog.title}
         </h1>
-        <div className="mb-4  mt-8 ">
-           {blog.category?.title && (
+        <div className="mb-4 mt-8">
+          {blog.category?.title && (
             <span className="px-3 py-1 rounded-full border bg-gray-100 border-gray-300">
               {blog.category.title}
             </span>
           )}
         </div>
+
         <div className="flex items-center gap-4 text-sm text-gray-500">
           <time>
             {new Date(blog.publishedAt).toLocaleDateString("en-US", {
@@ -40,16 +112,21 @@ export default async function BlogPage({ params }: BlogPageProps) {
               day: "numeric",
             })}
           </time>
-        <span>
-            By <span className="text-orange-500 font-semibold">{blog.author || "Unknown"}</span>
-        </span>
-
+          <span>
+            By{" "}
+            <span className="text-orange-500 font-semibold">
+              {blog.author || "Unknown"}
+            </span>
+          </span>
         </div>
-        <img
-          src={blog.imageUrl}
-          alt={blog.title}
-          className="w-full h-96 object-cover rounded-xl shadow mt-6"
-        />
+
+        {blog.imageUrl && (
+          <img
+            src={blog.imageUrl}
+            alt={blog.title}
+            className="w-full h-96 object-cover rounded-xl shadow mt-6"
+          />
+        )}
       </header>
 
       {/* 🟠 Body Section */}
