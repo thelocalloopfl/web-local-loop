@@ -7,16 +7,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Server configuration error: SANITY_WEBHOOK_SECRET missing' }, { status: 500 });
   }
 
-  const body = await req.json();
+  // Get the raw request body as string
+  const bodyText = await req.text();
   const signature = req.headers.get('sanity-webhook-signature') || '';
 
+  // Compute HMAC using the raw text
   const computedSignature = createHmac('sha256', secret)
-    .update(JSON.stringify(body))
+    .update(bodyText)
     .digest('hex');
 
   if (signature !== `sha256=${computedSignature}`) {
+    console.log('Received signature:', signature);
+    console.log('Computed signature:', `sha256=${computedSignature}`);
     return NextResponse.json({ message: 'Invalid signature' }, { status: 401 });
   }
+
+  // Parse JSON after verifying the signature
+  const body = JSON.parse(bodyText);
 
   try {
     const { _type, slug, _id } = body;
@@ -77,14 +84,10 @@ export async function POST(req: NextRequest) {
         break;
     }
 
-    // Revalidate paths
-    // If using Vercel On-Demand Revalidation, call the revalidate API route for each path
-    // Example: fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?path=${path}&secret=${secret}`)
+    // Trigger revalidation
     await Promise.all(pathsToRevalidate.map(async (path) => {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_URL}/api/revalidate?path=${encodeURIComponent(path)}&secret=${secret}`, {
-          method: 'GET',
-        });
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/api/revalidate?path=${encodeURIComponent(path)}&secret=${secret}`);
       } catch (err) {
         console.error(`Failed to revalidate ${path}`, err);
       }
