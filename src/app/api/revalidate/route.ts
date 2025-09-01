@@ -1,24 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
-  const signature = req.headers['sanity-webhook-signature'] as string;
+export async function POST(req: NextRequest) {
   const secret = process.env.SANITY_WEBHOOK_SECRET;
   if (!secret) {
-    return res.status(500).json({ message: 'Server configuration error: SANITY_WEBHOOK_SECRET missing' });
+    return NextResponse.json({ message: 'Server configuration error: SANITY_WEBHOOK_SECRET missing' }, { status: 500 });
   }
 
-  const body = req.body;
+  const body = await req.json();
+  const signature = req.headers.get('sanity-webhook-signature') || '';
+
   const computedSignature = createHmac('sha256', secret)
     .update(JSON.stringify(body))
     .digest('hex');
 
   if (signature !== `sha256=${computedSignature}`) {
-    return res.status(401).json({ message: 'Invalid signature' });
+    return NextResponse.json({ message: 'Invalid signature' }, { status: 401 });
   }
 
   try {
@@ -27,33 +24,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch (_type) {
       case 'blog':
-        if (_id) {
-          pathsToRevalidate.push(`/blog/${_id}`);
-        }
-        pathsToRevalidate.push('/blog');
-        pathsToRevalidate.push('/');
+        if (_id) pathsToRevalidate.push(`/blog/${_id}`);
+        pathsToRevalidate.push('/blog', '/');
         break;
 
       case 'blogCategory':
-        pathsToRevalidate.push('/blog');
-        pathsToRevalidate.push('/');
+        pathsToRevalidate.push('/blog', '/');
         break;
-      
+
       case 'bannerSection':
         pathsToRevalidate.push('/');
         break;
 
       case 'event':
-        if (slug?.current) {
-          pathsToRevalidate.push(`/event/${slug.current}`);
-        }
-        pathsToRevalidate.push('/events');
-        pathsToRevalidate.push('/');
+        if (slug?.current) pathsToRevalidate.push(`/event/${slug.current}`);
+        pathsToRevalidate.push('/events', '/');
         break;
 
       case 'eventCategory':
-        pathsToRevalidate.push('/events');
-        pathsToRevalidate.push('/');
+        pathsToRevalidate.push('/events', '/');
         break;
 
       case 'directory':
@@ -76,13 +65,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
 
       case 'spotlight':
-        pathsToRevalidate.push('/local-spotlight'); // Spotlight listing
-        pathsToRevalidate.push('/');                // Home (spotlight shows here)
+        pathsToRevalidate.push('/local-spotlight', '/');
         break;
 
       case 'spotlightCategory':
-        pathsToRevalidate.push('/local-spotlight');
-        pathsToRevalidate.push('/');
+        pathsToRevalidate.push('/local-spotlight', '/');
         break;
 
       default:
@@ -90,17 +77,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
     }
 
-    // Revalidate the affected paths
-    if (pathsToRevalidate.length > 0) {
-      await Promise.all(pathsToRevalidate.map(path => res.revalidate(path)));
-    }
+    // Revalidate paths
+    // If using Vercel On-Demand Revalidation, call the revalidate API route for each path
+    // Example: fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?path=${path}&secret=${secret}`)
+    await Promise.all(pathsToRevalidate.map(async (path) => {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/api/revalidate?path=${encodeURIComponent(path)}&secret=${secret}`, {
+          method: 'GET',
+        });
+      } catch (err) {
+        console.error(`Failed to revalidate ${path}`, err);
+      }
+    }));
 
-    return res.status(200).json({
-      message: 'Revalidation triggered',
-      paths: pathsToRevalidate,
-    });
+    return NextResponse.json({ message: 'Revalidation triggered', paths: pathsToRevalidate });
   } catch (error) {
     console.error('Revalidation failed:', error);
-    return res.status(500).json({ message: 'Revalidation failed' });
+    return NextResponse.json({ message: 'Revalidation failed' }, { status: 500 });
   }
 }
