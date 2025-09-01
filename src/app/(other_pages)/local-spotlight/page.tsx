@@ -5,6 +5,68 @@ import { fetchSpotlightCategories } from "../../../lib/fetchSpotlightCategories"
 import { PiShootingStarFill } from "react-icons/pi";
 import { FaBuilding } from "react-icons/fa6";
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { fetchSiteLogo } from "@/lib/fetchLogo";
+import { urlFor } from '@/lib/sanity.image';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const logo = await fetchSiteLogo();
+  const logoUrl = logo.logo
+    ? urlFor(logo.logo).width(1200).height(630).url()
+    : "https://thelocalloopfl.com/default-logo.png";
+
+  return {
+    title: "Local Business Spotlight",
+    description:
+      "Discover Winter Garden's best local businesses, restaurants, and community favorites featured in our Local Spotlight series.",
+    keywords: [
+      "Winter Garden business spotlight",
+      "local businesses Winter Garden",
+      "Winter Garden community",
+      "Florida small business spotlight",
+      "The Local Loop FL spotlight",
+      "local restaurants Winter Garden",
+    ],
+    openGraph: {
+      title: "Local Business Spotlight | The Local Loop FL",
+      description:
+        "Celebrate Winter Garden’s thriving small business community — explore our curated spotlights and discover local gems.",
+      url: "https://thelocalloopfl.com/local-spotlight",
+      siteName: "The Local Loop FL",
+      images: [
+        {
+          url: logoUrl,
+          width: 1200,
+          height: 630,
+          alt: "Winter Garden Local Business Spotlight",
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Local Business Spotlight | The Local Loop FL",
+      description:
+        "Explore Winter Garden’s top local businesses featured in The Local Loop FL spotlight series.",
+      images: [logoUrl],
+    },
+    alternates: {
+      canonical: "https://thelocalloopfl.com/local-spotlight",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+  };
+}
 
 
 const LocalSpotlight = async () => {
@@ -30,7 +92,7 @@ const LocalSpotlight = async () => {
                 categories={spotlightCategories} all={true} />
 
             {/* Business Featured */}
-            <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-lg shadow p-2 py-8 text-center lg:p-8">
+            <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-lg shadow p-2 mt-10 py-8 text-center lg:p-8">
                 <div className="flex justify-center mb-4">
                     <FaBuilding className="h-10 w-10 text-orange-500" />
                 </div>

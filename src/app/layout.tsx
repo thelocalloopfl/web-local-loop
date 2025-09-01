@@ -5,8 +5,10 @@ import type { Metadata } from "next";
 import { CartProvider } from "./components/Context/Context";
 
 export const metadata: Metadata = {
-  title: "Local Loop",
-  description: "Sanity-powered Next.js site",
+  title:{
+    default: "The Local Loop FL | Local Events, Blogs & Spotlights",
+    template: "%s | The Local Loop FL"
+  },
 };
 
 export default function RootLayout({
