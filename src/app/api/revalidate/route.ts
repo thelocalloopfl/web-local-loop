@@ -15,14 +15,14 @@ async function revalidateAndWarmup(path: string) {
   revalidatePath(path);
   console.log(`🔄 Revalidated: ${path}`);
 
-  if (!process.env.NEXT_PUBLIC_SITE_URL) {
-    console.warn("⚠️ NEXT_PUBLIC_SITE_URL not set, skipping warmup fetch");
+  if (!process.env.NEXT_PUBLIC_URL) {
+    console.warn("⚠️ NEXT_PUBLIC_URL not set, skipping warmup fetch");
     return;
   }
 
   try {
     // Warm up ISR cache by fetching the page
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}${path}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_URL}${path}`, {
       method: "GET",
       headers: { "User-Agent": "sanity-webhook-revalidator" },
     });
