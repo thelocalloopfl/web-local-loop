@@ -1,13 +1,6 @@
-// src/app/api/revalidate/route.ts
-
 import { SIGNATURE_HEADER_NAME, isValidSignature } from "@sanity/webhook";
 import { NextRequest, NextResponse } from "next/server";
-
-// Extend globalThis to include revalidatePath
-declare global {
-  // eslint-disable-next-line no-var
-  var revalidatePath: ((path: string) => Promise<void>) | undefined;
-}
+import { revalidatePath } from "next/cache"; // ✅ import directly
 
 interface RevalidateRequestBody {
   _type?: string;
@@ -113,13 +106,8 @@ export async function POST(req: NextRequest) {
     // Revalidate each path
     for (const path of pathsToRevalidate) {
       try {
-        // Use Next.js revalidatePath API
-        if (typeof globalThis.revalidatePath === "function") {
-          await globalThis.revalidatePath(path);
-          console.log(`Revalidated: ${path}`);
-        } else {
-          console.warn("revalidatePath is not available in this context.");
-        }
+        await revalidatePath(path);
+        console.log(`Revalidated: ${path}`);
       } catch (err) {
         console.error(`Failed to revalidate ${path}:`, err);
       }
