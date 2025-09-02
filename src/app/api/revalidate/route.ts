@@ -1,11 +1,14 @@
-// pages/api/revalidate.ts
+// src/app/api/revalidate/route.ts
 
 import { SIGNATURE_HEADER_NAME, isValidSignature } from "@sanity/webhook";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-/**
- * Next.js API Route for Sanity Webhooks
- */
+// Extend globalThis to include revalidatePath
+declare global {
+  // eslint-disable-next-line no-var
+  var revalidatePath: ((path: string) => Promise<void>) | undefined;
+}
+
 interface RevalidateRequestBody {
   _type?: string;
   _id?: string;
@@ -14,50 +17,40 @@ interface RevalidateRequestBody {
   };
 }
 
-interface JsonResponse {
-  msg?: string;
-  err?: string;
-}
-
-export default async function handler(
-  req: NextApiRequest & { body: RevalidateRequestBody },
-  res: NextApiResponse<JsonResponse>
-) {
+export async function POST(req: NextRequest) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ msg: "Only POST requests allowed" });
-    }
+    const body: RevalidateRequestBody = await req.json();
 
-    const signature = req.headers[SIGNATURE_HEADER_NAME];
-
-    if (!signature || typeof signature !== "string") {
-      return res.status(400).json({ msg: "Missing or invalid signature" });
+    const signature = req.headers.get(SIGNATURE_HEADER_NAME);
+    if (!signature) {
+      return NextResponse.json({ msg: "Missing signature" }, { status: 400 });
     }
 
     const webhookSecret = process.env.SANITY_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      return res.status(500).json({ msg: "Missing SANITY_WEBHOOK_SECRET environment variable" });
+      return NextResponse.json(
+        { msg: "Missing SANITY_WEBHOOK_SECRET environment variable" },
+        { status: 500 }
+      );
     }
 
     const isValid = isValidSignature(
-      JSON.stringify(req.body),
+      JSON.stringify(body),
       signature,
       webhookSecret
     );
 
     if (!isValid) {
-      return res.status(401).json({ msg: "Invalid request!" });
+      return NextResponse.json({ msg: "Invalid request!" }, { status: 401 });
     }
 
-    const { _type, _id, slug } = req.body;
-
+    const { _type, _id, slug } = body;
     if (!_type) {
-      return res.status(400).json({ msg: "Missing _type in body" });
+      return NextResponse.json({ msg: "Missing _type in body" }, { status: 400 });
     }
 
     const pathsToRevalidate: string[] = [];
 
-    // Handle revalidation logic by document type
     switch (_type) {
       case "blog":
         if (_id) pathsToRevalidate.push(`/blog/${_id}`);
@@ -117,19 +110,27 @@ export default async function handler(
         break;
     }
 
-    // Run revalidation
+    // Revalidate each path
     for (const path of pathsToRevalidate) {
       try {
-        await res.revalidate(path);
-        console.log(`Revalidated: ${path}`);
+        // Use Next.js revalidatePath API
+        if (typeof globalThis.revalidatePath === "function") {
+          await globalThis.revalidatePath(path);
+          console.log(`Revalidated: ${path}`);
+        } else {
+          console.warn("revalidatePath is not available in this context.");
+        }
       } catch (err) {
         console.error(`Failed to revalidate ${path}:`, err);
       }
     }
 
-    return res.status(200).json({ msg: `Revalidated paths: ${pathsToRevalidate.join(", ")}` });
+    return NextResponse.json(
+      { msg: `Revalidated paths: ${pathsToRevalidate.join(", ")}` },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Revalidation error:", error);
-    return res.status(500).json({ err: "Something went wrong!" });
+    return NextResponse.json({ err: "Something went wrong!" }, { status: 500 });
   }
 }
