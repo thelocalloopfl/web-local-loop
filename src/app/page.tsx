@@ -103,7 +103,7 @@ async function getBannerData(): Promise<BannerData> {
   }`;
 
   // return await client.fetch(query, {}, { cache: "no-store" });
-  return await client.fetch(query, {}, { next: { revalidate: 300 } });
+  return await client.fetch(query, {}, { next: { revalidate: 60 } });
 }
 
 export default async function HomePage() {
