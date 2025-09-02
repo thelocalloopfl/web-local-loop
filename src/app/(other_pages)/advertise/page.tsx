@@ -1,4 +1,3 @@
-// app/advertise/page.tsx
 import type { Metadata } from "next";
 import AdvertisePage from "../../components/AdvertisePage";
 import { fetchSiteLogo } from "@/lib/fetchLogo";

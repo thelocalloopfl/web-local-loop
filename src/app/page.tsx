@@ -1,26 +1,31 @@
+import Image from 'next/image';
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 
 import { client } from '../../lib/sanity';
+import { urlFor } from '@/lib/sanity.image';
 import { fetchEvents } from '../../lib/queries';
-import { EventItem } from '../../types/event';
-import EventSection from "./components/EventSection";
-import { fetchCategories } from "../lib/fetchCategories";
-import { fetchBlogs } from "../lib/fetchBlogs";
-import { fetchBlogCategories } from "../lib/fetchBlogCategories";
-import BlogSection from "./components/BlogSection";
-import { fetchSpotlights } from "../lib/fetchSpotlights";
-import { fetchSpotlightCategories } from "../lib/fetchSpotlightCategories";
-import SpotlightSection from "./components/SpotlightSection";
-import TopBannerSections from './components/TopBannerSections';
-import MiddelBanner from './components/MiddelBanner';
-import BottomBanner from './components/BottomBanner';
-import SideBar from './components/SideBar';
+import { fetchCategories } from '../lib/fetchCategories';
+import { fetchBlogs } from '../lib/fetchBlogs';
+import { fetchBlogCategories } from '../lib/fetchBlogCategories';
+import { fetchSpotlights } from '../lib/fetchSpotlights';
+import { fetchSpotlightCategories } from '../lib/fetchSpotlightCategories';
 import { fetchTopBanner } from '@/lib/fetchTopBanner';
 import { fetchMiddleBanner } from '@/lib/fetchMiddleBanner';
 import { fetchSideBar } from '@/lib/fetchSidebar';
-import NewsletterBox from './components/NewsLetterBox';
-import type { Metadata } from 'next';
-import { fetchSiteLogo } from "@/lib/fetchLogo";
-import { urlFor } from '@/lib/sanity.image';
+import { fetchSiteLogo } from '@/lib/fetchLogo';
+
+import { EventItem } from '../../types/event';
+
+// Lazy-loaded components
+const EventSection = dynamic(() => import('./components/EventSection'));
+const BlogSection = dynamic(() => import('./components/BlogSection'));
+const SpotlightSection = dynamic(() => import('./components/SpotlightSection'));
+const TopBannerSections = dynamic(() => import('./components/TopBannerSections'));
+const MiddelBanner = dynamic(() => import('./components/MiddelBanner'));
+const BottomBanner = dynamic(() => import('./components/BottomBanner'));
+const SideBar = dynamic(() => import('./components/SideBar'));
+const NewsletterBox = dynamic(() => import('./components/NewsLetterBox'));
 
 export async function generateMetadata(): Promise<Metadata> {
   const logo = await fetchSiteLogo();
@@ -137,11 +142,17 @@ export default async function HomePage() {
       {/* Banner Section */}
       <section
         className="hero-bg-image flex items-center justify-center text-white px-5 relative overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(90deg,#F97316 0%,#FACC15 100%), url(${bgImage})`,
-          backgroundBlendMode: 'multiply',
-        }}
       >
+        <Image
+          src={bgImage}
+          alt="Hero background"
+          fill
+          priority
+          quality={80}
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-yellow-400 mix-blend-multiply"></div>
+
         {/* Gradient overlay for better contrast */}
         <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{background: 'linear-gradient(90deg,#F97316 0%,#FACC15 100%)', opacity: 0.7}} />
         <div className="relative z-10 max-w-4xl text-center px-4">

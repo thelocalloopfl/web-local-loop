@@ -37,9 +37,9 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
       {/* Header */}
       <div className="text-center mb-12">
         <div className="flex justify-center mb-4">
-          <FiBox className="h-16 w-16 text-orange-500" />
+          <FiBox className="h-16 w-16 text-orange-700" />
         </div>
-        <h2 className="text-4xl font-bold text-orange-500">
+        <h2 className="text-4xl font-bold text-orange-700">
           The Local Loop Shop
         </h2>
         <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
@@ -75,7 +75,7 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
             {/* Content */}
             <div className="p-5 flex flex-col flex-grow">
               {/* Category */}
-              <p className="text-sm text-orange-500 font-medium mb-2">
+              <p className="text-sm text-orange-700 font-medium mb-2">
                 {item.category}
               </p>
 
@@ -106,7 +106,7 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
                     ${
                       item.comingsoon
                         ? "bg-orange-300 cursor-not-allowed"
-                        : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
+                        : "bg-orange-700 hover:bg-orange-800 cursor-pointer"
                     }
                   `}
                 >
@@ -141,7 +141,7 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
       {/* Stay Tuned */}
       <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-2xl shadow p-8 text-center">
         <div className="flex justify-center mb-4">
-          <FiMail className="h-10 w-10 text-orange-500" />
+          <FiMail className="h-10 w-10 text-orange-700" />
         </div>
         <h3 className="text-xl font-bold mb-2">Stay Tuned for More!</h3>
         <p className="text-gray-600 mb-4 max-w-xl mx-auto">
@@ -151,7 +151,7 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
         </p>
         <Link
           href="./newsletter"
-          className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition"
+          className="bg-orange-700 hover:bg-orange-800 text-white font-semibold px-6 py-3 rounded-xl transition"
         >
           Subscribe for Updates
         </Link>

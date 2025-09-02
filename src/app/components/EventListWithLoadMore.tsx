@@ -83,7 +83,7 @@ export default function EventListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-500 rounded-xl text-orange-500 font-semibold bg-white hover:bg-orange-500 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -106,7 +106,7 @@ export default function EventListWithLoadMore({
             <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
               <button
                 className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                  selectedCategory === null ? "font-bold text-orange-600" : ""
+                  selectedCategory === null ? "font-bold text-orange-700" : ""
                 }`}
                 onClick={() => {
                   setSelectedCategory(null);
@@ -121,7 +121,7 @@ export default function EventListWithLoadMore({
                   key={cat._id}
                   className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
                     selectedCategory === cat._id
-                      ? "font-bold text-orange-600"
+                      ? "font-bold text-orange-700"
                       : ""
                   }`}
                   onClick={() => {
@@ -165,7 +165,7 @@ export default function EventListWithLoadMore({
                   {(event.categories ?? []).map((cat) => (
                     <span
                       key={cat._id}
-                      className="text-xs font-medium text-orange-500"
+                      className="text-xs font-medium text-orange-700"
                     >
                       {cat.title}
                     </span>
@@ -192,7 +192,7 @@ export default function EventListWithLoadMore({
                   href={
                     event.slug?.current ? `/event/${event.slug.current}` : "#"
                   }
-                  className="inline-flex items-center gap-2 text-orange-500 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
                   prefetch={false}
                 >
                   View Details
@@ -210,7 +210,7 @@ export default function EventListWithLoadMore({
           <div className="flex justify-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50 cursor-pointer"
+              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
               disabled={isPending}
             >
               {isPending ? "Loading..." : "Load More Events"}

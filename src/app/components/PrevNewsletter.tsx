@@ -79,7 +79,7 @@ export default function PrevNewsletter() {
       {/* Newsletter Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2  gap-6 mb-8">
         {loading ? (
-          <div className="col-span-full text-center text-orange-500 py-12">
+          <div className="col-span-full text-center text-orange-700 py-12">
             Loading...
           </div>
         ) : visibleNewsletters.length === 0 ? (
@@ -121,7 +121,7 @@ export default function PrevNewsletter() {
                 <Link
                   href={n.link}
                   target="_blank"
-                  className="inline-flex items-center gap-2 text-orange-500 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
                 >
                   View Newsletter
                   <FiArrowRight className="text-lg" />
@@ -137,7 +137,7 @@ export default function PrevNewsletter() {
         <div className="flex justify-center">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50 cursor-pointer"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
             disabled={isPending}
           >
             {isPending ? "Loading..." : "Load More Newsletters"}

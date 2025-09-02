@@ -22,7 +22,7 @@ const CartPage: React.FC = () => {
   if (!mounted) {
     return (
       <div className="main-content mx-auto px-5 py-13 text-black min-h-screen flex items-center justify-center">
-        <p className="text-orange-500">Loading cart...</p>
+        <p className="text-orange-700">Loading cart...</p>
       </div>
     );
   }
@@ -73,7 +73,7 @@ const CartPage: React.FC = () => {
       <div className="text-center mb-12">
         <div className="flex justify-center mb-4 relative">
           <div className="relative inline-block">
-            <FiShoppingCart className="h-16 w-16 text-orange-500" />
+            <FiShoppingCart className="h-16 w-16 text-orange-700" />
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
                 {cart.length}
@@ -81,7 +81,7 @@ const CartPage: React.FC = () => {
             )}
           </div>
         </div>
-        <h2 className="text-4xl font-bold text-orange-500">Cart</h2>
+        <h2 className="text-4xl font-bold text-orange-700">Cart</h2>
       </div>
 
       {/* Cart Items */}
@@ -109,7 +109,7 @@ const CartPage: React.FC = () => {
                     removeFromCart(item.id);
                     showToast("Item removed from cart", 'success');
                   }}
-                  className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 cursor-pointer"
+                  className="bg-orange-700 text-white px-3 py-1 rounded hover:bg-orange-800 cursor-pointer"
                 >
                   Remove
                 </button>
@@ -137,7 +137,7 @@ const CartPage: React.FC = () => {
               </span>
               <button
                 onClick={handleCheckout}
-                className="bg-orange-500 text-white px-5 py-2 rounded-lg shadow hover:bg-orange-600 transition-colors duration-200 cursor-pointer"
+                className="bg-orange-700 text-white px-5 py-2 rounded-lg shadow hover:bg-orange-800 transition-colors duration-200 cursor-pointer"
               >
                 Buy Now
               </button>

@@ -30,7 +30,7 @@ const TopBannerSections: React.FC<TopBannerSectionsProps> = ({
         href={viewLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-3 px-4 py-2 bg-orange-500 text-white font-semibold rounded shadow hover:bg-orange-600 transition"
+        className="mt-3 px-4 py-2 bg-orange-700 text-white font-semibold rounded shadow hover:bg-orange-800 transition"
       >
         View
       </Link>

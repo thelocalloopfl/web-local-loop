@@ -79,11 +79,11 @@ const DirectoryPage = async () => {
           {/* Icon */}
           <div className="flex justify-center mb-4">
             <div className="flex justify-center mb-4">
-                <FiLayers className="h-16 w-16 text-orange-500" />
+                <FiLayers className="h-16 w-16 text-orange-700" />
             </div>
           </div>
           {/* Title */}
-          <h2 className="text-4xl font-bold text-orange-500">
+          <h2 className="text-4xl font-bold text-orange-700">
             The Local Loop Directory
           </h2>
         </div>

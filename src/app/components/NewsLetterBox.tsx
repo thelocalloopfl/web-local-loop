@@ -9,6 +9,7 @@ const NewsletterBox: React.FC = () => {
         src={`https://subscribe-forms.beehiiv.com/${subscribe_form_key}`}
         className="beehiiv-embed"
         data-test-id="beehiiv-embed"
+        title="Newsletter signup form"
         frameBorder="0"
         scrolling="no"
         style={{
