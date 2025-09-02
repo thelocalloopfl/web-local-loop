@@ -20,5 +20,5 @@ export async function fetchEvents(): Promise<EventItem[]> {
     "image": image.asset->url,
     categories[]->{_id, title}
   }`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  return await client.fetch(query, {}, { next: { revalidate: 300 } });
 }
