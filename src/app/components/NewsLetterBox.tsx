@@ -1,4 +1,5 @@
 import React from "react";
+import Script from "next/script";
 
 const subscribe_form_key = process.env.NEXT_PUBLIC_SUBSCRIBE_FORM_KEY;;
 
@@ -21,7 +22,10 @@ const NewsletterBox: React.FC = () => {
           maxWidth: "100%",
         }}
       />
-      <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+      <Script
+        src="https://subscribe-forms.beehiiv.com/embed.js"
+        strategy="lazyOnload"
+      />
     </div>
   );
 };

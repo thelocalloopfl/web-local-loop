@@ -5,8 +5,6 @@ import {
   cartReducer,
   initialState,
   CartItem,
-  CartState,
-  CartAction,
 } from "./CartReducer";
 
 interface CartContextType {
