@@ -1,103 +1,54 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createHmac, timingSafeEqual } from "crypto";
-import { revalidatePath } from "next/cache";
+// src/app/api/revalidate/route.ts
 
-// Normalize base64url → base64
-function normalizeBase64Url(sig: string): string {
-  return sig
-    .replace(/-/g, "+")
-    .replace(/_/g, "/")
-    .padEnd(sig.length + (4 - (sig.length % 4)) % 4, "=");
+import { SIGNATURE_HEADER_NAME, isValidSignature } from "@sanity/webhook";
+import { NextRequest, NextResponse } from "next/server";
+
+// Extend globalThis to include revalidatePath
+declare global {
+  // eslint-disable-next-line no-var
+  var revalidatePath: ((path: string) => Promise<void>) | undefined;
 }
 
-// Revalidate + warmup cache
-async function revalidateAndWarmup(path: string) {
-  revalidatePath(path);
-  console.log(`🔄 Revalidated: ${path}`);
-
-  if (!process.env.NEXT_PUBLIC_URL) {
-    console.warn("⚠️ NEXT_PUBLIC_URL not set, skipping warmup fetch");
-    return;
-  }
-
-  try {
-    // Warm up ISR cache by fetching the page
-    await fetch(`${process.env.NEXT_PUBLIC_URL}${path}`, {
-      method: "GET",
-      headers: { "User-Agent": "sanity-webhook-revalidator" },
-    });
-    console.log(`⚡ Warmed up: ${path}`);
-  } catch (err) {
-    console.error(`❌ Failed to warm up ${path}`, err);
-  }
+interface RevalidateRequestBody {
+  _type?: string;
+  _id?: string;
+  slug?: {
+    current?: string;
+  };
 }
 
 export async function POST(req: NextRequest) {
-  const secret = process.env.SANITY_WEBHOOK_SECRET;
-
-  if (!secret) {
-    return NextResponse.json(
-      { message: "❌ Server error: SANITY_WEBHOOK_SECRET missing" },
-      { status: 500 }
-    );
-  }
-
-  // Raw body for signature validation
-  const bodyText = await req.text();
-  const sigHeader = req.headers.get("sanity-webhook-signature") || "";
-
-  let timestamp: string | undefined;
-  let receivedSigRaw: string | undefined;
-
-  if (sigHeader.includes("v1=")) {
-    // Format: "t=...,v1=..."
-    const parts = Object.fromEntries(
-      sigHeader.split(",").map((p) => p.split("="))
-    );
-    timestamp = parts.t;
-    receivedSigRaw = parts.v1;
-  } else {
-    receivedSigRaw = sigHeader;
-  }
-
-  if (!receivedSigRaw) {
-    return NextResponse.json(
-      { message: "❌ Missing signature" },
-      { status: 401 }
-    );
-  }
-
-  const receivedSig = normalizeBase64Url(receivedSigRaw);
-  const signingInput = timestamp ? `${timestamp}.${bodyText}` : bodyText;
-
-  const computedSig = createHmac("sha256", secret)
-    .update(signingInput)
-    .digest("base64");
-
-  const valid =
-    receivedSig.length === computedSig.length &&
-    timingSafeEqual(Buffer.from(receivedSig), Buffer.from(computedSig));
-
-  if (!valid) {
-    console.error("❌ Invalid signature");
-    console.error("Received:", receivedSig);
-    console.error("Expected:", computedSig);
-    return NextResponse.json({ message: "Invalid signature" }, { status: 401 });
-  }
-
-  console.log("✅ Signature verified");
-
-  // --- Parse the body after verification ---
-  interface WebhookBody {
-    _type: string;
-    slug?: { current?: string };
-    _id?: string;
-    [key: string]: unknown;
-  }
-
   try {
-    const body: WebhookBody = JSON.parse(bodyText);
-    const { _type, slug, _id } = body;
+    const body: RevalidateRequestBody = await req.json();
+
+    const signature = req.headers.get(SIGNATURE_HEADER_NAME);
+    if (!signature) {
+      return NextResponse.json({ msg: "Missing signature" }, { status: 400 });
+    }
+
+    const webhookSecret = process.env.SANITY_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      return NextResponse.json(
+        { msg: "Missing SANITY_WEBHOOK_SECRET environment variable" },
+        { status: 500 }
+      );
+    }
+
+    const isValid = isValidSignature(
+      JSON.stringify(body),
+      signature,
+      webhookSecret
+    );
+
+    if (!isValid) {
+      return NextResponse.json({ msg: "Invalid request!" }, { status: 401 });
+    }
+
+    const { _type, _id, slug } = body;
+    if (!_type) {
+      return NextResponse.json({ msg: "Missing _type in body" }, { status: 400 });
+    }
+
     const pathsToRevalidate: string[] = [];
 
     switch (_type) {
@@ -155,22 +106,31 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        console.warn(`⚠️ Unknown content type: ${_type}`);
+        console.log(`No revalidation rule for type: ${_type}`);
         break;
     }
 
-    // Trigger ISR revalidation + warmup
-    await Promise.all(pathsToRevalidate.map(revalidateAndWarmup));
+    // Revalidate each path
+    for (const path of pathsToRevalidate) {
+      try {
+        // Use Next.js revalidatePath API
+        if (typeof globalThis.revalidatePath === "function") {
+          await globalThis.revalidatePath(path);
+          console.log(`Revalidated: ${path}`);
+        } else {
+          console.warn("revalidatePath is not available in this context.");
+        }
+      } catch (err) {
+        console.error(`Failed to revalidate ${path}:`, err);
+      }
+    }
 
-    return NextResponse.json({
-      message: "✅ Revalidation triggered",
-      paths: pathsToRevalidate,
-    });
-  } catch (error) {
-    console.error("❌ Revalidation failed:", error);
     return NextResponse.json(
-      { message: "Revalidation failed" },
-      { status: 500 }
+      { msg: `Revalidated paths: ${pathsToRevalidate.join(", ")}` },
+      { status: 200 }
     );
+  } catch (error) {
+    console.error("Revalidation error:", error);
+    return NextResponse.json({ err: "Something went wrong!" }, { status: 500 });
   }
 }

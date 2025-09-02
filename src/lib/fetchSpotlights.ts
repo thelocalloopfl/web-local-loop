@@ -20,5 +20,5 @@ export async function fetchSpotlights(): Promise<Spotlight[]> {
     websiteUrl,
     category->{_id, title}
   }`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  return await client.fetch(query, {});
 }

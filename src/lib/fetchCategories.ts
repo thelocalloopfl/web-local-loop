@@ -7,5 +7,5 @@ export type Category = {
 
 export async function fetchCategories(): Promise<Category[]> {
   const query = `*[_type == "eventCategory"]{_id, title}`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  return await client.fetch(query, {});
 }

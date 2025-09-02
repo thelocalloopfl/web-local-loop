@@ -102,8 +102,7 @@ async function getBannerData(): Promise<BannerData> {
     buttonTwoLink
   }`;
 
-  // return await client.fetch(query, {}, { cache: "no-store" });
-  return await client.fetch(query, {}, { next: { revalidate: 60 } });
+  return await client.fetch(query, {} );
 }
 
 export default async function HomePage() {
