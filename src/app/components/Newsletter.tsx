@@ -15,12 +15,12 @@ const Newsletter: React.FC = () => {
           {/* Icon */}
           <div className="flex justify-center mb-4">
             <span>
-              <IoNewspaper  className="text-orange-500 size-16" />
+              <IoNewspaper  className="text-orange-700 size-16" />
             </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-500 mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-700 mb-3">
             Join The Local Loop FL Newsletter
           </h1>
           <p className="text-gray-700 mb-6 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">

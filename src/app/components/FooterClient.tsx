@@ -33,7 +33,7 @@ export default function FooterClient() {
             />
             <button
               type="submit"
-              className="px-6 py-2 btn-orange border border-[#f97316] text-white rounded font-semibold text-base flex items-center gap-2 min-w-[120px] justify-center cursor-pointer hover:bg-transparent hover:text-[#f97316] transition-colors duration-200"
+              className="px-6 py-2 bg-orange-700 border text-white rounded font-semibold text-base flex items-center gap-2 min-w-[120px] justify-center cursor-pointer hover:bg-transparent hover:text-orange-800 border-orange-700 hover:border-orange-800 transition-all duration-200"
             >
               Signup
             </button>

@@ -73,9 +73,9 @@ const AdvertisePage = () => {
       {/* Header Section */}
       <div className="text-center max-w-2xl mx-auto px-4">
         <div className="flex justify-center mb-2">
-          <FiDollarSign className="w-16 h-16 text-orange-500" />
+          <FiDollarSign className="w-16 h-16 text-orange-700" />
         </div>
-        <h1 className="text-4xl md:text-4xl font-bold text-orange-500">
+        <h1 className="text-4xl md:text-4xl font-bold text-orange-700">
           Advertise With Us
         </h1>
         <p className="mt-4 text-gray-600">
@@ -94,7 +94,7 @@ const AdvertisePage = () => {
           {/* Card 1 */}
           <div className="bg-[#F8FAFC] shadow-md rounded-lg p-6 text-center hover:shadow-lg transition">
             <div className="flex justify-center mb-4">
-              <FiMail className="w-10 h-10 text-orange-500" />
+              <FiMail className="w-10 h-10 text-orange-700" />
             </div>
             <h3 className="font-semibold text-lg mb-2">
               Newsletter Sponsorship
@@ -207,7 +207,7 @@ const AdvertisePage = () => {
           <div className="text-center w-full">
             <button
               type="submit"
-              className="bg-orange-500 text-white px-6 py-2 w-full rounded-lg hover:bg-orange-600 transition flex items-center justify-center gap-2"
+              className="bg-orange-700 text-white px-6 py-2 w-full rounded-lg hover:bg-orange-800 transition flex items-center justify-center gap-2"
             >
               <FiSend className="w-5 h-5" />
               Send Inquiry

@@ -79,9 +79,9 @@ const LocalSpotlight = async () => {
         {/* Header */}
             <div className="text-center mb-12">
                 <div className="flex justify-center mb-4">
-                    <PiShootingStarFill className="h-16 w-16 text-orange-500" />
+                    <PiShootingStarFill className="h-16 w-16 text-orange-700" />
                 </div>
-                <h2 className="text-4xl font-bold text-orange-500">
+                <h2 className="text-4xl font-bold text-orange-700">
                         Local Business Spotlight
                 </h2>
                 <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
@@ -94,7 +94,7 @@ const LocalSpotlight = async () => {
             {/* Business Featured */}
             <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-lg shadow p-2 mt-10 py-8 text-center lg:p-8">
                 <div className="flex justify-center mb-4">
-                    <FaBuilding className="h-10 w-10 text-orange-500" />
+                    <FaBuilding className="h-10 w-10 text-orange-700" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Want Your Business Featured?</h3>
                 <p className="text-gray-600 mb-4 max-w-xl mx-auto">

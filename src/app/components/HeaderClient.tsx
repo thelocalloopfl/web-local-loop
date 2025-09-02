@@ -42,7 +42,7 @@ export default function HeaderClient() {
               className={
                 "px-3 py-1 rounded-md transition-colors duration-200 flex items-center gap-1" +
                 (isActive
-                  ? " bg-orange-500 text-white font-bold"
+                  ? " bg-orange-700 text-white font-bold"
                   : " text-white hover:bg-orange-400 hover:text-white")
               }
             >
@@ -109,7 +109,7 @@ export default function HeaderClient() {
                   className={
                     "py-2 px-3 rounded-md transition-colors duration-200 flex items-center gap-2" +
                     (isActive
-                      ? " bg-orange-500 text-white font-bold"
+                      ? " bg-orange-700 text-white font-bold"
                       : " text-white hover:bg-orange-400 hover:text-white")
                   }
                   onClick={() => setMobileMenuOpen(false)}

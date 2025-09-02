@@ -36,7 +36,7 @@ export default function SuccessInvoice() {
   if (!invoice) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-orange-500 animate-pulse">Loading invoice...</p>
+        <p className="text-orange-700 animate-pulse">Loading invoice...</p>
       </div>
     );
   }
@@ -46,9 +46,9 @@ export default function SuccessInvoice() {
       {/* ✅ Success Banner */}
       <div className="text-center mb-12">
         <div className="flex justify-center mb-4">
-          <MdOutlineVerified className="h-16 w-16 text-orange-500" />
+          <MdOutlineVerified className="h-16 w-16 text-orange-700" />
         </div>
-        <h2 className="text-4xl font-bold text-orange-500">
+        <h2 className="text-4xl font-bold text-orange-700">
           Payment Successful!
         </h2>
         <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
@@ -60,7 +60,7 @@ export default function SuccessInvoice() {
       {/* ✅ Invoice */}
       <div className="bg-gray-50 shadow-lg w-full max-w-md sm:max-w-lg md:max-w-2xl rounded-xl p-6 sm:p-8 text-sm">
         <div className="border-b pb-4 mb-4">
-          <h1 className="text-2xl font-bold tracking-widest text-center text-orange-500">
+          <h1 className="text-2xl font-bold tracking-widest text-center text-orange-700">
             INVOICE
           </h1>
         </div>
@@ -91,7 +91,7 @@ export default function SuccessInvoice() {
         <div className="overflow-x-auto pt-4">
           <table className="w-full border-collapse mb-4 text-xs sm:text-sm">
             <thead>
-              <tr className="bg-orange-100 text-orange-500 rounded-2xl">
+              <tr className="bg-orange-100 text-orange-700 rounded-2xl">
                 <th className="py-2 px-4 text-left">#</th>
                 <th className="py-2 px-4 text-left">Name</th>
                 <th className="py-2 px-4 text-right">Unit Price</th>
@@ -130,7 +130,7 @@ export default function SuccessInvoice() {
               </span>
             </div>
 
-            <div className="flex justify-between py-2 font-bold border-t mt-2 border-black text-orange-600 text-sm sm:text-base">
+            <div className="flex justify-between py-2 font-bold border-t mt-2 border-black text-orange-700 text-sm sm:text-base">
               <span>Total</span>
               <span>${(invoice.amount_total! / 100).toFixed(2)}</span>
             </div>
@@ -143,8 +143,8 @@ export default function SuccessInvoice() {
         <Link
           href="/"
           onClick={() => console.log("Back to Home clicked")}
-          className="flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-medium 
-                     rounded-full shadow-md hover:bg-orange-600 hover:shadow-lg 
+          className="flex items-center gap-2 px-6 py-3 bg-orange-700 text-white font-medium 
+                     rounded-full shadow-md hover:bg-orange-800 hover:shadow-lg 
                      transition-all duration-200"
         >
           <IoArrowBack className="text-lg" />

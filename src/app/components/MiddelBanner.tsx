@@ -29,7 +29,7 @@ const MiddelBanner: React.FC<MiddelBannerProps> = ({
         href={viewLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="px-4 py-2 bg-yellow-400 text-white font-semibold rounded shadow hover:bg-yellow-500 transition"
+        className="px-4 py-2 bg-yellow-800 text-white font-semibold rounded shadow hover:bg-yellow-900 transition"
       >
         View
       </Link>

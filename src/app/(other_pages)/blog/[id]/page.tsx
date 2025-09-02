@@ -93,7 +93,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
     <article className="main-content mx-auto pb-16 text-black max-w-4xl">
       {/* 🟠 Header Section */}
       <header className="mb-10">
-        <h1 className="text-3xl md:text-5xl font-bold text-orange-600 mb-3 capitalize">
+        <h1 className="text-3xl md:text-5xl font-bold text-orange-700 mb-3 capitalize">
           {blog.title}
         </h1>
         <div className="mb-4 mt-8">
@@ -114,7 +114,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           </time>
           <span>
             By{" "}
-            <span className="text-orange-500 font-semibold">
+            <span className="text-orange-700 font-semibold">
               {blog.author || "Unknown"}
             </span>
           </span>

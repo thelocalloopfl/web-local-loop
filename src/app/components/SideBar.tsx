@@ -39,7 +39,7 @@ const SideBar: React.FC<SideBarProps> = ( {sidebar}) => {
                 href={item.buttonLink ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 bg-orange-500 text-white px-2 py-1 text-xs rounded shadow hover:bg-orange-600 transition"
+                className="flex items-center gap-1 bg-orange-700 text-white px-2 py-1 text-xs rounded shadow hover:bg-orange-800 transition"
               >
                 Read More
                 <svg
