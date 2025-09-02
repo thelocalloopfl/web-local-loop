@@ -10,6 +10,28 @@ function normalizeBase64Url(sig: string): string {
     .padEnd(sig.length + (4 - (sig.length % 4)) % 4, "=");
 }
 
+// Revalidate + warmup cache
+async function revalidateAndWarmup(path: string) {
+  revalidatePath(path);
+  console.log(`🔄 Revalidated: ${path}`);
+
+  if (!process.env.NEXT_PUBLIC_SITE_URL) {
+    console.warn("⚠️ NEXT_PUBLIC_SITE_URL not set, skipping warmup fetch");
+    return;
+  }
+
+  try {
+    // Warm up ISR cache by fetching the page
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}${path}`, {
+      method: "GET",
+      headers: { "User-Agent": "sanity-webhook-revalidator" },
+    });
+    console.log(`⚡ Warmed up: ${path}`);
+  } catch (err) {
+    console.error(`❌ Failed to warm up ${path}`, err);
+  }
+}
+
 export async function POST(req: NextRequest) {
   const secret = process.env.SANITY_WEBHOOK_SECRET;
 
@@ -137,17 +159,8 @@ export async function POST(req: NextRequest) {
         break;
     }
 
-    // Trigger ISR revalidation directly
-    await Promise.all(
-      pathsToRevalidate.map(async (path) => {
-        try {
-          revalidatePath(path);
-          console.log(`🔄 Revalidated: ${path}`);
-        } catch (err) {
-          console.error(`❌ Failed to revalidate ${path}`, err);
-        }
-      })
-    );
+    // Trigger ISR revalidation + warmup
+    await Promise.all(pathsToRevalidate.map(revalidateAndWarmup));
 
     return NextResponse.json({
       message: "✅ Revalidation triggered",
