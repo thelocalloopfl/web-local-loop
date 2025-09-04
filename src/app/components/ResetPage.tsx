@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { FiLock, FiSend } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-import Toast from "../components/MessageTost";
+import Toast from "./MessageTost";
 
 type ToastType = { id: number; message: string; type: string };
 
@@ -19,7 +19,6 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
   const [toasts, setToasts] = useState<ToastType[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  // Toast handler
   const showToast = (message: string, type: string) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
@@ -30,7 +29,6 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       showToast("Passwords do not match", "error");
       return;
@@ -43,7 +41,6 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, password }),
         });
-
         const data = await res.json();
         if (!data.success) {
           showToast(data.message || "Reset failed", "error");
@@ -51,15 +48,14 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
           showToast("Password reset successful! Redirecting...", "success");
           setTimeout(() => router.push("/login"), 2000);
         }
-      } catch (error) {
+      } catch {
         showToast("Something went wrong", "error");
       }
     });
   };
 
   return (
-    <section className="py-16 px-4 text-black bg-gradient-to-l to-orange-100 via-white from-yellow-100 min-h-screen flex items-center justify-center">
-      {/* Toasts */}
+    <section className="min-h-screen flex items-center justify-center py-16 px-4 bg-gradient-to-l from-yellow-100 via-white to-orange-100 text-black">
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -71,25 +67,12 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
         />
       ))}
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full"
-      >
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
         <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
-          {/* Logo */}
           <div className="flex justify-center">{logo}</div>
-
-          {/* Title */}
-          <h2 className="text-3xl font-bold text-center text-orange-700 mb-2">
-            Reset Password
-          </h2>
-          <p className="text-center text-gray-500 mb-6">
-            Enter your new password below.
-          </p>
-
+          <h2 className="text-3xl font-bold text-center text-orange-700 mb-2">Reset Password</h2>
+          <p className="text-center text-gray-500 mb-6">Enter your new password below.</p>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* New Password */}
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-orange-500">
               <FiLock className="text-gray-400 mr-2" />
               <input
@@ -101,8 +84,6 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
                 required
               />
             </div>
-
-            {/* Confirm Password */}
             <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-orange-500">
               <FiLock className="text-gray-400 mr-2" />
               <input
@@ -114,8 +95,6 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
                 required
               />
             </div>
-
-            {/* Submit Button */}
             <AnimatePresence mode="wait">
               <motion.button
                 key="reset-btn"
@@ -125,7 +104,7 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className={`w-full px-6 py-2 rounded-lg transition flex items-center justify-center space-x-2 ${
+                className={`w-full px-6 py-2 rounded-lg flex items-center justify-center space-x-2 transition ${
                   isPending
                     ? "bg-orange-600 cursor-not-allowed"
                     : "bg-orange-700 hover:bg-orange-800 text-white"
@@ -142,14 +121,9 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
               </motion.button>
             </AnimatePresence>
           </form>
-
-          {/* Back to Login */}
           <p className="text-center text-gray-500 mt-6">
             Remembered your password?{" "}
-            <Link
-              href="/login"
-              className="text-orange-600 hover:underline font-medium"
-            >
+            <Link href="/login" className="text-orange-600 hover:underline font-medium">
               Back to Login
             </Link>
           </p>
