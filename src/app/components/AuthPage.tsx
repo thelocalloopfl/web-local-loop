@@ -42,6 +42,25 @@ const AuthPage = ({ logo }: { logo: React.ReactNode }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+     // Basic email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showToast("Please enter a valid email address", "error");
+      return;
+    }
+
+    // Signup password length check
+    if (isSignup && password.length < 8) {
+      showToast("Password must be at least 8 characters", "error");
+      return;
+    }
+
+    // Password match check
+    if ((isSignup || !isForgot) && password !== confirmPassword) {
+      showToast("Passwords do not match", "error");
+      return;
+    }
+
     startTransition(async () => {
       if (isForgot) {
         // Forgot Password Flow
