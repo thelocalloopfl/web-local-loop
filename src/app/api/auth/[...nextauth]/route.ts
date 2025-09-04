@@ -1,10 +1,10 @@
-// api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { sanityClient } from "../../../../lib/sanity";
 import bcrypt from "bcrypt";
 
-export const authOptions: NextAuthOptions = {
+// Keep authOptions internal — do NOT export it
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -31,7 +31,6 @@ export const authOptions: NextAuthOptions = {
 
         if (!isValid) return null;
 
-        // Must return at least { id, name, email }
         return {
           id: user._id.toString(),
           name: user.name,
@@ -45,7 +44,7 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
 
   pages: {
-    signIn: "/", 
+    signIn: "/", // custom sign-in page
   },
 
   callbacks: {
@@ -67,5 +66,8 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// NextAuth handler
 const handler = NextAuth(authOptions);
+
+// Export only route handlers for App Router
 export { handler as GET, handler as POST };
