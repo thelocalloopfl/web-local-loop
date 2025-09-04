@@ -20,7 +20,7 @@ const AdvertisePage = () => {
     setToasts((prev) => [...prev, { id, message , type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, 4000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -24,7 +24,7 @@ const ContactSection = () => {
     setToasts((prev) => [...prev, { id, message , type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, 4000);
   };
 
   // Handle form submit
@@ -126,7 +126,7 @@ const ContactSection = () => {
               ></textarea>
               <button
                 type="submit"
-                className="bg-orange-700 w-full hover:bg-orange-800 text-white px-6 py-2 rounded-lg transition flex items-center justify-center space-x-2"
+                className="bg-orange-700 w-full cursor-pointer hover:bg-orange-800 text-white px-6 py-2 rounded-lg transition flex items-center justify-center space-x-2"
               >
                 <FiSend className="w-5 h-5" />
                 <span>Send Message</span>

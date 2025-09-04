@@ -1,6 +1,6 @@
 import { SIGNATURE_HEADER_NAME, isValidSignature } from "@sanity/webhook";
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache"; // ✅ import directly
+import { revalidatePath } from "next/cache";
 
 interface RevalidateRequestBody {
   _type?: string;

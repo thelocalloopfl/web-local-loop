@@ -1,8 +1,16 @@
 import { fetchSiteLogo } from "@/lib/fetchLogo";
-import { urlFor } from "@/lib/sanity";
 import LogoClient from "../components/LogoClient";
 
-export default async function LogoServer() {
+interface LogoServerProps {
+  width?: number;
+  height?: number;
+}
+
+export default async function LogoServer({
+  width = 70,
+  height = 70,
+}: LogoServerProps) {
   const logo = await fetchSiteLogo();
-  return <LogoClient logo={logo} />;
+
+  return <LogoClient logo={logo} width={width} height={height} />;
 }

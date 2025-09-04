@@ -29,7 +29,7 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
     setToasts((prev) => [...prev, { id, message , type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, 4000);
   };
 
   return (

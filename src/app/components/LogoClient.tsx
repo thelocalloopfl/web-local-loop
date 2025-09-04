@@ -12,20 +12,29 @@ interface LogoData {
   title?: string;
 }
 
-export default function LogoClient({ logo }: { logo: LogoData }) {
-  if (!logo?.logo) return null; 
+interface LogoClientProps {
+  logo: LogoData;
+  width?: number;
+  height?: number;
+}
+
+export default function LogoClient({
+  logo,
+  width = 120,
+  height = 120,
+}: LogoClientProps) {
+  if (!logo?.logo) return null;
 
   return (
     <div className="site-logo">
-    <Image
-        src={urlFor(logo.logo).width(120).url()}
-        width={120}
-        height={120}
+      <Image
+        src={urlFor(logo.logo).width(width).height(height).url()}
+        width={width}
+        height={height}
         alt={logo.alt || "Logo"}
+        style={{ color: "transparent" }}
         priority
-        style={{ height: "auto", width: "100%" }}
-    />
+      />
     </div>
-
   );
 }
