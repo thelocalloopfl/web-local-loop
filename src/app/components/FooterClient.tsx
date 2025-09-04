@@ -1,9 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from "next-auth/react";
 
 
 export default function FooterClient() {
+
+  const { data: session } = useSession();
+
 
   return (
         <>
@@ -11,15 +15,19 @@ export default function FooterClient() {
         <div>
           <h3 className="text-xl font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-2 mt-2">
-            <li><Link href="/" className="hover:underline">Home</Link></li>
-            <li><Link href="/newsletter" className="hover:underline">Newsletter</Link></li>
+            <li><Link href="/home" className="hover:underline">Home</Link></li>
             <li><Link href="/blog" className="hover:underline">Blog</Link></li>
             <li><Link href="/local-spotlight" className="hover:underline">Local Spotlight</Link></li>
-            <li><Link href="/shop" className="hover:underline">Shop</Link></li>
             <li><Link href="/advertise" className="hover:underline">Advertise</Link></li>
             <li><Link href="/about" className="hover:underline">About</Link></li>
             <li><Link href="/contact" className="hover:underline">Contact</Link></li>
             <li><Link href="/directory" className="hover:underline">Directory</Link></li>
+            {session && 
+              <>
+                <li><Link href="/newsletter" className="hover:underline">Newsletter</Link></li> 
+                <li><Link href="/shop" className="hover:underline">Shop</Link></li>
+              </>
+            }
           </ul>
         </div>
         {/* Column 3 */}

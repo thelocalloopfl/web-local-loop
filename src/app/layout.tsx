@@ -1,8 +1,5 @@
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 import type { Metadata } from "next";
-import { CartProvider } from "./components/Context/Context";
 
 export const metadata: Metadata = {
   title:{
@@ -19,11 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white text-black" cz-shortcut-listen="true">
-        <CartProvider>
-          <Header />
-          <main className="w-full px-[20px] py-4">{children}</main>
-          <Footer />
-        </CartProvider>
+          <main className="w-full overflow-hidden">{children}</main>
       </body>
     </html>
   );
