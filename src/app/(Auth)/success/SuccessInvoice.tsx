@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { MdOutlineVerified } from "react-icons/md";
 import { IoArrowBack } from "react-icons/io5";
-import { useCart } from "../components/Context/Context";
+import { useCart } from "../../components/Context/Context";
 import type Stripe from "stripe";
 import Link from "next/link";
 
