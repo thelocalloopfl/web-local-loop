@@ -29,6 +29,12 @@ const ResetPage = ({ logo }: { logo: React.ReactNode }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password.length < 8) {
+      showToast("Password must be at least 8 characters", "error");
+      return;
+    }
+
     if (password !== confirmPassword) {
       showToast("Passwords do not match", "error");
       return;
