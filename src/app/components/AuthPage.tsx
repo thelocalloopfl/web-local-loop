@@ -55,8 +55,8 @@ const AuthPage = ({ logo }: { logo: React.ReactNode }) => {
       return;
     }
 
-    // Password match check
-    if ((isSignup || !isForgot) && password !== confirmPassword) {
+        // Password match check
+    if ( isSignup && password !== confirmPassword) {
       showToast("Passwords do not match", "error");
       return;
     }
