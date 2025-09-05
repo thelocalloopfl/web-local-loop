@@ -1,17 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { FiDollarSign, FiMail, FiUsers, FiSend } from "react-icons/fi";
 import { FaImage } from "react-icons/fa";
 import Toast from "./MessageTost";
 
+import { useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+
+
 type ToastType = { id: number; message: string , type: string };
 
 const AdvertisePage = () => {
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const [ispending, setTransition] = useTransition();
+  
   const [form, setForm] = useState({
     name: "",
     businessName: "",
     email: "",
     message: "",
+    recaptchaToken: "",
   });
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
@@ -37,22 +46,30 @@ const AdvertisePage = () => {
       return;
     }
 
-    try {
-      const res = await fetch("/api/advertise-form", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
-        showToast("Inquiry submitted successfully!" , 'success');
-        setForm({ name: "", businessName: "", email: "", message: "" });
-      } else {
-        showToast("Something went wrong. Please try again.", 'error');
-      }
-    } catch (error) {
-      showToast("⚠️ Network error. Try again later.", 'error');
+    if (!form.recaptchaToken) {
+      showToast("Please verify the reCAPTCHA.", "error");
+      return;
     }
+
+    setTransition( async ()=>{
+      try {
+        const res = await fetch("/api/advertise-form", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        if (res.ok) {
+          showToast("Inquiry submitted successfully!" , 'success');
+          setForm({ name: "", businessName: "", email: "", message: "" , recaptchaToken:"" });
+          recaptchaRef.current?.reset();
+        } else {
+          showToast("Something went wrong. Please try again.", 'error');
+        }
+      } catch (error) {
+        showToast("⚠️ Network error. Try again later.", 'error');
+      }
+    })
   };
 
   return (
@@ -203,15 +220,36 @@ const AdvertisePage = () => {
             ></textarea>
           </div>
 
+           {/* ✅ reCAPTCHA */}
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+              onChange={(token) => setForm({ ...form, recaptchaToken: token || "" })}
+              onExpired={() => setForm({ ...form, recaptchaToken: "" })}
+            />
+
           {/* Button */}
-          <div className="text-center w-full">
-            <button
-              type="submit"
-              className="bg-orange-700 text-white px-6 py-2 w-full rounded-lg hover:bg-orange-800 transition flex items-center justify-center gap-2"
-            >
-              <FiSend className="w-5 h-5" />
-              Send Inquiry
-            </button>
+          <div className="text-center w-full pt-5">
+          <button
+            type="submit"
+            disabled={ispending}
+            className={`text-white px-6 py-2 w-full rounded-lg transition flex items-center justify-center gap-2
+              ${ispending 
+                ? "bg-orange-500 cursor-not-allowed" 
+                : "bg-orange-700 hover:bg-orange-800 cursor-pointer"
+              }`}
+          >
+            {ispending ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </>
+            ):(
+              <>
+                <FiSend className="w-5 h-5" />
+                Send Inquiry
+              </>
+            )}
+          </button>
           </div>
         </form>
       </div>
