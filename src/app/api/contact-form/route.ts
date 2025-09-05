@@ -3,18 +3,47 @@ import { writeClient } from "@/lib/sanity";
 import { contactFormTemplate } from "../../../../lib/contactFormTemplate";
 import nodemailer from "nodemailer";
 
+type VerifyResponse = {
+  success: boolean;
+  "error-codes"?: string[];
+};
+
 export async function POST(req: Request) {
   try {
-    const { name, question, email, message } = await req.json();
+    const { name, question, email, message, recaptchaToken } = await req.json();
 
-    if (!name || !question || !email || !message) {
+    if (!name || !question || !email || !message || !recaptchaToken) {
       return NextResponse.json(
         { success: false, error: "All fields are required" },
         { status: 400 }
       );
     }
 
-    // Save to Sanity
+    // ✅ Verify reCAPTCHA token
+    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    if (!secret) {
+      throw new Error("Missing RECAPTCHA_SECRET_KEY");
+    }
+
+    const params = new URLSearchParams();
+    params.append("secret", secret);
+    params.append("response", recaptchaToken);
+
+    const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      body: params,
+    });
+
+    const data = (await verifyRes.json()) as VerifyResponse;
+    if (!data.success) {
+      console.error("reCAPTCHA failed:", data);
+      return NextResponse.json(
+        { success: false, error: "Failed reCAPTCHA verification" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ Passed reCAPTCHA → save to Sanity
     const doc = {
       _type: "contactFormSubmission",
       name,
@@ -25,7 +54,7 @@ export async function POST(req: Request) {
     };
     const result = await writeClient.create(doc);
 
-    // Setup nodemailer transporter
+    // ✅ Send email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
@@ -36,7 +65,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email
     await transporter.sendMail({
       from: `"The Local Loop FL | Contact" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
@@ -44,16 +72,10 @@ export async function POST(req: Request) {
       html: contactFormTemplate(name, email, question, message),
     });
 
-
     return NextResponse.json({ success: true, id: result._id });
   } catch (err: unknown) {
     console.error("Sanity form submission error:", err);
-
-    let message = "Something went wrong";
-    if (err instanceof Error) {
-      message = err.message;
-    }
-
+    const message = err instanceof Error ? err.message : "Something went wrong";
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
