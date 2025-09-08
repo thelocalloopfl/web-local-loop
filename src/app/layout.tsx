@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
 import Analytics from "./components/Analytics";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -42,7 +43,10 @@ export default function RootLayout({
       </head>
       <body className="bg-white text-black">
         <main className="w-full overflow-hidden">{children}</main>
-         <Analytics /> {/* ✅ Track client-side navigation */}
+         {/* ✅ Wrap Analytics in Suspense */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   );
