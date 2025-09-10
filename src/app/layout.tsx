@@ -41,7 +41,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="bg-white text-black">
+      <body className="bg-white text-black" cz-shortcut-listen="true">
         <main className="w-full overflow-hidden">{children}</main>
          {/* ✅ Wrap Analytics in Suspense */}
         <Suspense fallback={null}>

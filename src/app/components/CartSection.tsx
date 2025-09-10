@@ -4,20 +4,52 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../components/Context/Context";
 import Toast from "./MessageTost";
 import { FiShoppingCart } from "react-icons/fi";
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { fetchStripeConfig, StripeConfig } from "@/lib/fetchStripeConfig";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-type ToastType = { id: number; message: string ; type:string };
+type ToastType = { id: number; message: string; type: string };
 
 const CartPage: React.FC = () => {
   const { cart, removeFromCart, clearCart } = useCart();
   const [toasts, setToasts] = useState<ToastType[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
 
   useEffect(() => {
+    async function init() {
+      try {
+        const config: StripeConfig | null = await fetchStripeConfig();
+        if (!config) {
+          showToast("Stripe configuration not found.", "error");
+          return;
+        }
+
+        const publishableKey = config.enableSandbox
+          ? config.sandboxKey
+          : config.liveKey;
+
+        if (!publishableKey) {
+          showToast("Stripe publishable key missing.", "error");
+          return;
+        }
+
+        setStripePromise(loadStripe(publishableKey));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        showToast(`Failed to load Stripe config: ${message}`, "error");
+      }
+    }
+    init();
     setMounted(true);
   }, []);
+
+  const showToast = (message: string, type: string) => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 4000);
+  };
 
   if (!mounted) {
     return (
@@ -27,18 +59,10 @@ const CartPage: React.FC = () => {
     );
   }
 
-  const showToast = (message: string , type: string) => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message , type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  };
-
   const handleCheckout = async () => {
     try {
       if (cart.length === 0) {
-        showToast("Your cart is empty.", 'error');
+        showToast("Your cart is empty.", "error");
         return;
       }
 
@@ -50,20 +74,25 @@ const CartPage: React.FC = () => {
       const data = await response.json();
 
       if (!data.sessionId) {
-        showToast("Payment failed. Try again.", 'error');
+        showToast("Payment failed. Try again.", "error");
+        return;
+      }
+
+      if (!stripePromise) {
+        showToast("Stripe not initialized.", "error");
         return;
       }
 
       const stripe = await stripePromise;
       if (!stripe) {
-        showToast("Stripe failed to load.", 'error');
+        showToast("Stripe failed to load.", "error");
         return;
       }
 
       await stripe.redirectToCheckout({ sessionId: data.sessionId });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      showToast(`Payment failed. Try again. ${message}`, 'error');
+      showToast(`Payment failed. Try again. ${message}`, "error");
     }
   };
 
@@ -107,7 +136,7 @@ const CartPage: React.FC = () => {
                 <button
                   onClick={() => {
                     removeFromCart(item.id);
-                    showToast("Item removed from cart", 'success');
+                    showToast("Item removed from cart", "success");
                   }}
                   className="bg-orange-700 text-white px-3 py-1 rounded hover:bg-orange-800 cursor-pointer"
                 >
@@ -122,7 +151,7 @@ const CartPage: React.FC = () => {
             <button
               onClick={() => {
                 clearCart();
-                showToast("Cart cleared successfully!", 'success');
+                showToast("Cart cleared successfully!", "success");
               }}
               className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 cursor-pointer"
             >
