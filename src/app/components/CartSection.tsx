@@ -32,6 +32,7 @@ const CartPage: React.FC = () => {
           showToast("Stripe publishable key missing.", "error");
           return;
         }
+        console.log(publishableKey);
 
         setStripePromise(loadStripe(publishableKey));
       } catch (err) {

@@ -27,9 +27,7 @@ export async function GET(req: Request) {
     }
 
     // ✅ Init Stripe
-    const stripe = new Stripe(secretKey, {
-        apiVersion: "2025-07-30.basil",
-    });
+    const stripe = new Stripe(secretKey);
 
     // ✅ Retrieve checkout session
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
