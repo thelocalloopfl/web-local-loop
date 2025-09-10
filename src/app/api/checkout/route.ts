@@ -27,9 +27,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ Initialize Stripe with correct secret
-    const stripe = new Stripe(secretKey, {
-       apiVersion: "2025-07-30.basil",
-    });
+    const stripe = new Stripe(secretKey);
 
     const { cart } = (await req.json()) as { cart: CartItem[] };
 
