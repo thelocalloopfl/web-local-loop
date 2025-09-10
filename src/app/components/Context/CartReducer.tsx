@@ -27,8 +27,8 @@ export async function loadCartState(): Promise<CartState> {
 export type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: string | number }
-  | { type: "CLEAR_CART" };
-
+  | { type: "CLEAR_CART" }
+  | { type: "INIT_CART"; payload: CartItem[] }; // 👈 add this
 export const cartReducer = (
   state: CartState,
   action: CartAction
@@ -36,6 +36,9 @@ export const cartReducer = (
   let updatedState: CartState;
 
   switch (action.type) {
+    case "INIT_CART":
+      return { ...state, cartItems: action.payload };
+
     case "ADD_ITEM":
       const existingItem = state.cartItems.find(
         (item) => item.id === action.payload.id
