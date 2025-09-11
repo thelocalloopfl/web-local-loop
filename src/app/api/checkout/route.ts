@@ -11,31 +11,17 @@ type CartItem = {
 
 export async function POST(req: Request) {
   try {
-    // ✅ Get Stripe config from Sanity
     const config = await fetchStripeConfig();
+    if (!config) throw new Error("Stripe configuration not found in Sanity");
 
-    if (!config) {
-      throw new Error("Stripe configuration not found in Sanity");
-    }
+    const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
+    if (!secretKey) throw new Error("Stripe Secret Key missing");
 
-    const secretKey = config.enableSandbox
-      ? config.sandboxSecret
-      : config.liveSecret;
-
-    if (!secretKey) {
-      throw new Error("Stripe Secret Key is missing in Sanity config");
-    }
-
-    // ✅ Initialize Stripe with correct secret
-    const stripe = new Stripe(secretKey);
+    const stripe = new Stripe(secretKey, { apiVersion: "2025-08-27.basil" });
 
     const { cart } = (await req.json()) as { cart: CartItem[] };
-
     if (!cart || cart.length === 0) {
-      return NextResponse.json(
-        { error: "Cart is empty" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -53,11 +39,10 @@ export async function POST(req: Request) {
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/cart`,
     });
 
-    // ✅ Return sessionId
     return NextResponse.json({ sessionId: session.id });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Stripe Checkout Error:", message);
+    console.error("Checkout Error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

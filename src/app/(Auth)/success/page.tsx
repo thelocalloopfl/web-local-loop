@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import SuccessInvoice from "./SuccessInvoice";
 import type { Metadata } from "next";
 import { fetchSiteLogo } from "@/lib/fetchLogo";
-import { urlFor } from '@/lib/sanity.image';
+import { urlFor } from "@/lib/sanity.image";
 
-
+// Dynamic Metadata
 export async function generateMetadata(): Promise<Metadata> {
   const logo = await fetchSiteLogo();
   const logoUrl = logo.logo
@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : "https://thelocalloopfl.com/default-logo.png";
 
   return {
-    title: "Order Success ",
+    title: "Order Success",
     description:
       "Thank you for your order! Your purchase supports local Florida businesses. View your invoice and order details here.",
     keywords: [
