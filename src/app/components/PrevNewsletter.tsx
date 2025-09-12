@@ -3,6 +3,7 @@
 import React, { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
+import Image from "next/image";
 
 interface Newsletter {
   title: string;
@@ -93,10 +94,12 @@ export default function PrevNewsletter() {
               className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition duration-200"
             >
               {n.image && (
-                <img
+                <Image
                   src={n.image}
                   alt={n.title}
-                  className="w-full h-44 object-cover"
+                  width={400}   
+                  height={176}     
+                  className="w-full object-cover rounded-md"
                 />
               )}
               <div className="p-5 flex flex-col flex-grow">
