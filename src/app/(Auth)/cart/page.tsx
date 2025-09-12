@@ -1,8 +1,7 @@
-import React from 'react'
-import CartPage from '../../components/CartSection'
 import type { Metadata } from "next";
 import { fetchSiteLogo } from "@/lib/fetchLogo";
-import { urlFor } from '@/lib/sanity.image';
+import { urlFor } from "@/lib/sanity.image";
+import CartWrapper from "./CartWrapper";
 
 export async function generateMetadata(): Promise<Metadata> {
   const logo = await fetchSiteLogo();
@@ -62,12 +61,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const Cart = () => {
-  return (
-    <>
-        <CartPage/>
-    </>
-  )
+export default function CartPage() {
+  return <CartWrapper />;
 }
-
-export default Cart

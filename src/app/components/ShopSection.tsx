@@ -5,6 +5,7 @@ import { useCart } from "../components/Context/Context";
 import { FiShoppingCart, FiBox, FiLock, FiMail } from "react-icons/fi";
 import Toast from "./MessageTost";
 import Link from "next/link";
+import Image from "next/image";
 
 type ShopItem = {
   _id: string;
@@ -62,11 +63,15 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
               }`}
             >
               {item.imageUrl ? (
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 1200px"
+                    className="object-cover rounded-lg"
+                  />
+                </div>
               ) : (
                 <FiBox className="text-gray-400 w-12 h-12" />
               )}

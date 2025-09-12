@@ -2,6 +2,8 @@ import { fetchBlogById } from "@/lib/fetchBlogById";
 import BlogContent from "../../../../components/BlogContent";
 import type { PortableTextBlock } from "@portabletext/types";
 import type { Metadata } from "next";
+import Image from "next/image";
+
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
@@ -121,11 +123,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </div>
 
         {blog.imageUrl && (
-          <img
-            src={blog.imageUrl}
-            alt={blog.title}
-            className="w-full h-96 object-cover rounded-xl shadow mt-6"
-          />
+          <div className="relative w-full h-96 mt-6">
+            <Image
+              src={blog.imageUrl}
+              alt={blog.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="object-cover rounded-xl shadow"
+              priority
+            />
+          </div>
+
         )}
       </header>
 
