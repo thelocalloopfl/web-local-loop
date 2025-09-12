@@ -4,9 +4,11 @@ import Script from "next/script";
 import { Suspense } from "react";
 import Analytics from "./components/Analytics";
 
+// ✅ Google Analytics ID from env
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-import { Inter } from "next/font/google";
+// ✅ Fonts with CSS variables
+import { Inter, Playfair_Display } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,6 +16,14 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--font-playfair",
+});
+
+// ✅ Metadata
 export const metadata: Metadata = {
   title: {
     default: "The Local Loop FL | Local Events, Blogs & Spotlights",
@@ -27,8 +37,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <head>
+        {/* ✅ Preconnect to Google Fonts (performance) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+
         {/* ✅ Google Analytics */}
         {GA_MEASUREMENT_ID && (
           <>
@@ -49,9 +67,14 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="bg-white text-black" cz-shortcut-listen="true">
+
+      <body
+        className={`bg-white text-black ${inter.variable} ${playfair.variable}`}
+        cz-shortcut-listen="true"
+      >
         <main className="w-full overflow-hidden">{children}</main>
-         {/* ✅ Wrap Analytics in Suspense */}
+
+        {/* ✅ Wrap Analytics in Suspense */}
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
