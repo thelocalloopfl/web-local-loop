@@ -8,13 +8,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
         <CartProvider>
-          {/* <Providers> */}
+          <Providers >
             <Header />
               <main className="w-full px-[20px] py-4 mt-25 ">{children}</main>
             <Footer />
-          {/* </Providers> */}
+          </Providers>
         </CartProvider>
   );
 }

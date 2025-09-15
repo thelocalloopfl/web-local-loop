@@ -1,3 +1,5 @@
+// api/auth/[...nextauth]
+export const dynamic = "force-dynamic"; // 👈 disables caching
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { sanityClient } from "../../../../lib/sanity";

@@ -1,3 +1,4 @@
+// api/auth/reset-password
 import { NextResponse } from "next/server";
 import { writeClient } from "../../../../lib/sanity";
 import bcrypt from "bcrypt";

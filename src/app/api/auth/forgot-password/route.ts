@@ -1,3 +1,4 @@
+// api/auth/forgot-password
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import nodemailer from "nodemailer";

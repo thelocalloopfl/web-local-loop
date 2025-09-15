@@ -9,7 +9,6 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 // ✅ Fonts with CSS variables
 import { Inter, Playfair_Display } from "next/font/google";
-import Providers from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,9 +72,7 @@ export default function RootLayout({
         className={`bg-white text-black ${inter.variable} ${playfair.variable}`}
         cz-shortcut-listen="true"
       >
-         <Providers>
-            <main className="w-full ">{children}</main>
-         </Providers>
+        <main className="w-full ">{children}</main>
 
         {/* ✅ Wrap Analytics in Suspense */}
         <Suspense fallback={null}>

@@ -13,7 +13,9 @@ export default function HeaderClient() {
   const [isClient, setIsClient] = useState(false);
   const pathname = usePathname();
   const { cart } = useCart();
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: false,
+  });
 
   useEffect(() => setIsClient(true), [] );
   console.log('session are ' + session);
