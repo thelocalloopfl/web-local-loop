@@ -8,7 +8,9 @@ export const revalidate = 0;
 
 export default function FooterClient() {
 
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: false,
+  });
 
 
   return (
