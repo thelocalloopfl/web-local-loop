@@ -14,6 +14,7 @@ export default function HeaderClient() {
   const { data: session } = useSession();
 
   useEffect(() => setIsClient(true), [] );
+  console.log('session are ' + session);
 
   const menuItems = [
     { name: "Home", href: "/home" },
