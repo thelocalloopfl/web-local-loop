@@ -1,5 +1,7 @@
 import LogoServer from "../components/LogoServer";
 import HeaderClient from "../components/HeaderClient";
+export const dynamic = "force-dynamic"; 
+export const revalidate = 0;
 
 export default async function Header() {
   return (

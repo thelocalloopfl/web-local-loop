@@ -1,6 +1,7 @@
 import FooterClient from "./FooterClient";
 import LogoServer from "./LogoServer";
-
+export const dynamic = "force-dynamic"; 
+export const revalidate = 0;
 
 export default function Footer() {
 
