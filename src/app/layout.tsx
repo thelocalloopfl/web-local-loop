@@ -72,7 +72,7 @@ export default function RootLayout({
         className={`bg-white text-black ${inter.variable} ${playfair.variable}`}
         cz-shortcut-listen="true"
       >
-        <main className="w-full overflow-hidden">{children}</main>
+        <main className="w-full ">{children}</main>
 
         {/* ✅ Wrap Analytics in Suspense */}
         <Suspense fallback={null}>

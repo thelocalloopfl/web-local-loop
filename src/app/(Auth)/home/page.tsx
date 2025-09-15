@@ -188,7 +188,7 @@ export default async function HomePage() {
           <section className="py-12 px-0 w-full bg-white text-black">
             <div className="main-content mx-auto px-5">
               <h2 className="text-3xl font-semibold mb-6 text-center">Events</h2>
-              <EventSection allEvents={allEvents} categories={categories} />
+              <EventSection allEvents={allEvents} categories={categories} all={true} />
             </div>
           </section>
         </div>
