@@ -50,6 +50,7 @@ const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -63,8 +64,10 @@ const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.phone = token.phone as string | undefined;
       }
+      console.log("API Session callback:", { session, token });
       return session;
     },
+
   },
 };
 
