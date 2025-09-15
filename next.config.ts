@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
         hostname: "media.beehiiv.com", // ✅ added Beehiiv domain
       },
     ],
+
+     // ✅ Add allowed qualities here
+    qualities: [75, 80, 90, 100],
     // ✅ Use modern formats
     formats: ["image/avif", "image/webp"],
   },
