@@ -13,7 +13,10 @@ export default function HeaderClient() {
   const { cart } = useCart();
   const { data: session } = useSession();
 
-  useEffect(() => setIsClient(true), []);
+  useEffect(() => setIsClient(true), [] );
+
+  console.log(isClient);
+  console.log(session);
 
   const menuItems = [
     { name: "Home", href: "/home" },
