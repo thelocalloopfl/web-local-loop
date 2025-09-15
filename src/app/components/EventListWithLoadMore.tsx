@@ -205,7 +205,7 @@ export default function EventListWithLoadMore({
       </div>
 
       {/* Load More / View All */}
-    {
+    {all ? (
         !allLoaded && (
           <div className="flex justify-center">
             <button
@@ -213,11 +213,22 @@ export default function EventListWithLoadMore({
               className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
               disabled={isPending}
             >
-              {isPending ? "Loading..." : "Load More Events"}
+              {isPending ? "Loading..." : "Load More"}
             </button>
           </div>
         )
-    }
+      ): (
+        <div className="flex justify-center">
+          <Link
+            href="/event"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[200px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
+          >
+            View All Events
+          </Link>
+        </div>
+      )}
+
+      
     </>
   );
 }

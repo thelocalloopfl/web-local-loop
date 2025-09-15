@@ -12,7 +12,7 @@ export default function RootLayout({
         <CartProvider>
           <Providers>
             <Header />
-              <main className="w-full px-[20px] py-4">{children}</main>
+              <main className="w-full px-[20px] py-4 mt-25 ">{children}</main>
             <Footer />
           </Providers>
         </CartProvider>

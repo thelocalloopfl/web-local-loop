@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.sanity.io",
       },
+      {
+        protocol: "https",
+        hostname: "media.beehiiv.com", // ✅ added Beehiiv domain
+      },
     ],
     // ✅ Use modern formats
     formats: ["image/avif", "image/webp"],
