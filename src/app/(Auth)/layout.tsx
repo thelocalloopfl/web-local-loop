@@ -17,7 +17,7 @@ export default async function RootLayout({
   console.log("RootLayout session:", session);
   return (
         <CartProvider>
-          <Providers >
+          <Providers  >
             <Header />
               <main className="w-full px-[20px] py-4 mt-25 ">{children}</main>
             <Footer />
