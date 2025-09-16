@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSession } from "next-auth/react";
+import NewsletterBox from './NewsLetterBox';
 
 
 export default function FooterClient() {
@@ -33,23 +34,13 @@ export default function FooterClient() {
           </ul>
         </div>
         {/* Column 3 */}
-        <div>
-          <h3 className="text-xl font-semibold mb-2">Stay Connected</h3>
-          <form className="flex flex-col sm:flex-row gap-3 mt-2">
-            <input
-              type="email"
-              placeholder="Your email"
-              className="px-4 py-2 rounded border border-gray-200 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#f97316] flex-1 min-w-0 placeholder-white"
-            />
-            <button
-              type="submit"
-              className="px-6 py-2 bg-orange-700 border text-white rounded font-semibold text-base flex items-center gap-2 min-w-[120px] justify-center cursor-pointer hover:bg-transparent hover:text-orange-800 border-orange-700 hover:border-orange-800 transition-all duration-200"
-            >
-              Signup
-            </button>
-          </form>
+        <div >
+          <h3 className="text-xl font-semibold mb-2 ml-2 md:ml-5">Stay Connected</h3>
+            <div className='h-[50px] overflow-hidden'>          {/* Subscription iframe component */}
+                <NewsletterBox/>
+            </div>
           {/* Social Icons */}
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 ml-2 md:ml-5">
             <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <svg className="w-6 h-6 transition" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M240 363.3L240 576L356 576L356 363.3L442.5 363.3L460.5 265.5L356 265.5L356 230.9C356 179.2 376.3 159.4 428.7 159.4C445 159.4 458.1 159.8 465.7 160.6L465.7 71.9C451.4 68 416.4 64 396.2 64C289.3 64 240 114.5 240 223.4L240 265.5L174 265.5L174 363.3L240 363.3z"/></svg>
             </a>
