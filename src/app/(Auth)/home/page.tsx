@@ -225,7 +225,7 @@ export default async function HomePage() {
           </section>
 
           {/* Bottom Banner Section */}
-          <section className="container mx-auto px-5 flex  text-black">
+          <section className="container mx-auto flex  text-black">
             <div className="main-content mx-auto px-5 flex justify-center items-center  rounded-xl bg-gradient-to-r from-[#F97316] to-[#FACC15]">
               <BottomBanner />
             </div>

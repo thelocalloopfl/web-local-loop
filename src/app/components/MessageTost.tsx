@@ -19,7 +19,7 @@ const Toast = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -30, scale: 0.95 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className={`fixed top-6 right-6 max-w-sm w-full flex items-start gap-3 px-5 py-4 rounded-2xl shadow-xl z-50 backdrop-blur-xl border 
+      className={`fixed top-28  right-0 lg:right-6 max-w-sm w-full flex items-start gap-3 px-5 py-4 rounded-2xl shadow-xl z-50 backdrop-blur-xl border 
         ${isSuccess
           ? "bg-gradient-to-r from-green-500/70 to-emerald-600/90 border-green-400 shadow-green-500/40"
           : "bg-gradient-to-r from-red-500/70 to-rose-600/90 border-red-400 shadow-red-500/40"
