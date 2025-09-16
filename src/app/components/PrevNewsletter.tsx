@@ -15,7 +15,7 @@ interface Newsletter {
 
 export default function PrevNewsletter() {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(4);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function PrevNewsletter() {
   }, []);
 
   const handleLoadMore = () => {
-    startTransition(() => setVisibleCount((prev) => prev + 3));
+    startTransition(() => setVisibleCount((prev) => prev + 2));
   };
 
   const filtered = Array.isArray(newsletters)
@@ -55,7 +55,7 @@ export default function PrevNewsletter() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setVisibleCount(3);
+            setVisibleCount(2);
           }}
           className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
         />

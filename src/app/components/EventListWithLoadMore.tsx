@@ -182,12 +182,6 @@ export default function EventListWithLoadMore({
                     day: "numeric",
                   })}
                 </p>
-                <p className="text-sm text-gray-600 flex-grow mb-4">
-                  {event.description?.split(" ").slice(0, 20).join(" ")}
-                  {event.description &&
-                    event.description.split(" ").length > 20 &&
-                    "..."}
-                </p>
                 <Link
                   href={
                     event.slug?.current ? `/event/${event.slug.current}` : "#"
