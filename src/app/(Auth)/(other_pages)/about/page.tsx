@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import { fetchSiteLogo } from "@/lib/fetchLogo";
 import { urlFor } from '@/lib/sanity.image';
 
+export const revalidate = 86400;
+
 export async function generateMetadata(): Promise<Metadata> {
   const logo = await fetchSiteLogo();
   const logoUrl = logo.logo ? urlFor(logo.logo).width(1200).height(630).url() : 'https://thelocalloopfl.com/default-logo.png';

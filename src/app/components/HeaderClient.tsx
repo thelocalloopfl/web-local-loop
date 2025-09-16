@@ -11,12 +11,11 @@ export default function HeaderClient() {
   const [isClient, setIsClient] = useState(false);
   const pathname = usePathname();
   const { cart } = useCart();
-  const { data: session , status } = useSession({
+  const { data: session } = useSession({
     required: false,
   });
 
   useEffect(() => setIsClient(true), [] );
-  console.log("Footer session:", session, status);
 
   const menuItems = [
     { name: "Home", href: "/home" },

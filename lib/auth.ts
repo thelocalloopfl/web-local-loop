@@ -55,7 +55,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.phone = token.phone as string | undefined;
       }
-      console.log("API Session callback:", { session, token });
       return session;
     },
   },
