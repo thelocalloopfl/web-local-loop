@@ -8,7 +8,7 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-    <SessionProvider refetchOnWindowFocus={false}>
+    <SessionProvider >
       {children}
     </SessionProvider>
   );

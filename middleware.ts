@@ -12,15 +12,12 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET!
     })
     
-    console.log('✅ Token found:', !!token)
-    
     // If no token, redirect to home page
     if (!token) {
       console.log('❌ No authentication token, redirecting to home')
       return NextResponse.redirect(new URL('/', request.url))
     }
     
-    console.log('✅ User authenticated, allowing access to shop')
     return NextResponse.next()
     
   } catch (error) {

@@ -3,8 +3,7 @@ import type { NextRequest } from 'next/server'
 import { getToken } from "next-auth/jwt"
 
 export async function middleware(request: NextRequest) {
-  console.log('🔐 Auth Middleware triggered for:', request.nextUrl.pathname)
-  
+ 
   try {
     // Get the token from the request
     const token = await getToken({ 
@@ -12,7 +11,6 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET!
     })
     
-    console.log('✅ Token found:', !!token)
     
     // If no token, redirect to home page
     if (!token) {
@@ -20,7 +18,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url))
     }
     
-    console.log('✅ User authenticated, allowing access to shop')
     return NextResponse.next()
     
   } catch (error) {

@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useCart } from "../components/Context/Context";
-export const dynamic = "force-dynamic"; 
-export const revalidate = 0;
 
 export default function HeaderClient() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

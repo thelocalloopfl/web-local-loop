@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { useSession } from "next-auth/react";
-export const dynamic = "force-dynamic"; 
-export const revalidate = 0;
 
 
 export default function FooterClient() {
