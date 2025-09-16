@@ -87,7 +87,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="py-16 px-4 text-black">
+    <section className="py-16 text-black">
       {/* Toasts */}
       {toasts.map((toast) => (
         <Toast
@@ -115,7 +115,7 @@ const ContactSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Contact Form */}
-          <div className="md:col-span-2 bg-white border border-gray-200 rounded-lg shadow p-6">
+          <div className="md:col-span-2 mx-auto px-4 bg-white shadow-md rounded-lg p-6">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">
               Send Us a Message
             </h3>
@@ -157,13 +157,14 @@ const ContactSection = () => {
                 className="w-full border border-gray-300 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:outline-none focus:border-orange-700"
               ></textarea>
 
-              {/* ✅ reCAPTCHA */}
+                  {/* ✅ reCAPTCHA */}
               <ReCAPTCHA
                 ref={recaptchaRef}
                 sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                 onChange={(token) => setForm({ ...form, recaptchaToken: token || "" })}
                 onExpired={() => setForm({ ...form, recaptchaToken: "" })}
               />
+            
 
               <button
                 type="submit"

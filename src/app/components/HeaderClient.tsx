@@ -17,6 +17,9 @@ export default function HeaderClient() {
 
   useEffect(() => setIsClient(true), [] );
 
+  const menuClass = `lg:hidden absolute overflow-auto right-0 top-21.5 w-80 bg-[#20293a] text-white shadow-lg border-l border-gray-700 z-50 transform transition-transform duration-500 ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`;
+  const dynamicHeightClass = isClient ? "h-[calc(100vh-100px)]" : "h-50";
+
   const menuItems = [
     { name: "Home", href: "/home" },
     { name: "Blog", href: "/blog" },
@@ -173,10 +176,7 @@ export default function HeaderClient() {
       </button>
 
       {/* Mobile Menu Drawer */}
-      <div
-        className={`lg:hidden absolute right-0 top-21.5 w-80 bg-[#20293a] text-white shadow-lg border-l border-gray-700 z-50 transform transition-transform duration-500 ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-      >
+      <div className={`${menuClass} ${dynamicHeightClass}`}>
         <nav className="flex flex-col gap-2 p-6">
           {menuItems.map((item) => {
             const isActive =
