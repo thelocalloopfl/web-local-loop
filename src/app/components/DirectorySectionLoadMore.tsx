@@ -169,6 +169,7 @@ export default function DirectoryListWithLoadMore({
                 </p>
                 <Link
                   href={directory.link}
+                  target={'_blank'}
                   className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
                 >
                   View

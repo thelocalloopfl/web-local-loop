@@ -13,7 +13,7 @@ export default function SpotlightListWithLoadMore({
   categories?: SpotlightCategory[];
   all?: boolean;
 }) {
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(3);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
@@ -23,7 +23,7 @@ export default function SpotlightListWithLoadMore({
 
   const handleLoadMore = () => {
     startTransition(() => {
-      setVisibleCount((prev) => prev + 6);
+      setVisibleCount((prev) => prev + 3);
     });
   };
 
@@ -52,7 +52,7 @@ export default function SpotlightListWithLoadMore({
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setVisibleCount(6);
+              setVisibleCount(3);
             }}
             className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
           />
@@ -107,7 +107,7 @@ export default function SpotlightListWithLoadMore({
                 onClick={() => {
                   setSelectedCategory(null);
                   setShowCategories(false);
-                  setVisibleCount(6);
+                  setVisibleCount(3);
                 }}
               >
                 All Categories
@@ -121,7 +121,7 @@ export default function SpotlightListWithLoadMore({
                   onClick={() => {
                     setSelectedCategory(cat._id);
                     setShowCategories(false);
-                    setVisibleCount(6);
+                    setVisibleCount(3);
                   }}
                 >
                   {cat.title}
