@@ -18,10 +18,11 @@ export default function SuccessInvoice() {
   const { clearCart } = useCart();
 
   // Clear cart once after mount
-  useEffect(() => {
+useEffect(() => {
+  if (invoice) {
     clearCart();
-  },[]);
-
+  }
+}, [invoice?.id]);
   // Fetch invoice from backend
   useEffect(() => {
     if (!sessionId) return;
