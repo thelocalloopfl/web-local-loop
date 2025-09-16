@@ -236,6 +236,7 @@ export default function HeaderClient() {
                     ? " bg-orange-700 text-white font-bold"
                     : " text-white hover:bg-orange-400 hover:text-white")
                 }
+                onClick={() => setMobileMenuOpen(false)}
               >
                 {item?.icon && (
                   <div className="relative">
