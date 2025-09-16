@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       email,
       phone,
       password: hashedPassword,
-      createdAt: new Date().toISOString(), 
+      createdAt: new Date().toISOString(),
     });
 
     return NextResponse.json(
