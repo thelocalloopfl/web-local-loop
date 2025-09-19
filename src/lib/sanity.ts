@@ -4,7 +4,7 @@ import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Rename from config → sanityConfig
 export const sanityConfig = {
-  projectId: 'h0p4hnwf',      
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,      
   dataset: 'production',
   apiVersion: '2025-07-31',
   useCdn: false,
