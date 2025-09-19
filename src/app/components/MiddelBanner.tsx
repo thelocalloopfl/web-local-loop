@@ -11,7 +11,7 @@ interface MiddelBannerProps {
 const MiddelBanner: React.FC<MiddelBannerProps> = ({
   bgImage,
   text,
-  viewLink = "https://example.com",
+  viewLink = "#",
 }) => {
   return (
     <div

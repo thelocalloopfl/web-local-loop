@@ -10,10 +10,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  console.log("🔹 /api/backup called");
 
   // Get environment variables for Sanity configuration
-  const projectId = process.env.SANITY_PROJECT_ID;
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   const dataset = process.env.SANITY_DATASET;
   const token = process.env.SANITY_READ_API_TOKEN;
 
