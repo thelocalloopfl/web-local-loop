@@ -18,7 +18,10 @@ const CartPage: React.FC = () => {
   useEffect(() => {
     async function init() {
       try {
+        console.log("[DEBUG] Fetching Stripe configuration...");
         const config: StripeConfig | null = await fetchStripeConfig();
+        console.log("[DEBUG] Stripe config response:", config);
+
         if (!config) {
           showToast("Stripe configuration not found.", "error");
           return;
@@ -30,13 +33,15 @@ const CartPage: React.FC = () => {
 
         if (!publishableKey) {
           showToast("Stripe publishable key missing.", "error");
+          console.error("[DEBUG] No publishable key found in config.");
           return;
         }
-        console.log(publishableKey);
 
+        console.log("[DEBUG] Using Stripe publishable key:", publishableKey);
         setStripePromise(loadStripe(publishableKey));
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
+        console.error("[DEBUG] Error loading Stripe config:", message);
         showToast(`Failed to load Stripe config: ${message}`, "error");
       }
     }
@@ -45,6 +50,7 @@ const CartPage: React.FC = () => {
   }, []);
 
   const showToast = (message: string, type: string) => {
+    console.log(`[DEBUG] Toast triggered: [${type}] ${message}`);
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
@@ -53,6 +59,7 @@ const CartPage: React.FC = () => {
   };
 
   if (!mounted) {
+    console.log("[DEBUG] Component not mounted yet, showing loader...");
     return (
       <div className="main-content mx-auto px-5 py-13 text-black min-h-screen flex items-center justify-center">
         <p className="text-orange-700">Loading cart...</p>
@@ -62,37 +69,48 @@ const CartPage: React.FC = () => {
 
   const handleCheckout = async () => {
     try {
+      console.log("[DEBUG] Checkout started. Cart contents:", cart);
+
       if (cart.length === 0) {
         showToast("Your cart is empty.", "error");
+        console.warn("[DEBUG] Checkout blocked. Cart empty.");
         return;
       }
 
+      console.log("[DEBUG] Sending checkout request with cart:", cart);
       const response = await fetch("/api/checkout", {
         method: "POST",
         body: JSON.stringify({ cart }),
       });
 
+      console.log("[DEBUG] Checkout response status:", response.status);
       const data = await response.json();
+      console.log("[DEBUG] Checkout response body:", data);
 
       if (!data.sessionId) {
         showToast("Payment failed. Try again.", "error");
+        console.error("[DEBUG] No sessionId returned from API.");
         return;
       }
 
       if (!stripePromise) {
         showToast("Stripe not initialized.", "error");
+        console.error("[DEBUG] Stripe promise is null.");
         return;
       }
 
       const stripe = await stripePromise;
       if (!stripe) {
         showToast("Stripe failed to load.", "error");
+        console.error("[DEBUG] Stripe object is null.");
         return;
       }
 
+      console.log("[DEBUG] Redirecting to Stripe Checkout with sessionId:", data.sessionId);
       await stripe.redirectToCheckout({ sessionId: data.sessionId });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
+      console.error("[DEBUG] Checkout error:", message);
       showToast(`Payment failed. Try again. ${message}`, "error");
     }
   };
@@ -136,6 +154,7 @@ const CartPage: React.FC = () => {
                 </span>
                 <button
                   onClick={() => {
+                    console.log("[DEBUG] Removing item from cart:", item);
                     removeFromCart(item.id);
                     showToast("Item removed from cart", "success");
                   }}
@@ -151,6 +170,7 @@ const CartPage: React.FC = () => {
           <div className="flex justify-between items-center mt-4">
             <button
               onClick={() => {
+                console.log("[DEBUG] Clearing cart...");
                 clearCart();
                 showToast("Cart cleared successfully!", "success");
               }}
