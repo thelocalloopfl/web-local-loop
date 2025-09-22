@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import axios from "axios";
-import * as cheerio from "cheerio";
 
 interface Newsletter {
   title: string;
@@ -12,52 +12,50 @@ interface Newsletter {
 
 export async function GET() {
   try {
-    const BEEHIIV_URL = process.env.BEEHIIV_URL;
-    if (!BEEHIIV_URL) {
+    const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
+
+    if (!BEEHIIV_API_KEY) {
       return NextResponse.json(
-        { error: "BEEHIIV_URL not configured in env" },
+        { error: "Beehiiv API key not configured" },
         { status: 500 }
       );
     }
+    const PUBLICATION_ID = process.env.BEEHIIV_PUBLICATION_ID;
 
-    const baseURL = new URL(BEEHIIV_URL).origin;
-    const { data } = await axios.get(BEEHIIV_URL);
-    const $ = cheerio.load(data);
+    if (!PUBLICATION_ID) {
+      return NextResponse.json(
+        { error: "Beehiiv Publication ID not configured" },
+        { status: 500 }
+      );
+    }
+  
 
-    const seen = new Map<string, Newsletter>();
+    const requestUrl = `https://api.beehiiv.com/v2/publications/${PUBLICATION_ID}/posts?limit=4&page=1`;
 
-    $('a[href^="/p/"]').each((_, el) => {
-      const anchor = $(el);
-      const card = anchor.closest("div.space-y-2, div.rounded-lg, div[class*='space-y']");
 
-      const link = anchor.attr("href") || "";
-      const fullLink = link.startsWith("http") ? link : `${baseURL}${link}`;
-
-      const title = card.find("h2").text().trim();
-      const snippet = card.find("p").text().trim();
-      const date = card.find("time").text().trim();
-      const image = card.find("img").attr("src");
-
-      const isDefaultImage = image?.includes("profile_picture.png");
-
-      if (title && link) {
-        const existing = seen.get(fullLink);
-        if (!existing || (existing.image?.includes("profile_picture.png") && !isDefaultImage)) {
-          seen.set(fullLink, {
-            title,
-            link: fullLink,
-            date: date || undefined,
-            snippet: snippet || undefined,
-            image: image || undefined,
-          });
-        }
-      }
+    const { data } = await axios.get(requestUrl, {
+      headers: {
+        Authorization: `Bearer ${BEEHIIV_API_KEY}`,
+      },
     });
 
-    return NextResponse.json(Array.from(seen.values()));
-  } catch {
+
+    const newsletters: Newsletter[] = data.data.map((post: any, index: number) => {
+      const mapped = {
+        title: post.title,
+        link: post.web_url,
+        date: post.publish_date ? new Date(post.publish_date * 1000).toISOString() : undefined, // convert from unix timestamp
+        snippet: post.subtitle,
+        image: post.thumbnail_url || undefined,
+      };
+      return mapped;
+    });
+
+
+    return NextResponse.json(newsletters);
+  } catch (err: any) {
     return NextResponse.json(
-      { error: "Failed to fetch newsletters" },
+      { error: "Failed to fetch newsletters from Beehiiv API" },
       { status: 500 }
     );
   }
