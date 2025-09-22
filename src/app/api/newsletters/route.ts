@@ -15,7 +15,6 @@ export async function GET() {
     const BEEHIIV_API_KEY = process.env.BEEHIIV_API_KEY;
 
     if (!BEEHIIV_API_KEY) {
-      console.error("[DEBUG] Missing BEEHIIV_API_KEY in environment variables");
       return NextResponse.json(
         { error: "Beehiiv API key not configured" },
         { status: 500 }
@@ -24,7 +23,6 @@ export async function GET() {
     const PUBLICATION_ID = process.env.BEEHIIV_PUBLICATION_ID;
 
     if (!PUBLICATION_ID) {
-      console.error("[DEBUG] Missing BEEHIIV_PUBLICATION_ID in environment variables");
       return NextResponse.json(
         { error: "Beehiiv Publication ID not configured" },
         { status: 500 }
@@ -34,7 +32,6 @@ export async function GET() {
 
     const requestUrl = `https://api.beehiiv.com/v2/publications/${PUBLICATION_ID}/posts?limit=4&page=1`;
 
-    console.log("[DEBUG] Fetching newsletters from:", requestUrl);
 
     const { data } = await axios.get(requestUrl, {
       headers: {
@@ -42,7 +39,6 @@ export async function GET() {
       },
     });
 
-    console.log("[DEBUG] Raw API response:", JSON.stringify(data, null, 2));
 
     const newsletters: Newsletter[] = data.data.map((post: any, index: number) => {
       const mapped = {
@@ -52,22 +48,12 @@ export async function GET() {
         snippet: post.subtitle,
         image: post.thumbnail_url || undefined,
       };
-      console.log(`[DEBUG] Mapped newsletter ${index + 1}:`, mapped);
       return mapped;
     });
 
-    console.log("[DEBUG] Final newsletters array:", newsletters);
 
     return NextResponse.json(newsletters);
   } catch (err: any) {
-    console.error("[DEBUG] Error fetching newsletters");
-    if (err.response) {
-      console.error("[DEBUG] Error Response Status:", err.response.status);
-      console.error("[DEBUG] Error Response Data:", err.response.data);
-    } else {
-      console.error("[DEBUG] Error Message:", err.message);
-    }
-
     return NextResponse.json(
       { error: "Failed to fetch newsletters from Beehiiv API" },
       { status: 500 }
