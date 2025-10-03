@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+
+    async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.thelocalloopfl.com' }],
+        destination: 'https://thelocalloopfl.com/:path*',
+        permanent: true, // 308 on Vercel
+      },
+    ];
+  },
+
   reactStrictMode: true,
 
   images: {
