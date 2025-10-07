@@ -6,6 +6,15 @@ export type DirectoryCategory = {
 };
 
 export async function fetchDirectoryCategory(): Promise<DirectoryCategory[]> {
-  const query = `*[_type == "directoryCategory"]{_id, title}`;
-  return await client.fetch(query, {});
+  const query = `*[_type == "directoryCategory"]{_id, title} | order(title asc)`;
+
+  const categories = await client.fetch(query, {});
+
+  // Remove duplicate titles
+  const uniqueCategories = categories.filter(
+    (cat: DirectoryCategory, index: number, self: DirectoryCategory[]) =>
+      index === self.findIndex(c => c.title === cat.title)
+  );
+
+  return uniqueCategories;
 }

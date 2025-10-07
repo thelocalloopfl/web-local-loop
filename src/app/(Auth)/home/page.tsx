@@ -132,16 +132,16 @@ export default async function HomePage() {
   const middleBannerlink = middleBanner?.buttonLink || '';
 
   return (
-    <div className="main-content-area">
+    <div className="main-content-area  max-w-[1200px] mx-auto">
 
       {/*Top banner Section  */}
-      <section className="container mx-auto px-5">
+      <section className="container mx-auto">
         <TopBannerSections bgImage={topBannerImg} text={topBannerTitle} viewLink={topBannerlink} />
       </section>
 
       {/* Banner Section */}
       <section
-        className="hero-bg-image flex items-center justify-center text-white px-5 relative overflow-hidden"
+        className="hero-bg-image max-w-[1200px] mx-auto flex items-center justify-center text-white px-5 relative overflow-hidden"
       >
         <Image
           src={bgImage}
@@ -159,22 +159,34 @@ export default async function HomePage() {
           <h1 className="text-4xl font-bold mb-4">{banner?.heading}</h1>
           <p className="text-lg mb-6">{banner?.subHeading}</p>
           <div className="flex flex-wrap justify-center gap-4">
-            {banner?.buttonOneText && banner?.buttonOneLink && (
+            {/* {banner?.buttonOneText && banner?.buttonOneLink && (
               <a
                 href={banner.buttonOneLink}
                 className="bg-white text-black px-5 py-2 rounded font-medium"
               >
                 {banner.buttonOneText}
               </a>
-            )}
-            {banner?.buttonTwoText && banner?.buttonTwoLink && (
+            )} */}
+            {/* {banner?.buttonTwoText && banner?.buttonTwoLink && (
               <a
                 href={banner.buttonTwoLink}
                 className="bg-transparent border border-white px-5 py-2 rounded font-medium"
               >
                 {banner.buttonTwoText}
               </a>
-            )}
+            )} */}
+              <a
+                href='/newsletter'
+                className="bg-white text-black px-5 py-2 rounded font-medium"
+              >
+                Get the Newsletter
+              </a>
+              <a
+                href='/about'
+                className="bg-transparent border border-white px-5 py-2 rounded font-medium"
+              >
+                About Us
+              </a>
             <NewsletterBox/>
           </div>
         </div>
@@ -186,7 +198,7 @@ export default async function HomePage() {
 
           {/* Events Section */}
           <section className="py-12 px-0 w-full bg-white text-black">
-            <div className="main-content mx-auto px-5">
+            <div className="main-content mx-auto">
               <h2 className="text-3xl font-semibold mb-6 text-center">Events</h2>
               <EventSection allEvents={allEvents} categories={categories} all={true} />
             </div>
@@ -200,13 +212,13 @@ export default async function HomePage() {
       </div>
 
           {/* Middle Banner Section */}
-          <section className="container mx-auto px-5 mt-5">
+          <section className="container mx-auto mt-5">
             <MiddelBanner bgImage={middleBannerImg} text={middleBannerTitle}  viewLink={middleBannerlink}/>
           </section>
 
       {/* Blog Section */}
-          <section className="py-12 px-0 w-full bg-gray-50 text-black">
-            <div className="main-content mx-auto px-5">
+          <section className="py-12 px-0 w-full text-black">
+            <div className="main-content mx-auto ">
               <h2 className="text-3xl font-semibold mb-6 text-center">Blog</h2>
               <BlogSection allBlogs={allBlogs} categories={blogCategories} all={false} />
             </div>
@@ -214,7 +226,7 @@ export default async function HomePage() {
 
           {/* Spotlight Section */}
           <section className="py-12 px-0 w-full bg-white text-black">
-            <div className="main-content mx-auto px-5">
+            <div className="main-content mx-auto">
               <h2 className="text-3xl font-semibold mb-6 text-center">Local Spotlight</h2>
               <SpotlightSection
                 allSpotlights={allSpotlights}
@@ -226,7 +238,7 @@ export default async function HomePage() {
 
           {/* Bottom Banner Section */}
           <section className="container mx-auto flex  text-black">
-            <div className="main-content mx-auto px-5 flex justify-center items-center  rounded-xl bg-gradient-to-r from-[#F97316] to-[#FACC15]">
+            <div className="main-content mx-auto flex justify-center items-center  rounded-xl bg-gradient-to-r from-[#F97316] to-[#FACC15]">
               <BottomBanner />
             </div>
           </section>

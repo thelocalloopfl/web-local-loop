@@ -43,7 +43,7 @@ export default function SpotlightListWithLoadMore({
   return (
     <>
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
         <div className="relative w-full">
           <input

@@ -2,7 +2,7 @@
 import { client } from './sanity';
 
 export async function fetchEvents() {
-  const query = `*[_type == "event"] | order(publishedAt desc){
+  const query = `*[_type == "event" && publishedAt >= now()] | order(publishedAt asc){
     _id,
     title,
     slug,
