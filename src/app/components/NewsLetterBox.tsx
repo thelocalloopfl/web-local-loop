@@ -44,7 +44,6 @@ const NewsletterBox: React.FC = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
           required
           className="flex-1 px-4 py-3 text-gray-700 text-sm focus:outline-none min-w-0"
         />
@@ -60,7 +59,7 @@ const NewsletterBox: React.FC = () => {
 
       {message && (
         <p
-          className={`mt-3 text-sm font-medium border rounded-md p-3 w-full max-w-md text-center transition-all duration-300 ${
+          className={`mt-3 text-sm font-medium border rounded-md p-3 w-[250px] max-w-md text-center transition-all duration-300 ${
             status === "success"
               ? "border-green-600 bg-green-100 text-green-700"
               : "border-red-600 bg-red-100 text-red-700"

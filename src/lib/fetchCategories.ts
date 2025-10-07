@@ -6,6 +6,17 @@ export type Category = {
 };
 
 export async function fetchCategories(): Promise<Category[]> {
-  const query = `*[_type == "eventCategory"]{_id, title}`;
-  return await client.fetch(query, {});
+  const query = `*[_type == "eventCategory"]{
+    _id,
+    title
+  } | order(title asc)`;
+  
+  const categories = await client.fetch(query, {});
+
+  const uniqueCategories = categories.filter(
+    (cat: Category, index: number, self: Category[]) =>
+      index === self.findIndex(c => c.title === cat.title)
+  );
+
+  return uniqueCategories;
 }
