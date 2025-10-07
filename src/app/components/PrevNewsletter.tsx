@@ -46,7 +46,7 @@ export default function PrevNewsletter() {
   const allLoaded = visibleCount >= filtered.length;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto py-8">
       {/* Search */}
       <div className="mb-8 relative w-full">
         <input

@@ -30,7 +30,7 @@ export default async function Layout({
     <>
       <div >
          {/*Top banner Section  */}
-          <section className="container mx-auto px-5">
+          <section className="container mx-auto">
             <TopBannerSections bgImage={topBannerImg} text={topBannerTitle} viewLink={topBannerlink} />
           </section>
                 <div className="main-content flex flex-col lg:flex-row gap-5">
@@ -46,7 +46,7 @@ export default async function Layout({
                 </div>
 
           {/* Middle Banner Section */}
-          <section className="container mx-auto px-5 mt-5">
+          <section className="container mx-auto mt-5">
             <MiddelBanner bgImage={middleBannerImg} text={middleBannerTitle}  viewLink={middleBannerlink}/>
           </section>
       </div>

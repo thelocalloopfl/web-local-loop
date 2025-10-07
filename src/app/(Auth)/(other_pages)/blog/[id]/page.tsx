@@ -85,7 +85,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   if (!blog) {
     return (
-      <div className="main-content mx-auto px-5 text-center text-3xl pb-16 text-black max-w-7xl">
+      <div className="main-content mx-auto text-center text-3xl pb-16 text-black max-w-7xl">
         Blog not found
       </div>
     );
