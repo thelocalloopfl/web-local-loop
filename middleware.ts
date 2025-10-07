@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
     // If no token, redirect to home page
     if (!token) {
       console.log('❌ No authentication token, redirecting to home')
-      return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/login', request.url))
     }
     
     return NextResponse.next()
@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error('💥 Auth Middleware error:', error)
     // Redirect to home on error
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 }
 
