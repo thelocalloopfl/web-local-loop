@@ -115,7 +115,7 @@ const ContactSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Contact Form */}
-          <div className="md:col-span-2 mx-auto px-4 bg-white shadow-md rounded-lg p-6">
+          <div className="md:col-span-2 w-full mx-auto px-4 bg-white shadow-md rounded-lg p-6">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">
               Send Us a Message
             </h3>
@@ -124,31 +124,40 @@ const ContactSection = () => {
             </p>
 
             <form className="space-y-4" onSubmit={handleSubmit}>
+              <label className="block text-gray-700 font-medium mb-1">
+              Your Name
+            </label>
               <input
                 type="text"
-                placeholder="Your Name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="w-full border border-gray-300 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:outline-none focus:border-orange-700"
               />
+              <label className="block text-gray-700 font-medium mb-1">
+                Your Email
+              </label>
               <input
                 type="text"
-                placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full border border-gray-300 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:outline-none focus:border-orange-700"
               />
+              <label className="block text-gray-700 font-medium mb-1">
+                Question About
+              </label>
+             
               <input
                 type="text"
-                placeholder="Question about..."
                 value={form.question}
                 onChange={(e) =>
                   setForm({ ...form, question: e.target.value })
                 }
                 className="w-full border border-gray-300 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:outline-none focus:border-orange-700"
               />
+               <label className="block text-gray-700 font-medium mb-1">
+                Your Message
+              </label>
               <textarea
-                placeholder="Type your message here..."
                 rows={5}
                 value={form.message}
                 onChange={(e) =>

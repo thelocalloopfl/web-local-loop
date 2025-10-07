@@ -75,7 +75,7 @@ const LocalSpotlight = async () => {
   const spotlightCategories = await fetchSpotlightCategories();
   return (
     <>
-        <div className="main-content mx-auto px-5 py-16 text-black max-w-7xl">
+        <div className="main-content mx-auto py-16 text-black max-w-7xl">
         {/* Header */}
             <div className="text-center mb-12">
                 <div className="flex justify-center mb-4">

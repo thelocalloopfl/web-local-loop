@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { writeClient } from "@/lib/sanity";
 import { contactFormTemplate } from "../../../../lib/contactFormTemplate";
 import nodemailer from "nodemailer";
 
@@ -43,17 +42,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Passed reCAPTCHA → save to Sanity
-    const doc = {
-      _type: "contactFormSubmission",
-      name,
-      email,
-      question,
-      message,
-      createdAt: new Date().toISOString(),
-    };
-    const result = await writeClient.create(doc);
-
     // ✅ Send email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -72,9 +60,12 @@ export async function POST(req: Request) {
       html: contactFormTemplate(name, email, question, message),
     });
 
-    return NextResponse.json({ success: true, id: result._id });
+    return NextResponse.json({
+      success: true,
+      message: "Email sent successfully",
+    });
   } catch (err: unknown) {
-    console.error("Sanity form submission error:", err);
+    console.error("Contact form error:", err);
     const message = err instanceof Error ? err.message : "Something went wrong";
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }

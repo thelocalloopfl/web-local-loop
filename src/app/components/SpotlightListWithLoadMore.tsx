@@ -48,7 +48,6 @@ export default function SpotlightListWithLoadMore({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search Spotlight..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -78,7 +77,7 @@ export default function SpotlightListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-             className="w-full px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+             className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
              <svg
@@ -144,14 +143,18 @@ export default function SpotlightListWithLoadMore({
               key={spotlight._id}
               className="bg-white shadow rounded-xl overflow-hidden flex flex-col"
             >
-              {spotlight.image && (
+              {spotlight.image ? (
                 <Image
                   src={spotlight.image}
                   alt={spotlight.title}
                   width={600}
-                  height={400}
-                  className="w-full h-48 object-cover"
+                  height={300}
+                  className="w-full h-44 object-cover rounded-md"
                 />
+              ) : (
+                <div className="w-full h-44 bg-gray-300 flex items-center justify-center rounded-md">
+                  <span className="text-gray-600 text-sm">No Image Available</span>
+                </div>
               )}
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="text-lg font-semibold mb-2">
@@ -179,12 +182,12 @@ export default function SpotlightListWithLoadMore({
                   href={spotlight.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center justify-center px-4 py-2 bg-orange-700 text-white rounded-lg font-medium text-sm hover:bg-orange-800 transition"
+                  className="mt-auto inline-flex items-center justify-center px-4 py-2.5 bg-orange-700 text-white rounded-lg font-medium text-sm hover:bg-orange-800 transition"
                 >
                   Visit Website
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2"
+                    className="h-5 w-5 ml-0.5 pt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

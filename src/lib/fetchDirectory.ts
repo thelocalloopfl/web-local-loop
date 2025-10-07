@@ -6,11 +6,11 @@ export type Directory = {
   logo?: string;
   category?: { _id: string; title: string };
   description: string;
-  link: string ;
+  link: string;
 };
 
 export async function fetchDirectory(): Promise<Directory[]> {
-  const query = `*[_type == "directory"]{
+  const query = `*[_type == "directory"] | order(name asc) {
     _id,
     name,
     "logo": logo.asset->url,

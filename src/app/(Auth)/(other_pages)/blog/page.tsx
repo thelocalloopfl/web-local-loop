@@ -72,7 +72,7 @@ const blogCategories = await fetchBlogCategories();
 
   return (
     <>
-        <div className="main-content mx-auto px-5 py-16 text-black max-w-7xl">
+        <div className="main-content mx-auto py-16 text-black max-w-7xl">
               {/* Header */}
               <div className="text-center mb-12">
                 <h2 className="text-4xl font-bold text-orange-700">

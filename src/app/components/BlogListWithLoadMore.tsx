@@ -48,7 +48,6 @@ export default function BlogListWithLoadMore({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search blogs..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -78,7 +77,7 @@ export default function BlogListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -145,15 +144,19 @@ export default function BlogListWithLoadMore({
               key={blog._id}
               className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition duration-200"
             >
-              {blog.image && (
-                <Image
-                  src={blog.image}
-                  alt={blog.title}
-                  width={600}
-                  height={300}
-                  className="w-full h-44 object-cover"
-                />
-              )}
+            {blog.image ? (
+              <Image
+                src={blog.image}
+                alt={blog.title}
+                width={600}
+                height={300}
+                className="w-full h-44 object-cover rounded-md"
+              />
+            ) : (
+              <div className="w-full h-44 bg-gray-300 flex items-center justify-center rounded-md">
+                <span className="text-gray-600 text-sm">No Image Available</span>
+              </div>
+            )}
               <div className="p-5 flex flex-col flex-grow">
                 {blog.category && (
                   <span className="text-xs font-medium text-orange-700 mb-2">
@@ -181,7 +184,7 @@ export default function BlogListWithLoadMore({
                 </p>
                 <Link
                   href={`/blog/${blog._id}`}
-                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
                 >
                   Read More
                   <FiArrowRight className="text-lg" />

@@ -20,10 +20,15 @@ export default function DirectoryListWithLoadMore({
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // 👈 new state
 
   const handleLoadMore = () => {
     startTransition(() => {
-      setVisibleCount((prev) => prev + 3);
+      setIsLoading(true);
+      setTimeout(() => {
+        setVisibleCount((prev) => prev + 3);
+        setIsLoading(false);
+      }, 2000);
     });
   };
 
@@ -48,7 +53,6 @@ export default function DirectoryListWithLoadMore({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search directories..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -78,7 +82,7 @@ export default function DirectoryListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -170,7 +174,7 @@ export default function DirectoryListWithLoadMore({
                 <Link
                   href={directory.link}
                   target={'_blank'}
-                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
                 >
                   View
                   <FiArrowRight className="text-lg" />
@@ -188,9 +192,15 @@ export default function DirectoryListWithLoadMore({
             <button
               onClick={handleLoadMore}
               className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
-              disabled={isPending}
+              disabled={isPending || isLoading}
             >
-              {isPending ? "Loading..." : "Load More"}
+              {isLoading ? (
+                <>
+                  <div className="size-5 border-2 border-orange-700 border-t-transparent rounded-full animate-spin "></div>
+                </>
+              ) : (
+                "Load More"
+              )}
             </button>
           </div>
         )

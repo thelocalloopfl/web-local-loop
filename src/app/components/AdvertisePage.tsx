@@ -64,7 +64,8 @@ const AdvertisePage = () => {
           setForm({ name: "", businessName: "", email: "", message: "" , recaptchaToken:"" });
           recaptchaRef.current?.reset();
         } else {
-          showToast("Something went wrong. Please try again.", 'error');
+          const errorData = await res.json();
+          showToast(errorData.error || "Something went wrong.", 'error');
         }
       } catch (error) {
         showToast("⚠️ Network error. Try again later.", 'error');
@@ -171,7 +172,6 @@ const AdvertisePage = () => {
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Name"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -187,7 +187,6 @@ const AdvertisePage = () => {
               onChange={(e) =>
                 setForm({ ...form, businessName: e.target.value })
               }
-              placeholder="Business Name"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -201,7 +200,6 @@ const AdvertisePage = () => {
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="you@example.com"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -215,7 +213,6 @@ const AdvertisePage = () => {
               rows={4}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              placeholder="Write message..."
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400"
             ></textarea>
           </div>

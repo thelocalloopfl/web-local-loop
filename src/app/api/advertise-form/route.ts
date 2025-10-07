@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { writeClient } from "@/lib/sanity";
 import { advertiseFormTemplate } from "../../../../lib/advertiseFormTemplate";
 import nodemailer from "nodemailer";
 
@@ -10,7 +9,7 @@ type VerifyResponse = {
 
 export async function POST(req: Request) {
   try {
-    const { name, businessName, email, message , recaptchaToken } = await req.json();
+    const { name, businessName, email, message, recaptchaToken } = await req.json();
 
     if (!name || !businessName || !email || !message || !recaptchaToken) {
       return NextResponse.json(
@@ -43,17 +42,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const doc = {
-      _type: "advertiseFormSubmission",
-      name,
-      businessName,
-      email,
-      message,
-      createdAt: new Date().toISOString(),
-    };
-
-    const result = await writeClient.create(doc);
-
     // ✅ Send email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -72,9 +60,9 @@ export async function POST(req: Request) {
       html: advertiseFormTemplate(name, businessName, email, message),
     });
 
-    return NextResponse.json({ success: true, id: result._id });
+    return NextResponse.json({ success: true, message: "Email sent successfully" });
   } catch (err: unknown) {
-    console.error("Sanity form submission error:", err);
+    console.error("Form submission error:", err);
 
     let message = "Something went wrong";
     if (err instanceof Error) {
