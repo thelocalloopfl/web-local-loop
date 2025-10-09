@@ -1,4 +1,3 @@
-// app/api/checkout/route.ts
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
@@ -24,20 +23,57 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: cart.map((item) => ({
-        price_data: {
-          currency: "usd",
-          product_data: { name: item.name },
-          unit_amount: Math.round(item.price * 100),
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card", "link" ],
+    mode: "payment",
+    customer_creation: "always",
+
+    line_items: cart.map((item) => ({
+      price_data: {
+        currency: "usd",
+        product_data: { name: item.name },
+        unit_amount: Math.round(item.price * 100),
+        tax_behavior: "exclusive",
+      },
+      quantity: item.qty,
+    })),
+
+    // automatic_tax: { enabled: true },
+
+    shipping_address_collection: {
+
+        allowed_countries: ["US", "CA", "GB"], 
+    },
+
+    shipping_options: [
+      {
+        shipping_rate_data: {
+          type: "fixed_amount",
+          fixed_amount: { amount: 500, currency: "usd" }, // $5
+          display_name: "Standard Shipping",
+          delivery_estimate: {
+            minimum: { unit: "business_day", value: 5 },
+            maximum: { unit: "business_day", value: 7 },
+          },
         },
-        quantity: item.qty,
-      })),
-      success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}/cart`,
-    });
+      },
+      {
+        shipping_rate_data: {
+          type: "fixed_amount",
+          fixed_amount: { amount: 1500, currency: "usd" }, // $15
+          display_name: "Expedited Shipping",
+          delivery_estimate: {
+            minimum: { unit: "business_day", value: 1 },
+            maximum: { unit: "business_day", value: 3 },
+          },
+        },
+      },
+    ],
+
+    success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/cart`,
+  });
+
 
     return NextResponse.json({ sessionId: session.id });
   } catch (err: unknown) {

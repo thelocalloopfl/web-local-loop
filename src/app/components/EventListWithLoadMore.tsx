@@ -53,7 +53,6 @@ export default function EventListWithLoadMore({
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search events..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -83,7 +82,7 @@ export default function EventListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
