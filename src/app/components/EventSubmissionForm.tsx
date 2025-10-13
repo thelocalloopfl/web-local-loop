@@ -107,8 +107,8 @@ export default function EventSubmissionForm() {
         recaptchaRef.current?.reset();
         setImage(null);
         setPreview(null);
-      } catch (error: any) {
-        showToast(error.message, "error");
+      } catch (error: unknown) {
+        showToast(error instanceof Error ? error.message : "An unexpected error occurred.", "error");
       }
     });
   };
