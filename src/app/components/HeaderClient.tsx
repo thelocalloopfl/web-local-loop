@@ -23,6 +23,7 @@ export default function HeaderClient() {
   const menuItems = [
     { name: "Home", href: "/home" },
     { name: "Blog", href: "/blog" },
+    { name: "Events", href: "/event" },
     { name: "Local Spotlight", href: "/local-spotlight" },
     { name: "Advertise", href: "/advertise" },
     { name: "About", href: "/about" },

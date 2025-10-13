@@ -24,6 +24,8 @@ export default function EventListWithLoadMore({
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("soonest");
+  const [showSort, setShowSort] = useState(false);
 
   const handleLoadMore = () => {
     startTransition(() => {
@@ -32,7 +34,8 @@ export default function EventListWithLoadMore({
   };
 
   // Filter events by search and category
-  const filteredEvents = allEvents.filter((event) => {
+const filteredEvents = allEvents
+  .filter((event) => {
     const matchesSearch = event.title
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -40,6 +43,13 @@ export default function EventListWithLoadMore({
       !selectedCategory ||
       (event.categories ?? []).some((cat) => cat._id === selectedCategory);
     return matchesSearch && matchesCategory;
+  })
+  .sort((a, b) => {
+    if (sortBy === "soonest") {
+      return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
+    } else {
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    }
   });
 
   const events = filteredEvents.slice(0, visibleCount);
@@ -137,6 +147,44 @@ export default function EventListWithLoadMore({
         </div>
       </div>
 
+      {/* Sort By */}
+
+      <div className="flex mb-6">
+          <button
+            type="button"
+            className="px-4 py-1.5 w-25 border border-orange-700 rounded-xl text-orange-700 text-sm bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            onClick={() => setShowSort((v) => !v)}
+          >
+            {sortBy === "soonest" ? "Soonest" : "Newest"}
+          </button>
+          {showSort && (
+            <div className="absolute z-10  w-25 mt-9 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+              <button
+                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
+                  sortBy === "soonest" ? "font-bold text-orange-700" : ""
+                }`}
+                onClick={() => {
+                  setSortBy("soonest");
+                  setShowSort(false);
+                }}
+              >
+                Soonest
+              </button>
+              <button
+                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
+                  sortBy === "newest" ? "font-bold text-orange-700" : ""
+                }`}
+                onClick={() => {
+                  setSortBy("newest");
+                  setShowSort(false);
+                }}
+              >
+                Newest
+              </button>
+            </div>
+          )}
+        </div>
+
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
         {events.length === 0 ? (
@@ -185,7 +233,7 @@ export default function EventListWithLoadMore({
                   href={
                     event.slug?.current ? `/event/${event.slug.current}` : "#"
                   }
-                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
                   prefetch={false}
                 >
                   View Details
