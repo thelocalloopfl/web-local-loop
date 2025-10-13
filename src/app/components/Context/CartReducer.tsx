@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react";
 export interface CartItem {
   id: string | number;
   name: string;
@@ -9,19 +10,25 @@ export interface CartState {
   cartItems: CartItem[];
 }
 
-// ✅ Load from localStorage if available
 export const initialState: CartState = {
-  cartItems:
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("cart") || "[]")
-      : [],
+  cartItems: [],
 };
+
+export async function loadCartState(): Promise<CartState> {
+  if (typeof window !== "undefined") {
+    const session = await getSession();
+    const userId = session?.user?.id || "guest";
+    const stored = localStorage.getItem(`cart_${userId}`);
+    return { cartItems: stored ? JSON.parse(stored) : [] };
+  }
+  return { cartItems: [] };
+}
 
 export type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: string | number }
-  | { type: "CLEAR_CART" };
-
+  | { type: "CLEAR_CART" }
+  | { type: "INIT_CART"; payload: CartItem[] }; // 👈 add this
 export const cartReducer = (
   state: CartState,
   action: CartAction
@@ -29,6 +36,9 @@ export const cartReducer = (
   let updatedState: CartState;
 
   switch (action.type) {
+    case "INIT_CART":
+      return { ...state, cartItems: action.payload };
+
     case "ADD_ITEM":
       const existingItem = state.cartItems.find(
         (item) => item.id === action.payload.id
@@ -67,9 +77,14 @@ export const cartReducer = (
       return state;
   }
 
-  // ✅ Save to localStorage
   if (typeof window !== "undefined") {
-    localStorage.setItem("cart", JSON.stringify(updatedState.cartItems));
+    getSession().then((session) => {
+      const userId = session?.user?.id || "guest";
+      localStorage.setItem(
+        `cart_${userId}`,
+        JSON.stringify(updatedState.cartItems)
+      );
+    });
   }
 
   return updatedState;

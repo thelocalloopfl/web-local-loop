@@ -5,6 +5,7 @@ export type Blog = {
   title: string;
   publishedAt: string;
   imageUrl: string;
+  description: string;
   category?: {
     _id: string;
     title: string;
@@ -19,6 +20,7 @@ export async function fetchBlogById(id: string): Promise<Blog | null> {
       _id,
       title,
       publishedAt,
+      description,
       "imageUrl": image.asset->url,
       category->{
         _id,
@@ -29,5 +31,5 @@ export async function fetchBlogById(id: string): Promise<Blog | null> {
     }
   `;
 
-  return await client.fetch(query, { id }, { next: { revalidate: 30 } });
+  return await client.fetch(query, { id });
 }

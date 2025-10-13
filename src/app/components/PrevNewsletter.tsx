@@ -3,6 +3,7 @@
 import React, { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
+import Image from "next/image";
 
 interface Newsletter {
   title: string;
@@ -14,7 +15,7 @@ interface Newsletter {
 
 export default function PrevNewsletter() {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(4);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,7 @@ export default function PrevNewsletter() {
   }, []);
 
   const handleLoadMore = () => {
-    startTransition(() => setVisibleCount((prev) => prev + 3));
+    startTransition(() => setVisibleCount((prev) => prev + 2));
   };
 
   const filtered = Array.isArray(newsletters)
@@ -45,7 +46,7 @@ export default function PrevNewsletter() {
   const allLoaded = visibleCount >= filtered.length;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto py-8">
       {/* Search */}
       <div className="mb-8 relative w-full">
         <input
@@ -54,7 +55,7 @@ export default function PrevNewsletter() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setVisibleCount(3);
+            setVisibleCount(2);
           }}
           className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
         />
@@ -79,7 +80,7 @@ export default function PrevNewsletter() {
       {/* Newsletter Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2  gap-6 mb-8">
         {loading ? (
-          <div className="col-span-full text-center text-orange-500 py-12">
+          <div className="col-span-full text-center text-orange-700 py-12">
             Loading...
           </div>
         ) : visibleNewsletters.length === 0 ? (
@@ -93,10 +94,12 @@ export default function PrevNewsletter() {
               className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition duration-200"
             >
               {n.image && (
-                <img
+                <Image
                   src={n.image}
                   alt={n.title}
-                  className="w-full h-44 object-cover"
+                  width={400}   
+                  height={176}     
+                  className="w-full object-cover rounded-md"
                 />
               )}
               <div className="p-5 flex flex-col flex-grow">
@@ -121,7 +124,7 @@ export default function PrevNewsletter() {
                 <Link
                   href={n.link}
                   target="_blank"
-                  className="inline-flex items-center gap-2 text-orange-500 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
                 >
                   View Newsletter
                   <FiArrowRight className="text-lg" />
@@ -137,7 +140,7 @@ export default function PrevNewsletter() {
         <div className="flex justify-center">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50 cursor-pointer"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
             disabled={isPending}
           >
             {isPending ? "Loading..." : "Load More Newsletters"}

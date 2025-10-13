@@ -11,7 +11,7 @@ export type Spotlight = {
 };
 
 export async function fetchSpotlights(): Promise<Spotlight[]> {
-  const query = `*[_type == "spotlight"]|order(_createdAt desc){
+  const query = `*[_type == "spotlight"]| order(publishedAt desc){
     _id,
     title,
     "image": image.asset->url,
@@ -20,5 +20,5 @@ export async function fetchSpotlights(): Promise<Spotlight[]> {
     websiteUrl,
     category->{_id, title}
   }`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  return await client.fetch(query, {});
 }

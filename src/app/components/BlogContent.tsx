@@ -42,7 +42,7 @@ export default function BlogContent({ value }: { value: PortableTextBlock[] }) {
                 href={value?.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-orange-600 hover:text-orange-800 underline"
+                className="text-orange-700 hover:text-orange-800 underline"
               >
                 {children}
               </a>
@@ -61,7 +61,7 @@ export default function BlogContent({ value }: { value: PortableTextBlock[] }) {
               </h1>
             ),
             h2: ({ children }) => (
-              <h2 className="text-3xl font-bold mt-10 mb-5 text-gray-900 border-l-4 border-orange-500 pl-3">
+              <h2 className="text-3xl font-bold mt-10 mb-5 text-gray-900 border-l-4 border-orange-700 pl-3">
                 {children}
               </h2>
             ),

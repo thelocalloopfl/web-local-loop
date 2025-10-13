@@ -20,10 +20,15 @@ export default function DirectoryListWithLoadMore({
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // 👈 new state
 
   const handleLoadMore = () => {
     startTransition(() => {
-      setVisibleCount((prev) => prev + 3);
+      setIsLoading(true);
+      setTimeout(() => {
+        setVisibleCount((prev) => prev + 3);
+        setIsLoading(false);
+      }, 2000);
     });
   };
 
@@ -43,12 +48,11 @@ export default function DirectoryListWithLoadMore({
   return (
     <>
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search directories..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -78,7 +82,7 @@ export default function DirectoryListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-500 rounded-xl text-orange-500 font-semibold bg-white hover:bg-orange-500 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -101,7 +105,7 @@ export default function DirectoryListWithLoadMore({
             <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
               <button
                 className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                  selectedCategory === null ? "font-bold text-orange-600" : ""
+                  selectedCategory === null ? "font-bold text-orange-700" : ""
                 }`}
                 onClick={() => {
                   setSelectedCategory(null);
@@ -116,7 +120,7 @@ export default function DirectoryListWithLoadMore({
                   key={cat._id}
                   className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
                     selectedCategory === cat._id
-                      ? "font-bold text-orange-600"
+                      ? "font-bold text-orange-700"
                       : ""
                   }`}
                   onClick={() => {
@@ -156,7 +160,7 @@ export default function DirectoryListWithLoadMore({
               )}
               <div className="p-5 flex flex-col flex-grow">
                 {directory.category && (
-                  <span className="text-xs font-medium text-orange-500 mb-2">
+                  <span className="text-xs font-medium text-orange-700 mb-2">
                     {directory.category.title}
                   </span>
                 )}
@@ -169,7 +173,8 @@ export default function DirectoryListWithLoadMore({
                 </p>
                 <Link
                   href={directory.link}
-                  className="inline-flex items-center gap-2 text-orange-500 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  target={'_blank'}
+                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
                 >
                   View
                   <FiArrowRight className="text-lg" />
@@ -186,10 +191,16 @@ export default function DirectoryListWithLoadMore({
           <div className="flex justify-center mb-5">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50 cursor-pointer"
-              disabled={isPending}
+              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
+              disabled={isPending || isLoading}
             >
-              {isPending ? "Loading..." : "Load More"}
+              {isLoading ? (
+                <>
+                  <div className="size-5 border-2 border-orange-700 border-t-transparent rounded-full animate-spin "></div>
+                </>
+              ) : (
+                "Load More"
+              )}
             </button>
           </div>
         )
@@ -197,7 +208,7 @@ export default function DirectoryListWithLoadMore({
         <div className="flex justify-center">
           <Link
             href="/directory"
-            className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[200px] justify-center hover:bg-transparent hover:text-orange-500 border border-orange-500 transition"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[200px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
           >
             View All Directories
           </Link>

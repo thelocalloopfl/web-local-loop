@@ -1,6 +1,7 @@
 import FooterClient from "./FooterClient";
 import LogoServer from "./LogoServer";
-
+export const dynamic = "force-dynamic"; 
+export const revalidate = 0;
 
 export default function Footer() {
 
@@ -9,8 +10,8 @@ export default function Footer() {
       <div className="main-footer-inner grid grid-cols-1 md:grid-cols-3 gap-10 pb-8 mx-auto px-2">
         {/* Column 1 */}
         <div>
-          {/* <h3 className="text-2xl font-bold mb-2">The Local Loop FL</h3> */}
-          <LogoServer/>
+         
+          <LogoServer />
           <p className="text-base text-white/90 max-w-xs">Your guide to Winter Garden, Florida. Discover local events, business and stories.</p>
         </div>
         <FooterClient/>

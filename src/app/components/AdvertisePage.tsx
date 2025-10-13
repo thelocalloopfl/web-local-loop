@@ -1,17 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { FiDollarSign, FiMail, FiUsers, FiSend } from "react-icons/fi";
 import { FaImage } from "react-icons/fa";
 import Toast from "./MessageTost";
 
+import { useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+
+
 type ToastType = { id: number; message: string , type: string };
 
 const AdvertisePage = () => {
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const [ispending, setTransition] = useTransition();
+  
   const [form, setForm] = useState({
     name: "",
     businessName: "",
     email: "",
     message: "",
+    recaptchaToken: "",
   });
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
@@ -20,7 +29,7 @@ const AdvertisePage = () => {
     setToasts((prev) => [...prev, { id, message , type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, 4000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,22 +46,31 @@ const AdvertisePage = () => {
       return;
     }
 
-    try {
-      const res = await fetch("/api/advertise-form", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
-        showToast("Inquiry submitted successfully!" , 'success');
-        setForm({ name: "", businessName: "", email: "", message: "" });
-      } else {
-        showToast("Something went wrong. Please try again.", 'error');
-      }
-    } catch (error) {
-      showToast("⚠️ Network error. Try again later.", 'error');
+    if (!form.recaptchaToken) {
+      showToast("Please verify the reCAPTCHA.", "error");
+      return;
     }
+
+    setTransition( async ()=>{
+      try {
+        const res = await fetch("/api/advertise-form", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+
+        if (res.ok) {
+          showToast("Inquiry submitted successfully!" , 'success');
+          setForm({ name: "", businessName: "", email: "", message: "" , recaptchaToken:"" });
+          recaptchaRef.current?.reset();
+        } else {
+          const errorData = await res.json();
+          showToast(errorData.error || "Something went wrong.", 'error');
+        }
+      } catch (error) {
+        showToast("⚠️ Network error. Try again later.", 'error');
+      }
+    })
   };
 
   return (
@@ -73,9 +91,9 @@ const AdvertisePage = () => {
       {/* Header Section */}
       <div className="text-center max-w-2xl mx-auto px-4">
         <div className="flex justify-center mb-2">
-          <FiDollarSign className="w-16 h-16 text-orange-500" />
+          <FiDollarSign className="w-16 h-16 text-orange-700" />
         </div>
-        <h1 className="text-4xl md:text-4xl font-bold text-orange-500">
+        <h1 className="text-4xl md:text-4xl font-bold text-orange-700">
           Advertise With Us
         </h1>
         <p className="mt-4 text-gray-600">
@@ -94,7 +112,7 @@ const AdvertisePage = () => {
           {/* Card 1 */}
           <div className="bg-[#F8FAFC] shadow-md rounded-lg p-6 text-center hover:shadow-lg transition">
             <div className="flex justify-center mb-4">
-              <FiMail className="w-10 h-10 text-orange-500" />
+              <FiMail className="w-10 h-10 text-orange-700" />
             </div>
             <h3 className="font-semibold text-lg mb-2">
               Newsletter Sponsorship
@@ -154,7 +172,6 @@ const AdvertisePage = () => {
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Name"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -170,7 +187,6 @@ const AdvertisePage = () => {
               onChange={(e) =>
                 setForm({ ...form, businessName: e.target.value })
               }
-              placeholder="Business Name"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -184,7 +200,6 @@ const AdvertisePage = () => {
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="you@example.com"
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           </div>
@@ -198,20 +213,40 @@ const AdvertisePage = () => {
               rows={4}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              placeholder="Write message..."
               className="w-full border bg-[#F8FAFC] text-gray-700 border-gray-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-orange-400"
             ></textarea>
           </div>
 
+           {/* ✅ reCAPTCHA */}
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+              onChange={(token) => setForm({ ...form, recaptchaToken: token || "" })}
+              onExpired={() => setForm({ ...form, recaptchaToken: "" })}
+            />
+
           {/* Button */}
-          <div className="text-center w-full">
-            <button
-              type="submit"
-              className="bg-orange-500 text-white px-6 py-2 w-full rounded-lg hover:bg-orange-600 transition flex items-center justify-center gap-2"
-            >
-              <FiSend className="w-5 h-5" />
-              Send Inquiry
-            </button>
+          <div className="text-center w-full pt-5">
+          <button
+            type="submit"
+            disabled={ispending}
+            className={`text-white px-6 py-2 w-full rounded-lg transition flex items-center justify-center gap-2
+              ${ispending 
+                ? "bg-orange-500 cursor-not-allowed" 
+                : "bg-orange-700 hover:bg-orange-800 cursor-pointer"
+              }`}
+          >
+            {ispending ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </>
+            ):(
+              <>
+                <FiSend className="w-5 h-5" />
+                Send Inquiry
+              </>
+            )}
+          </button>
           </div>
         </form>
       </div>

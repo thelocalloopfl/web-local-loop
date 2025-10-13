@@ -24,6 +24,8 @@ export default function EventListWithLoadMore({
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("soonest");
+  const [showSort, setShowSort] = useState(false);
 
   const handleLoadMore = () => {
     startTransition(() => {
@@ -32,7 +34,8 @@ export default function EventListWithLoadMore({
   };
 
   // Filter events by search and category
-  const filteredEvents = allEvents.filter((event) => {
+const filteredEvents = allEvents
+  .filter((event) => {
     const matchesSearch = event.title
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -40,6 +43,13 @@ export default function EventListWithLoadMore({
       !selectedCategory ||
       (event.categories ?? []).some((cat) => cat._id === selectedCategory);
     return matchesSearch && matchesCategory;
+  })
+  .sort((a, b) => {
+    if (sortBy === "soonest") {
+      return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
+    } else {
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    }
   });
 
   const events = filteredEvents.slice(0, visibleCount);
@@ -48,12 +58,11 @@ export default function EventListWithLoadMore({
   return (
     <>
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search events..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -83,7 +92,7 @@ export default function EventListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-            className="w-full px-4 py-2 border border-orange-500 rounded-xl text-orange-500 font-semibold bg-white hover:bg-orange-500 hover:text-white transition flex items-center justify-center gap-2"
+            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -106,7 +115,7 @@ export default function EventListWithLoadMore({
             <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
               <button
                 className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                  selectedCategory === null ? "font-bold text-orange-600" : ""
+                  selectedCategory === null ? "font-bold text-orange-700" : ""
                 }`}
                 onClick={() => {
                   setSelectedCategory(null);
@@ -121,7 +130,7 @@ export default function EventListWithLoadMore({
                   key={cat._id}
                   className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
                     selectedCategory === cat._id
-                      ? "font-bold text-orange-600"
+                      ? "font-bold text-orange-700"
                       : ""
                   }`}
                   onClick={() => {
@@ -137,6 +146,44 @@ export default function EventListWithLoadMore({
           )}
         </div>
       </div>
+
+      {/* Sort By */}
+
+      <div className="flex mb-6">
+          <button
+            type="button"
+            className="px-4 py-1.5 w-25 border border-orange-700 rounded-xl text-orange-700 text-sm bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            onClick={() => setShowSort((v) => !v)}
+          >
+            {sortBy === "soonest" ? "Soonest" : "Newest"}
+          </button>
+          {showSort && (
+            <div className="absolute z-10  w-25 mt-9 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+              <button
+                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
+                  sortBy === "soonest" ? "font-bold text-orange-700" : ""
+                }`}
+                onClick={() => {
+                  setSortBy("soonest");
+                  setShowSort(false);
+                }}
+              >
+                Soonest
+              </button>
+              <button
+                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
+                  sortBy === "newest" ? "font-bold text-orange-700" : ""
+                }`}
+                onClick={() => {
+                  setSortBy("newest");
+                  setShowSort(false);
+                }}
+              >
+                Newest
+              </button>
+            </div>
+          )}
+        </div>
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
@@ -165,7 +212,7 @@ export default function EventListWithLoadMore({
                   {(event.categories ?? []).map((cat) => (
                     <span
                       key={cat._id}
-                      className="text-xs font-medium text-orange-500"
+                      className="text-xs font-medium text-orange-700"
                     >
                       {cat.title}
                     </span>
@@ -182,17 +229,11 @@ export default function EventListWithLoadMore({
                     day: "numeric",
                   })}
                 </p>
-                <p className="text-sm text-gray-600 flex-grow mb-4">
-                  {event.description?.split(" ").slice(0, 20).join(" ")}
-                  {event.description &&
-                    event.description.split(" ").length > 20 &&
-                    "..."}
-                </p>
                 <Link
                   href={
                     event.slug?.current ? `/event/${event.slug.current}` : "#"
                   }
-                  className="inline-flex items-center gap-2 text-orange-500 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
                   prefetch={false}
                 >
                   View Details
@@ -205,19 +246,30 @@ export default function EventListWithLoadMore({
       </div>
 
       {/* Load More / View All */}
-    {
+    {all ? (
         !allLoaded && (
           <div className="flex justify-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50 cursor-pointer"
+              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
               disabled={isPending}
             >
-              {isPending ? "Loading..." : "Load More Events"}
+              {isPending ? "Loading..." : "Load More"}
             </button>
           </div>
         )
-    }
+      ): (
+        <div className="flex justify-center">
+          <Link
+            href="/event"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[200px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
+          >
+            View All Events
+          </Link>
+        </div>
+      )}
+
+      
     </>
   );
 }

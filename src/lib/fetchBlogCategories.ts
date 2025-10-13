@@ -6,6 +6,15 @@ export type BlogCategory = {
 };
 
 export async function fetchBlogCategories(): Promise<BlogCategory[]> {
-  const query = `*[_type == "blogCategory"]{_id, title}`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  const query = `*[_type == "blogCategory"]{_id, title} | order(title asc)`;
+
+  const categories = await client.fetch(query, {});
+
+  // Remove duplicate titles
+  const uniqueCategories = categories.filter(
+    (cat: BlogCategory, index: number, self: BlogCategory[]) =>
+      index === self.findIndex(c => c.title === cat.title)
+  );
+
+  return uniqueCategories;
 }

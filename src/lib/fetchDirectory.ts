@@ -6,11 +6,11 @@ export type Directory = {
   logo?: string;
   category?: { _id: string; title: string };
   description: string;
-  link: string ;
+  link: string;
 };
 
 export async function fetchDirectory(): Promise<Directory[]> {
-  const query = `*[_type == "directory"]{
+  const query = `*[_type == "directory"] | order(name asc) {
     _id,
     name,
     "logo": logo.asset->url,
@@ -18,5 +18,5 @@ export async function fetchDirectory(): Promise<Directory[]> {
     link,
     category->{_id, title}
   }`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+  return await client.fetch(query, {});
 }

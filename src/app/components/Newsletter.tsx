@@ -9,18 +9,18 @@ const Newsletter: React.FC = () => {
   return (
     <>
       {/* Main Container */}
-      <div className="main-content mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-black max-w-5xl">
+      <div className="main-content mx-auto pb-12 text-black max-w-5xl">
         {/* Top Card */}
         <div className="bg-gradient-to-b from-orange-50 to-yellow-50 rounded-xl shadow-lg p-6 sm:p-8 lg:p-12 text-center">
           {/* Icon */}
           <div className="flex justify-center mb-4">
             <span>
-              <IoNewspaper  className="text-orange-500 size-16" />
+              <IoNewspaper  className="text-orange-700 size-16" />
             </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-500 mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-700 mb-3">
             Join The Local Loop FL Newsletter
           </h1>
           <p className="text-gray-700 mb-6 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
@@ -31,7 +31,7 @@ const Newsletter: React.FC = () => {
 
           {/* Email Subscription Box */}
           <div className="bg-gradient-to-b from-orange-50 to-orange-100 rounded-lg shadow-md p-5 sm:p-8 flex flex-col gap-4 lg:gap-6 border border-gray-200">
-            <div className="flex-1 text-left">
+            <div className="flex-1 text-center">
               <p className="font-semibold text-gray-800 text-base sm:text-lg">
                 Join Our Weekly Newsletter!
               </p>

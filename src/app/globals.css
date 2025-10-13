@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,8 +9,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* ✅ match RootLayout fonts */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,34 +23,29 @@
 }
 
 body {
-  /* background: var(--background); */
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-.site-logo {
-    width: 60px;
-    height: 60px;
-}
-.main-header {
-    background: linear-gradient(90deg, var(--main-orange) 0%, #FACC15 100%);
-    width: 100%;
+  font-family: var(--font-sans);
 }
 
+.main-header {
+  background: linear-gradient(90deg, var(--main-orange) 0%, #FACC15 100%);
+  width: 100%;
+}
 
 .main-header-inner,
 .main-content,
 .main-footer-inner {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
-
 
 .main-footer {
-    background: #20293a;
+  background: #20293a;
 }
-.hero-bg-image{
+
+.hero-bg-image {
   position: relative;
   background-size: cover;
   background-position: center;
@@ -58,16 +54,19 @@ body {
   border-radius: 10px;
 }
 
-.btn-orange, .filter-orange, .link-orange {
+.btn-orange,
+.filter-orange,
+.link-orange {
   background-color: var(--main-orange) !important;
   color: #fff !important;
   border-color: var(--main-orange) !important;
 }
 
-.text-orange, .filter-orange-text, .link-orange-text {
+.text-orange,
+.filter-orange-text,
+.link-orange-text {
   color: var(--main-orange) !important;
 }
-
 
 /* Responsive layout for header, content, and footer */
 @media (max-width: 640px) {
@@ -93,7 +92,3 @@ body {
     max-width: 1024px;
   }
 }
-
-
-
-

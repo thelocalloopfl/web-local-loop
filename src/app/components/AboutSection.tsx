@@ -8,7 +8,7 @@ const GetInvolvedSection = () => {
   return (
     <section className="main-content mx-auto px-6 pb-12 text-black">
       <div className="bg-gradient-to-l to-orange-100 via-white from-yellow-100 p-10 rounded-lg shadow-sm mb-12">
-        <h2 className="text-4xl text-orange-500 font-bold text-center mb-8">
+        <h2 className="text-4xl text-orange-700 font-bold text-center mb-8">
           How to Get Involved
         </h2>
         <div className="max-w-2xl mx-auto mb-6">
@@ -20,7 +20,7 @@ const GetInvolvedSection = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Mission */}
           <div className="text-center">
-            <FiMapPin className="text-orange-500 w-10 h-10 mx-auto mb-4" />
+            <FiMapPin className="text-orange-700 w-10 h-10 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Mission</h3>
             <p className="text-gray-600 mb-4">
               To serve and strengthen the local community by connecting people

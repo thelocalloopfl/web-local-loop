@@ -1,13 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
-import {
-  cartReducer,
-  initialState,
-  CartItem,
-  CartState,
-  CartAction,
-} from "./CartReducer";
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
+import { cartReducer, initialState, CartItem, loadCartState } from "./CartReducer";
 
 interface CartContextType {
   cart: CartItem[];
@@ -19,8 +13,15 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-    const [cartState, dispatch] = useReducer(cartReducer, initialState);
+  const [cartState, dispatch] = useReducer(cartReducer, initialState);
 
+  // 👇 Load cart from localStorage + session on mount
+  useEffect(() => {
+    (async () => {
+      const state = await loadCartState();
+      dispatch({ type: "INIT_CART", payload: state.cartItems });
+    })();
+  }, []);
 
   const addToCart = (item: CartItem) => {
     dispatch({ type: "ADD_ITEM", payload: item });

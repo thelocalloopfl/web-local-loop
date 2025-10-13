@@ -13,7 +13,7 @@ export default function SpotlightListWithLoadMore({
   categories?: SpotlightCategory[];
   all?: boolean;
 }) {
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(3);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [showCategories, setShowCategories] = useState(false);
@@ -23,7 +23,7 @@ export default function SpotlightListWithLoadMore({
 
   const handleLoadMore = () => {
     startTransition(() => {
-      setVisibleCount((prev) => prev + 6);
+      setVisibleCount((prev) => prev + 3);
     });
   };
 
@@ -43,16 +43,15 @@ export default function SpotlightListWithLoadMore({
   return (
     <>
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search Spotlight..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setVisibleCount(6);
+              setVisibleCount(3);
             }}
             className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
           />
@@ -78,7 +77,7 @@ export default function SpotlightListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-             className="w-full px-4 py-2 border border-orange-500 rounded-xl text-orange-500 font-semibold bg-white hover:bg-orange-500 hover:text-white transition flex items-center justify-center gap-2"
+             className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
             onClick={() => setShowCategories((v) => !v)}
           >
              <svg
@@ -107,7 +106,7 @@ export default function SpotlightListWithLoadMore({
                 onClick={() => {
                   setSelectedCategory(null);
                   setShowCategories(false);
-                  setVisibleCount(6);
+                  setVisibleCount(3);
                 }}
               >
                 All Categories
@@ -121,7 +120,7 @@ export default function SpotlightListWithLoadMore({
                   onClick={() => {
                     setSelectedCategory(cat._id);
                     setShowCategories(false);
-                    setVisibleCount(6);
+                    setVisibleCount(3);
                   }}
                 >
                   {cat.title}
@@ -144,14 +143,18 @@ export default function SpotlightListWithLoadMore({
               key={spotlight._id}
               className="bg-white shadow rounded-xl overflow-hidden flex flex-col"
             >
-              {spotlight.image && (
+              {spotlight.image ? (
                 <Image
                   src={spotlight.image}
                   alt={spotlight.title}
                   width={600}
-                  height={400}
-                  className="w-full h-48 object-cover"
+                  height={300}
+                  className="w-full h-44 object-cover rounded-md"
                 />
+              ) : (
+                <div className="w-full h-44 bg-gray-300 flex items-center justify-center rounded-md">
+                  <span className="text-gray-600 text-sm">No Image Available</span>
+                </div>
               )}
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="text-lg font-semibold mb-2">
@@ -159,7 +162,7 @@ export default function SpotlightListWithLoadMore({
                 </h3>
 
                 {spotlight.category && (
-                  <span className="text-sm text-orange-500 mb-2">
+                  <span className="text-sm text-orange-700 mb-2">
                     {spotlight.category.title}
                   </span>
                 )}
@@ -179,12 +182,12 @@ export default function SpotlightListWithLoadMore({
                   href={spotlight.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg font-medium text-sm hover:bg-orange-600 transition"
+                  className="mt-auto inline-flex items-center justify-center px-4 py-2.5 bg-orange-700 text-white rounded-lg font-medium text-sm hover:bg-orange-800 transition"
                 >
                   Visit Website
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2"
+                    className="h-5 w-5 ml-0.5 pt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -209,7 +212,7 @@ export default function SpotlightListWithLoadMore({
           <div className="flex justify-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-500 border border-orange-500 transition disabled:opacity-50"
+              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50"
               disabled={isPending}
             >
               {isPending ? "Loading..." : "Load More"}
@@ -220,7 +223,7 @@ export default function SpotlightListWithLoadMore({
         <div className="flex justify-center">
           <Link
             href="/local-spotlight"
-            className="px-6 py-3 bg-orange-500 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-500 border border-orange-500 transition"
+            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
           >
             View All Spotlights
           </Link>

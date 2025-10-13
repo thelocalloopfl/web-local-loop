@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 
 interface AdItem {
@@ -21,9 +22,11 @@ const SideBar: React.FC<SideBarProps> = ( {sidebar}) => {
         <div key={item._id} className="mb-6 flex-shrink-0 lg:flex-shrink">
           {/* Image with Overlay */}
           <div className="relative rounded-md overflow-hidden shadow-md w-48 lg:w-full">
-            <img
+            <Image
               src={item.imageUrl}
               alt={item.text}
+              width={800}      
+              height={600} 
               className="w-full h-auto"
             />
 
@@ -39,7 +42,7 @@ const SideBar: React.FC<SideBarProps> = ( {sidebar}) => {
                 href={item.buttonLink ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 bg-orange-500 text-white px-2 py-1 text-xs rounded shadow hover:bg-orange-600 transition"
+                className="flex items-center gap-1 bg-orange-700 text-white px-2 py-1 text-xs rounded shadow hover:bg-orange-800 transition"
               >
                 Read More
                 <svg
