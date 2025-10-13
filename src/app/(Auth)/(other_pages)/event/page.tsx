@@ -1,10 +1,12 @@
 import React from 'react'
 
-import { fetchEvents , fetchCategories } from '../../../../../lib/queries';
+import { fetchEvents  } from '../../../../../lib/queries';
+import { fetchCategories } from '../../../../lib/fetchCategories';
 import type { Metadata } from 'next';
 import { fetchSiteLogo } from "@/lib/fetchLogo";
 import { urlFor } from '@/lib/sanity.image';
 import EventSection from '@/app/components/EventSection';
+import EventSubmissionForm from '@/app/components/EventSubmissionForm';
 
 export async function generateMetadata(): Promise<Metadata> {
   const logo = await fetchSiteLogo();
@@ -83,6 +85,17 @@ const eventCategories = await fetchCategories();
                 </p>
               </div>
             <EventSection allEvents={allEvents} categories={eventCategories} all={true} />
+
+                    {/* 2. Add the EventSubmissionForm component */}
+        <EventSubmissionForm />
+
+            <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-lg shadow p-2 mt-10 py-8 text-center lg:p-8">
+              <h3 className="text-lg font-semibold">Want to promote your event?</h3>
+              <p>Reach thousands of visitors every week!</p>
+              <a href="/advertise" className="inline-block mt-2 bg-orange-600 text-white px-4 py-2 rounded transition duration-200 hover:bg-orange-700">
+                Advertise with Us
+              </a>
+            </div>
         </div>
     </>
   )

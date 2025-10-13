@@ -29,6 +29,7 @@ export default  function FooterClient() {
           <ul className="space-y-2 mt-2">
             <li><Link href="/home" className="hover:underline">Home</Link></li>
             <li><Link href="/blog" className="hover:underline">Blog</Link></li>
+            <li><Link href="/event" className="hover:underline">Events</Link></li>
             <li><Link href="/local-spotlight" className="hover:underline">Local Spotlight</Link></li>
             <li><Link href="/advertise" className="hover:underline">Advertise</Link></li>
             <li><Link href="/about" className="hover:underline">About</Link></li>
@@ -43,13 +44,13 @@ export default  function FooterClient() {
           </ul>
         </div>
         {/* Column 3 */}
-        <div >
-          <h3 className="text-xl font-semibold mb-2 ml-5 lg:ml-8">Stay Connected</h3>
-            <div className=' overflow-hidden'>          {/* Subscription iframe component */}
+        <div>
+          <h3 className="text-xl text-center lg:text-left font-semibold mb-2 ml-5 lg:ml-8">Stay Connected</h3>
+            <div className='mt-1 '>          {/* Subscription iframe component */}
                 <NewsletterBox/>
             </div>
           {/* Social Icons */}
-          <div className="flex gap-4 ml-5 lg:ml-8">
+          <div className="flex justify-center lg:justify-start gap-4 ml-5 lg:ml-8">
             <a href={links?.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <svg className="w-6 h-6 transition" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M240 363.3L240 576L356 576L356 363.3L442.5 363.3L460.5 265.5L356 265.5L356 230.9C356 179.2 376.3 159.4 428.7 159.4C445 159.4 458.1 159.8 465.7 160.6L465.7 71.9C451.4 68 416.4 64 396.2 64C289.3 64 240 114.5 240 223.4L240 265.5L174 265.5L174 363.3L240 363.3z"/></svg>
             </a>

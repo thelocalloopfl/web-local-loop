@@ -2,7 +2,13 @@
 import { client } from './sanity';
 
 export async function fetchEvents() {
-  const query = `*[_type == "event" && publishedAt >= now()] | order(publishedAt asc){
+  // 1. Calculate the ISO string for 24 hours ago
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayISO = yesterday.toISOString();
+
+  // 2. Use a parameter ($yesterday) in the query
+  const query = `*[_type == "event" && publishedAt >= $yesterday] | order(publishedAt asc){
     _id,
     title,
     slug,
@@ -14,7 +20,11 @@ export async function fetchEvents() {
       title
     }
   }`;
-  return await client.fetch(query, {}, { next: { revalidate: 30 } });
+
+  // 3. Pass the calculated date as a parameter
+  const params = { yesterday: yesterdayISO };
+
+  return await client.fetch(query, params, { next: { revalidate: 30 } });
 }
 
 export async function fetchCategories() {
