@@ -42,6 +42,11 @@ export function eventSubmissionTemplate(
           <p style="margin: 0; white-space: pre-wrap; color: #444;">${eventDetails}</p>
         </div>
 
+        <!-- Submitted Time -->
+        <p style="margin-top: 25px; font-size: 14px; color: #777;">
+          Submitted on: ${new Date().toLocaleString()}
+        </p>
+
         <!-- Image Note -->
         <p style="margin-top: 25px; font-size: 14px; color: #777; font-style: italic;">
           📎 An event image may be attached to this email if one was provided.
