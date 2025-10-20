@@ -37,6 +37,11 @@ export function passwordResetTemplate(userName: string, resetLink: string) {
           </p>
         </div>
 
+        <!-- Submitted Time -->
+        <p style="margin-top: 25px; font-size: 14px; color: #777;">
+          Submitted on: ${new Date().toLocaleString()}
+        </p>
+
         <p style="margin-top: 20px; font-size: 15px; color: #444;">
           Best regards,<br>
           <strong>The Local Loop FL Team</strong>
