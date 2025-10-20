@@ -81,36 +81,42 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Main Content */}
         <div
           className={`transition-all duration-300 ${
-            hasSidebar ? (sidebarVisible ? "lg:w-[80%]" : "w-full") : "w-full"
+            hasSidebar && sidebarVisible ? "lg:w-[75%]" : "w-full"
           }`}
         >
           {children}
         </div>
 
         {/* Sidebar */}
-
-                {hasSidebar && (
-                  <div className="relative">
-                    <div className="flex justify-end mb-2 sticky top-30 z-10">
-                      <button
-                        onClick={() => setSidebarVisible(!sidebarVisible)}
-                        className="text-gray-600 hover:text-orange-600 cursor-pointer transition rounded-full bg-orange-100 p-3"
-                        aria-label="Toggle sidebar"
-                      >
-                        {sidebarVisible ? <FiX className="text-2xl" /> : <FiSidebar className="text-2xl" />}
-                      </button>
-                    </div>
-                    <div
-                      className={`transition-all duration-300 ease-in-out ${
-                        sidebarVisible
-                          ? "w-full lg:w-70 max-h-150 overflow-y-auto block"
-                          : "w-0 hidden overflow-hidden"
-                      }`}
-                    >
-                      <SideBar sidebar={sidebar} />
-                    </div>
-                  </div>
+        {hasSidebar && (
+          <div
+            className={`relative transition-all duration-300 ease-in-out ${
+              sidebarVisible
+                ? "lg:w-[25%] max-w-[350px] block"
+                : "w-0 overflow-hidden"
+            }`}
+          >
+            {/* Toggle Button */}
+            <div className="flex justify-end mb-2 sticky top-5 z-10">
+              <button
+                onClick={() => setSidebarVisible(!sidebarVisible)}
+                className="text-gray-600 hover:text-orange-600 cursor-pointer transition rounded-full bg-orange-100 p-3"
+                aria-label="Toggle sidebar"
+              >
+                {sidebarVisible ? (
+                  <FiX className="text-2xl" />
+                ) : (
+                  <FiSidebar className="text-2xl" />
                 )}
+              </button>
+            </div>
+
+            {/* Sidebar Scroll Content */}
+            <div className="max-h-300 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-gray-100 rounded-lg">
+              <SideBar sidebar={sidebar} />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 🔹 Middle Banner Section */}
