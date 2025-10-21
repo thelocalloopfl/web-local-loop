@@ -19,7 +19,7 @@ const TopBannerSections: React.FC<TopBannerSectionsProps> = ({
 
   return (
     <section
-      className="relative w-full max-w-[1200px] mx-auto mb-5 rounded-2xl overflow-hidden group h-48 sm:h-56 flex flex-col justify-between shadow-xl"
+      className="relative w-full max-w-[1200px] mx-auto mb-5 rounded-2xl overflow-hidden group sm:h-56 flex flex-col justify-between shadow-xl"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",

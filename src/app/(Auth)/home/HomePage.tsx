@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
 import React, { useState } from "react";
@@ -92,13 +91,13 @@ export default function HomePage({
       </section>
 
       {/* 🔹 Events + Sidebar */}
-      <div className="flex flex-col lg:flex-row gap-5 relative mt-10">
+      <div className="flex flex-col lg:flex-row gap-5 relative mt-5 lg:mt-10">
         <div
           className={`transition-all duration-300 ${
             hasSidebar ? (sidebarVisible ? "lg:w-[80%]" : "w-full") : "w-full"
           }`}
         >
-          <section className="py-12 bg-white text-black">
+          <section className="lg:py-12 py-6 bg-white text-black">
             <h2 className="text-3xl font-semibold mb-6 text-center">Events</h2>
             <EventSection allEvents={allEvents} categories={categories} all={true} />
           </section>
@@ -130,7 +129,7 @@ export default function HomePage({
 
       {/* 🔹 Middle Banner */}
       {hasMiddleBanner && (
-        <section className="container mx-auto mt-5">
+        <section className="container mx-auto mt-3 lg:mt-5">
           <MiddelBanner
             bgImage={middleBanner.imageUrl}
             title={middleBanner.title}
@@ -141,19 +140,19 @@ export default function HomePage({
       )}
 
       {/* 🔹 Blog Section */}
-      <section className="py-12 text-black">
+      <section className="py-6 lg:py-12 text-black">
         <h2 className="text-3xl font-semibold mb-6 text-center">Blog</h2>
         <BlogSection allBlogs={allBlogs} categories={blogCategories} all={false} />
       </section>
 
       {/* 🔹 Local Spotlight */}
-      <section className="py-12 bg-white text-black">
+      <section className="py-6 lg:py-12 bg-white text-black">
         <h2 className="text-3xl font-semibold mb-6 text-center">Local Spotlight</h2>
         <SpotlightSection allSpotlights={allSpotlights} categories={spotlightCategories} all={false} />
       </section>
 
       {/* 🔹 Bottom Banner */}
-      <section className="container mx-auto flex text-black mt-8">
+      <section className="container mx-auto flex text-black mt-4 lg:mt-8">
         <div className="main-content mx-auto flex justify-center items-center rounded-xl bg-gradient-to-r from-[#F97316] to-[#FACC15]">
           <BottomBanner />
         </div>
