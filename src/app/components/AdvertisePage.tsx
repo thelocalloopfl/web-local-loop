@@ -1,16 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState, useTransition, useRef } from "react";
-import { FiDollarSign, FiMail, FiUsers, FiSend, FiPhone } from "react-icons/fi";
+
+import React, { useState, useTransition, useRef, useEffect } from "react";
+import { FiDollarSign, FiMail, FiUsers, FiSend } from "react-icons/fi";
 import { FaImage, FaFilePdf } from "react-icons/fa";
 import Toast from "./MessageTost";
 import ReCAPTCHA from "react-google-recaptcha";
+import { fetchSideBar } from "@/lib/fetchSidebar";
+import Link from "next/link";
+import Image from "next/image";
 
 type ToastType = { id: number; message: string; type: string };
 
 export default function AdvertisePage() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [isPending, startTransition] = useTransition();
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      const [sidebar] = await Promise.all([fetchSideBar()]);
+      setData({ sidebar });
+    }
+    loadData();
+  }, []);
 
   const [form, setForm] = useState({
     name: "",
@@ -111,6 +124,11 @@ export default function AdvertisePage() {
     });
   };
 
+  if (!data) return null;
+
+  const { sidebar } = data;
+  const hasAdv = sidebar && Array.isArray(sidebar) && sidebar.length > 0;
+
   return (
     <div className="min-h-screen py-12 text-black">
       {/* ✅ Toast Messages */}
@@ -119,23 +137,75 @@ export default function AdvertisePage() {
           key={toast.id}
           message={toast.message}
           type={toast.type}
-          onClose={() =>
-            setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-          }
+          onClose={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
         />
       ))}
+
+      {/* ✅ Advertise Listing - 3 Column Responsive Grid */}
+      {hasAdv && (
+        <div className="mt-2 mb-6">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+            {sidebar.map((item: any) => (
+              <div
+                key={item._id}
+                className="relative group bg-gray-50 rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
+              >
+                {/* Ad Image */}
+                <div className="relative h-40 sm:h-48 w-full">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                </div>
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-4">
+                  <h3 className="text-white text-base font-semibold drop-shadow-md mb-1">
+                    {item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title}
+                  </h3>
+                  <p className="text-white/80 text-xs mb-3 line-clamp-2">
+                    {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
+                  </p>
+
+                  <div className="flex justify-end">
+                    <Link
+                      href={item.buttonLink ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300"
+                    >
+                      Read More
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </section>
+        </div>
+      )}
 
       {/* ✅ Header */}
       <div className="text-center max-w-2xl mx-auto px-4">
         <div className="flex justify-center mb-2">
           <FiDollarSign className="w-16 h-16 text-orange-700" />
         </div>
-        <h1 className="text-4xl font-bold text-orange-700">
-          Advertise With Us
-        </h1>
+        <h1 className="text-4xl font-bold text-orange-700">Advertise With Us</h1>
         <p className="mt-4 text-gray-600">
-          Connect with the Winter Garden community and grow your business by
-          partnering with The Local Loop FL.
+          Connect with the Winter Garden community and grow your business by partnering with The
+          Local Loop FL.
         </p>
       </div>
 
@@ -176,12 +246,9 @@ export default function AdvertisePage() {
 
       {/* ✅ Form Section */}
       <div className="mt-16 max-w-2xl mx-auto px-6 bg-white shadow-lg rounded-2xl p-8 space-y-5">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">
-          Get in Touch
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Get in Touch</h2>
         <p className="text-gray-500 text-center">
-          Fill out the form below, and we&#39;ll get back to you with ad options
-          and pricing.
+          Fill out the form below, and we&#39;ll get back to you with ad options and pricing.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -190,16 +257,10 @@ export default function AdvertisePage() {
             { label: "Your Name", name: "name", type: "text" },
             { label: "Business Name", name: "businessName", type: "text" },
             { label: "Email Address", name: "email", type: "email" },
-            {
-              label: "Phone Number",
-              name: "phone",
-              type: "tel",
-            },
+            { label: "Phone Number", name: "phone", type: "tel" },
           ].map(({ label, name, type }) => (
             <div key={name}>
-              <label className="block text-gray-700 font-medium mb-1">
-                {label}
-              </label>
+              <label className="block text-gray-700 font-medium mb-1">{label}</label>
               <input
                 type={type}
                 value={(form as any)[name]}
@@ -211,9 +272,7 @@ export default function AdvertisePage() {
 
           {/* Message */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Tell Us About Your Goals
-            </label>
+            <label className="block text-gray-700 font-medium mb-1">Tell Us About Your Goals</label>
             <textarea
               rows={4}
               value={form.message}
@@ -222,16 +281,13 @@ export default function AdvertisePage() {
             />
           </div>
 
-
           {/* Ad Zone Dropdown */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Ad Zone (Optional)
-            </label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Ad Zone (Optional)</label>
             <select
               value={form.adZone}
               onChange={(e) => setForm({ ...form, adZone: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg p-3 bg-[rgb(248,250,252)] text-gray-700 
+              className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] text-gray-700 
                 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent 
                 hover:bg-white transition-all duration-200 ease-in-out cursor-pointer"
             >
@@ -242,17 +298,14 @@ export default function AdvertisePage() {
             </select>
           </div>
 
-
           {/* File Upload + Preview */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">
-              Upload Ad (Image or PDF)
-            </label>
+            <label className="block text-gray-700 font-medium mb-1">Upload Ad (Image or PDF)</label>
             <input
               type="file"
               accept="image/*,.pdf"
               onChange={handleFileChange}
-              className="w-full  border border-gray-300 rounded-lg p-3 bg-[rgb(248,250,252)] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+              className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
             />
 
             {previewUrl && (
@@ -260,16 +313,14 @@ export default function AdvertisePage() {
                 {previewUrl === "pdf" ? (
                   <div className="flex items-center gap-2 p-3 bg-gray-100">
                     <FaFilePdf className="text-red-600 w-6 h-6" />
-                    <span className="text-sm text-gray-700">
-                      {form.file?.name}
-                    </span>
+                    <span className="text-sm text-gray-700">{form.file?.name}</span>
                   </div>
                 ) : (
                   <img
-                  src={previewUrl}
-                  alt="Selected event"
-                  className="w-full max-h-64 object-cover rounded-lg border border-gray-200 shadow-sm"
-                />
+                    src={previewUrl}
+                    alt="Selected event"
+                    className="w-full max-h-64 object-cover rounded-lg border border-gray-200 shadow-sm"
+                  />
                 )}
               </div>
             )}
@@ -279,9 +330,7 @@ export default function AdvertisePage() {
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-            onChange={(token) =>
-              setForm({ ...form, recaptchaToken: token || "" })
-            }
+            onChange={(token) => setForm({ ...form, recaptchaToken: token || "" })}
             onExpired={() => setForm({ ...form, recaptchaToken: "" })}
           />
 
