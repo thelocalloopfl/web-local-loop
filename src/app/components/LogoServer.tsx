@@ -1,5 +1,5 @@
 import { fetchSiteLogo } from "@/lib/fetchLogo";
-import LogoClient from "../components/LogoClient";
+import LogoClient from "./LogoClient";
 
 interface LogoServerProps {
   width?: number;

@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useTransition } from "react";
+
+import React, { useState, useTransition, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
@@ -22,41 +23,53 @@ export default function EventListWithLoadMore({
   const [visibleCount, setVisibleCount] = useState(3);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
-  const [showCategories, setShowCategories] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("soonest");
+  const [showCategories, setShowCategories] = useState(false);
   const [showSort, setShowSort] = useState(false);
 
   const handleLoadMore = () => {
-    startTransition(() => {
-      setVisibleCount((prev) => prev + 3);
-    });
+    startTransition(() => setVisibleCount((prev) => prev + 3));
   };
 
-  // Filter events by search and category
-const filteredEvents = allEvents
-  .filter((event) => {
-    const matchesSearch = event.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesCategory =
-      !selectedCategory ||
-      (event.categories ?? []).some((cat) => cat._id === selectedCategory);
-    return matchesSearch && matchesCategory;
-  })
-  .sort((a, b) => {
-    if (sortBy === "soonest") {
-      return new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime();
-    } else {
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
-    }
-  });
+  // --- FILTER + SORT ---
+  const filteredEvents = useMemo(() => {
+    return allEvents
+      .filter((event) => {
+        const matchesSearch = event.title
+          .toLowerCase()
+          .includes(search.toLowerCase());
+        const matchesCategory =
+          !selectedCategory ||
+          (event.categories ?? []).some((cat) => cat._id === selectedCategory);
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => {
+        if (sortBy === "soonest") {
+          return (
+            new Date(a.publishedAt).getTime() -
+            new Date(b.publishedAt).getTime()
+          );
+        } else {
+          return (
+            new Date(b.publishedAt).getTime() -
+            new Date(a.publishedAt).getTime()
+          );
+        }
+      });
+  }, [allEvents, search, selectedCategory, sortBy]);
 
   const events = filteredEvents.slice(0, visibleCount);
   const allLoaded = visibleCount >= filteredEvents.length;
 
   return (
-    <>
+    <main
+      className="
+        mx-auto max-w-7xl px-4 py-10 
+        bg-[var(--background)] text-[var(--foreground)] 
+        transition-colors duration-300
+      "
+    >
       {/* Search + Filter */}
       <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
@@ -68,9 +81,15 @@ const filteredEvents = allEvents
               setSearch(e.target.value);
               setVisibleCount(3);
             }}
-            className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+            className="
+              w-full border border-gray-300 dark:border-gray-700 
+              rounded-xl px-4 py-2 pl-10 text-base md:text-lg 
+              focus:outline-none focus:ring-2 focus:ring-orange-400
+              bg-[var(--background)] text-[var(--foreground)] 
+              transition-colors duration-300
+            "
           />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -92,7 +111,12 @@ const filteredEvents = allEvents
         <div className="relative">
           <button
             type="button"
-            className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            className="
+              w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl font-semibold 
+              bg-[var(--background)] text-orange-700 dark:text-orange-400 dark:border-orange-500 
+              hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 transition duration-200
+              flex items-center justify-center gap-1
+            "
             onClick={() => setShowCategories((v) => !v)}
           >
             <svg
@@ -112,10 +136,18 @@ const filteredEvents = allEvents
             Filter by Category
           </button>
           {showCategories && (
-            <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            <div
+              className="
+                absolute z-10 mt-2 w-full bg-[var(--background)] 
+                border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl 
+                max-h-60 overflow-y-auto transition-colors duration-200
+              "
+            >
               <button
-                className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                  selectedCategory === null ? "font-bold text-orange-700" : ""
+                className={`block w-full text-left px-4 py-2 hover:bg-orange-200 dark:hover:bg-gray-800 ${
+                  selectedCategory === null
+                    ? "font-bold text-orange-700 dark:text-orange-500"
+                    : "hover:text-black"
                 }`}
                 onClick={() => {
                   setSelectedCategory(null);
@@ -128,10 +160,10 @@ const filteredEvents = allEvents
               {categories.map((cat) => (
                 <button
                   key={cat._id}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                  className={`block w-full text-left px-4 py-2 hover:bg-orange-200 dark:hover:bg-gray-800 ${
                     selectedCategory === cat._id
-                      ? "font-bold text-orange-700"
-                      : ""
+                      ? "font-bold text-orange-700 dark:text-orange-500"
+                      : "hover:text-black"
                   }`}
                   onClick={() => {
                     setSelectedCategory(cat._id);
@@ -148,54 +180,62 @@ const filteredEvents = allEvents
       </div>
 
       {/* Sort By */}
-
-      <div className="flex mb-6">
-          <button
-            type="button"
-            className="px-4 py-1.5 w-25 border border-orange-700 rounded-xl text-orange-700 text-sm bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
-            onClick={() => setShowSort((v) => !v)}
+      <div className="flex mb-8 relative">
+        <button
+          type="button"
+          className="
+            px-4 py-2 border border-orange-700 rounded-xl text-orange-700 dark:text-orange-400 
+            bg-[var(--background)] hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 
+            text-sm font-semibold transition flex items-center gap-2
+          "
+          onClick={() => setShowSort((v) => !v)}
+        >
+          {sortBy === "soonest" ? "Soonest" : "Newest"}
+        </button>
+        {showSort && (
+          <div
+            className="
+              absolute z-10 mt-10 bg-[var(--background)] 
+              border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl 
+              overflow-hidden
+            "
           >
-            {sortBy === "soonest" ? "Soonest" : "Newest"}
-          </button>
-          {showSort && (
-            <div className="absolute z-10  w-25 mt-9 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            {["soonest", "newest"].map((option) => (
               <button
-                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
-                  sortBy === "soonest" ? "font-bold text-orange-700" : ""
+                key={option}
+                className={`block w-full  px-4 py-2 text-sm text-center hover:bg-orange-200 ${
+                  sortBy === option
+                    ? "font-bold text-orange-700 dark:text-orange-500"
+                    : "hover:text-black"
                 }`}
                 onClick={() => {
-                  setSortBy("soonest");
+                  setSortBy(option);
                   setShowSort(false);
                 }}
               >
-                Soonest
+                {option === "soonest" ? "Soonest" : "Newest"}
               </button>
-              <button
-                className={`block text-center w-full px-4 py-1.5 text-sm cursor-pointer hover:bg-gray-100 ${
-                  sortBy === "newest" ? "font-bold text-orange-700" : ""
-                }`}
-                onClick={() => {
-                  setSortBy("newest");
-                  setShowSort(false);
-                }}
-              >
-                Newest
-              </button>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
         {events.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500 text-lg py-12">
-            No Event Found
+          <div className="col-span-full text-center text-gray-500 dark:text-gray-400 text-lg py-12">
+            No events found.
           </div>
         ) : (
           events.map((event) => (
             <div
               key={event._id}
-              className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition duration-200"
+              className="
+                bg-[var(--background)] border border-gray-200 dark:border-gray-700
+                shadow-md rounded-2xl overflow-hidden flex flex-col 
+                hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-500 
+                transition-all duration-300
+              "
             >
               {event.image && (
                 <Image
@@ -207,22 +247,20 @@ const filteredEvents = allEvents
                 />
               )}
               <div className="p-5 flex flex-col flex-grow">
-                {/* Categories */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   {(event.categories ?? []).map((cat) => (
                     <span
                       key={cat._id}
-                      className="text-xs font-medium text-orange-700"
+                      className="text-xs font-medium text-orange-700 dark:text-orange-400"
                     >
                       {cat.title}
                     </span>
                   ))}
                 </div>
-
-                <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">
+                <h3 className="text-lg md:text-xl font-semibold mb-2">
                   {event.title}
                 </h3>
-                <p className="text-xs md:text-sm text-gray-500 mb-2">
+                <p className="text-xs md:text-sm opacity-70 mb-2">
                   {new Date(event.publishedAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -233,7 +271,10 @@ const filteredEvents = allEvents
                   href={
                     event.slug?.current ? `/event/${event.slug.current}` : "#"
                   }
-                  className="inline-flex items-center gap-1 text-orange-700 font-semibold mt-auto hover:gap-2 transition-all duration-200"
+                  className="
+                    inline-flex items-center gap-1 text-orange-700 dark:text-orange-400 
+                    font-semibold mt-auto hover:gap-2 transition-all duration-200
+                  "
                   prefetch={false}
                 >
                   View Details
@@ -246,30 +287,38 @@ const filteredEvents = allEvents
       </div>
 
       {/* Load More / View All */}
-    {all ? (
+      {all ? (
         !allLoaded && (
           <div className="flex justify-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[180px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
               disabled={isPending}
+              className="
+                px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base 
+                flex items-center gap-2 min-w-[180px] justify-center 
+                hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+                border border-orange-700 transition disabled:opacity-50
+              "
             >
               {isPending ? "Loading..." : "Load More"}
             </button>
           </div>
         )
-      ): (
+      ) : (
         <div className="flex justify-center">
           <Link
             href="/event"
-            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 min-w-[200px] justify-center hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
+            className="
+              px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base 
+              flex items-center gap-2 min-w-[200px] justify-center 
+              hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+              border border-orange-700 transition
+            "
           >
             View All Events
           </Link>
         </div>
       )}
-
-      
-    </>
+    </main>
   );
 }

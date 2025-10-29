@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
 import Analytics from "./components/Analytics";
+import { ThemeProvider } from "./components/theme-provider";
 
 // ✅ Google Analytics ID from env
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
@@ -37,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* ✅ Preconnect to Google Fonts (performance) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -69,15 +70,23 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`bg-white text-black ${inter.variable} ${playfair.variable}`}
+        className={`bg-white text-black dark:bg-black dark:text-white ${inter.variable} ${playfair.variable}`}
         cz-shortcut-listen="true"
       >
-        <main className="w-full ">{children}</main>
+        {/* ✅ Wrap everything in ThemeProvider */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className="w-full">{children}</main>
 
-        {/* ✅ Wrap Analytics in Suspense */}
-        <Suspense fallback={null}>
-          <Analytics />
-        </Suspense>
+          {/* ✅ Wrap Analytics in Suspense */}
+          <Suspense fallback={null}>
+            <Analytics />
+          </Suspense>
+        </ThemeProvider>
       </body>
     </html>
   );

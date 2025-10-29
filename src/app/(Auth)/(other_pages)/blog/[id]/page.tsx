@@ -4,14 +4,11 @@ import type { PortableTextBlock } from "@portabletext/types";
 import type { Metadata } from "next";
 import Image from "next/image";
 
-
 interface BlogPageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata(
-  { params }: BlogPageProps
-): Promise<Metadata> {
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { id } = await params;
   const blog = await fetchBlogById(id);
 
@@ -19,22 +16,15 @@ export async function generateMetadata(
     return {
       title: "Blog Not Found | The Local Loop FL",
       description: "The requested blog post could not be found.",
-      robots: {
-        index: false,
-        follow: false,
-      },
+      robots: { index: false, follow: false },
     };
   }
 
-  const title = `${blog.title}`;
-
+  const title = blog.title;
   const description =
     blog.description ||
     `Read "${blog.title}" on The Local Loop FL — your source for Winter Garden community stories, restaurant reviews, and local events.`;
-
-  const imageUrl =
-    blog.imageUrl || "https://thelocalloopfl.com/default-logo.png";
-
+  const imageUrl = blog.imageUrl || "https://thelocalloopfl.com/default-logo.png";
   const url = `https://thelocalloopfl.com/blog/${id}`;
 
   return {
@@ -52,30 +42,13 @@ export async function generateMetadata(
       description,
       url,
       siteName: "The Local Loop FL",
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: blog.title,
-        },
-      ],
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: blog.title }],
       locale: "en_US",
       type: "article",
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [imageUrl],
-    },
-    alternates: {
-      canonical: url,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    twitter: { card: "summary_large_image", title, description, images: [imageUrl] },
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -85,28 +58,54 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   if (!blog) {
     return (
-      <div className="main-content mx-auto text-center text-3xl pb-16 text-black max-w-7xl">
+      <div
+        className="
+          main-content mx-auto text-center text-3xl pb-16
+          text-[var(--foreground)] bg-[var(--background)]
+          transition-colors duration-300 max-w-7xl
+        "
+      >
         Blog not found
       </div>
     );
   }
 
   return (
-    <article className="main-content mx-auto pb-16 text-black max-w-4xl">
+    <article
+      className="
+        main-content mx-auto pb-16 max-w-4xl
+        bg-[var(--background)] text-[var(--foreground)]
+        transition-colors duration-300
+      "
+    >
       {/* 🟠 Header Section */}
       <header className="mb-10">
-        <h1 className="text-3xl md:text-5xl font-bold text-orange-700 mb-3 capitalize">
+        <h1
+          className="
+            text-3xl md:text-5xl font-bold mb-3 capitalize
+            text-[var(--main-orange)]
+          "
+        >
           {blog.title}
         </h1>
+
+        {/* Category */}
         <div className="mb-4 mt-8">
           {blog.category?.title && (
-            <span className="px-3 py-1 rounded-full border bg-gray-100 border-gray-300">
+            <span
+              className="
+                px-3 py-1 rounded-full border
+                bg-[var(--footer-bg)] border-[var(--border-color)]
+                text-[var(--foreground)]
+              "
+            >
               {blog.category.title}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-gray-500">
+        {/* Meta info */}
+        <div className="flex items-center gap-4 text-sm text-[var(--muted-text)]">
           <time>
             {new Date(blog.publishedAt).toLocaleDateString("en-US", {
               year: "numeric",
@@ -116,12 +115,13 @@ export default async function BlogPage({ params }: BlogPageProps) {
           </time>
           <span>
             By{" "}
-            <span className="text-orange-700 font-semibold">
+            <span className="text-[var(--main-orange)] font-semibold">
               {blog.author || "Unknown"}
             </span>
           </span>
         </div>
 
+        {/* Hero Image */}
         {blog.imageUrl && (
           <div className="relative w-full h-96 mt-6">
             <Image
@@ -133,7 +133,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
               priority
             />
           </div>
-
         )}
       </header>
 
