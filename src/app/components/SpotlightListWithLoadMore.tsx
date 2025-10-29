@@ -22,12 +22,10 @@ export default function SpotlightListWithLoadMore({
   const showall = all;
 
   const handleLoadMore = () => {
-    startTransition(() => {
-      setVisibleCount((prev) => prev + 3);
-    });
+    startTransition(() => setVisibleCount((prev) => prev + 3));
   };
 
-  // Filter spotlights by search and category
+  // --- FILTER ---
   const filteredSpotlights = allSpotlights.filter((spotlight) => {
     const matchesSearch = spotlight.title
       .toLowerCase()
@@ -41,7 +39,13 @@ export default function SpotlightListWithLoadMore({
   const allLoaded = visibleCount >= filteredSpotlights.length;
 
   return (
-    <>
+    <main
+      className="
+        mx-auto max-w-7xl px-4 py-10 
+        bg-[var(--background)] text-[var(--foreground)]
+        transition-colors duration-300
+      "
+    >
       {/* Search + Filter */}
       <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-4 mb-10">
         {/* Search */}
@@ -53,9 +57,15 @@ export default function SpotlightListWithLoadMore({
               setSearch(e.target.value);
               setVisibleCount(3);
             }}
-            className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+            className="
+              w-full border border-gray-300 dark:border-gray-700
+              rounded-xl px-4 py-2 pl-10 text-base md:text-lg 
+              focus:outline-none focus:ring-2 focus:ring-orange-400 
+              bg-[var(--background)] text-[var(--foreground)]
+              transition-colors duration-300
+            "
           />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -77,10 +87,15 @@ export default function SpotlightListWithLoadMore({
         <div className="relative">
           <button
             type="button"
-             className="w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl text-orange-700 font-semibold bg-white hover:bg-orange-800 hover:text-white transition flex items-center justify-center gap-2"
+            className="
+              w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl font-semibold
+              bg-[var(--background)] text-orange-700 dark:text-orange-400 dark:border-orange-500
+              hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 
+              transition duration-200 flex items-center justify-center gap-2
+            "
             onClick={() => setShowCategories((v) => !v)}
           >
-             <svg
+            <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
               fill="none"
@@ -98,10 +113,19 @@ export default function SpotlightListWithLoadMore({
           </button>
 
           {showCategories && (
-            <div className="absolute z-20 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow max-h-64 overflow-y-auto">
+            <div
+              className="
+                absolute z-20 mt-2 w-full bg-[var(--background)] 
+                border border-gray-200 dark:border-gray-700 
+                rounded-xl shadow-xl max-h-64 overflow-y-auto
+                transition-colors duration-200
+              "
+            >
               <button
-                className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                  selectedCategory === null ? "font-semibold" : ""
+                className={`block w-full text-left px-4 py-2 hover:bg-orange-200 dark:hover:bg-gray-800 ${
+                  selectedCategory === null
+                    ? "font-bold text-orange-700 dark:text-orange-500"
+                    : "hover:text-black"
                 }`}
                 onClick={() => {
                   setSelectedCategory(null);
@@ -114,8 +138,10 @@ export default function SpotlightListWithLoadMore({
               {categories.map((cat) => (
                 <button
                   key={cat._id}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                    selectedCategory === cat._id ? "font-semibold" : ""
+                  className={`block w-full text-left px-4 py-2 hover:bg-orange-200 dark:hover:bg-gray-800 ${
+                    selectedCategory === cat._id
+                      ? "font-bold text-orange-700 dark:text-orange-500"
+                      : "hover:text-black"
                   }`}
                   onClick={() => {
                     setSelectedCategory(cat._id);
@@ -134,14 +160,19 @@ export default function SpotlightListWithLoadMore({
       {/* Spotlight Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {spotlights.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500 text-lg py-12">
+          <div className="col-span-full text-center text-gray-500 dark:text-gray-400 text-lg py-12">
             No Spotlight Found
           </div>
         ) : (
           spotlights.map((spotlight) => (
             <div
               key={spotlight._id}
-              className="bg-white shadow rounded-xl overflow-hidden flex flex-col"
+              className="
+                bg-[var(--background)] border border-gray-200 dark:border-gray-700 
+                shadow-md rounded-2xl overflow-hidden flex flex-col 
+                hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-500
+                transition-all duration-300
+              "
             >
               {spotlight.image ? (
                 <Image
@@ -149,31 +180,31 @@ export default function SpotlightListWithLoadMore({
                   alt={spotlight.title}
                   width={600}
                   height={300}
-                  className="w-full h-44 object-cover rounded-md"
+                  className="w-full h-44 object-cover"
                 />
               ) : (
-                <div className="w-full h-44 bg-gray-300 flex items-center justify-center rounded-md">
-                  <span className="text-gray-600 text-sm">No Image Available</span>
+                <div className="w-full h-44 bg-gray-300 dark:bg-gray-800 flex items-center justify-center">
+                  <span className="text-gray-600 dark:text-gray-400 text-sm">
+                    No Image Available
+                  </span>
                 </div>
               )}
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="text-lg font-semibold mb-2">
-                  {spotlight.title}
-                </h3>
+              <div className="p-5 flex flex-col flex-grow">
+                <h3 className="text-lg font-semibold mb-2">{spotlight.title}</h3>
 
                 {spotlight.category && (
-                  <span className="text-sm text-orange-700 mb-2">
+                  <span className="text-sm text-orange-700 dark:text-orange-400 mb-2">
                     {spotlight.category.title}
                   </span>
                 )}
 
-                <p className="text-sm text-gray-600 mb-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   {spotlight.description.split(" ").slice(0, 20).join(" ")}
                   {spotlight.description.split(" ").length > 20 && "..."}
                 </p>
 
                 {spotlight.offerText && (
-                  <div className="inline-block px-3 py-1 mb-4 bg-green-100 text-green-700 rounded-md text-sm">
+                  <div className="inline-block px-3 py-1 mb-4 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 rounded-md text-sm">
                     {spotlight.offerText}
                   </div>
                 )}
@@ -182,12 +213,17 @@ export default function SpotlightListWithLoadMore({
                   href={spotlight.websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-auto inline-flex items-center justify-center px-4 py-2.5 bg-orange-700 text-white rounded-lg font-medium text-sm hover:bg-orange-800 transition"
+                  className="
+                    mt-auto inline-flex items-center justify-center px-4 py-2.5 
+                    bg-orange-700 text-white rounded-lg font-medium text-sm 
+                    hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+                    border border-orange-700 transition duration-200
+                  "
                 >
                   Visit Website
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-0.5 pt-0.5"
+                    className="h-5 w-5 ml-1"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -212,8 +248,13 @@ export default function SpotlightListWithLoadMore({
           <div className="flex justify-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50"
               disabled={isPending}
+              className="
+                px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base 
+                flex items-center gap-2 min-w-[180px] justify-center 
+                hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+                border border-orange-700 transition disabled:opacity-50
+              "
             >
               {isPending ? "Loading..." : "Load More"}
             </button>
@@ -223,12 +264,17 @@ export default function SpotlightListWithLoadMore({
         <div className="flex justify-center">
           <Link
             href="/local-spotlight"
-            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition"
+            className="
+              px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base 
+              flex items-center gap-2 min-w-[200px] justify-center 
+              hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+              border border-orange-700 transition
+            "
           >
             View All Spotlights
           </Link>
         </div>
       )}
-    </>
+    </main>
   );
 }

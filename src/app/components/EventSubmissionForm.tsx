@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useTransition, useRef, useEffect } from "react";
 import Toast from "./MessageTost";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchCategories } from "../../lib/fetchCategories"; // ✅ Import the fetch function
+import { fetchCategories } from "../../lib/fetchCategories";
 import type { Category } from "../../lib/fetchCategories";
 
 type ToastType = { id: number; message: string; type: string };
 
 export default function EventSubmissionForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,7 +25,6 @@ export default function EventSubmissionForm() {
   const [isPending, startTransition] = useTransition();
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
-  // ✅ Fetch categories from Sanity (or your API)
   useEffect(() => {
     fetchCategories()
       .then((data) => setCategories(data))
@@ -37,9 +34,7 @@ export default function EventSubmissionForm() {
   const showToast = (message: string, type: string) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
   };
 
   const handleInputChange = (
@@ -79,9 +74,7 @@ export default function EventSubmissionForm() {
 
     startTransition(async () => {
       const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value);
-      });
+      Object.entries(formData).forEach(([key, value]) => data.append(key, value));
       if (image) data.append("image", image);
 
       try {
@@ -91,8 +84,7 @@ export default function EventSubmissionForm() {
         });
 
         const result = await response.json();
-        if (!response.ok)
-          throw new Error(result.message || "Something went wrong");
+        if (!response.ok) throw new Error(result.message || "Something went wrong");
 
         showToast(result.message, "success");
         setFormData({
@@ -108,32 +100,41 @@ export default function EventSubmissionForm() {
         setImage(null);
         setPreview(null);
       } catch (error: unknown) {
-        showToast(error instanceof Error ? error.message : "An unexpected error occurred.", "error");
+        showToast(
+          error instanceof Error ? error.message : "An unexpected error occurred.",
+          "error"
+        );
       }
     });
   };
 
   return (
     <>
-      {/* Toasts */}
+      {/* ✅ Toasts */}
       <div className="fixed top-0 right-0 p-4 space-y-2 z-50">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
             message={toast.message}
             type={toast.type}
-            onClose={() =>
-              setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-            }
+            onClose={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
           />
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mt-16 max-w-3xl mx-auto border border-gray-100">
-        <h3 className="text-2xl md:text-3xl font-bold text-center text-orange-700 mb-2">
+      {/* ✅ Dark Mode Container */}
+      <div
+        className="
+          rounded-2xl shadow-lg p-6 md:p-8 mt-16 max-w-3xl mx-auto border
+          border-gray-200 dark:border-gray-700
+          bg-[var(--background)] text-[var(--foreground)]
+          transition-colors duration-300
+        "
+      >
+        <h3 className="text-2xl md:text-3xl font-bold text-center text-[var(--main-orange)] mb-2">
           Submit Your Event
         </h3>
-        <p className="text-center text-gray-600 mb-6">
+        <p className="text-center text-[var(--muted-text)] mb-6">
           Have a local event you want to share? Fill out the form below for
           consideration.
         </p>
@@ -142,7 +143,7 @@ export default function EventSubmissionForm() {
           {/* Name + Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 Your Name
               </label>
               <input
@@ -150,11 +151,11 @@ export default function EventSubmissionForm() {
                 type="text"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full border border-gray-300 dark:border-gray-700 bg-[rgb(248,250,252)] text-black rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 Your Email
               </label>
               <input
@@ -162,15 +163,15 @@ export default function EventSubmissionForm() {
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full border border-gray-300 dark:border-gray-700 text-black bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none"
               />
             </div>
           </div>
 
-          {/* Title + Date */}
+          {/* Event Title + Date */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 Event Title
               </label>
               <input
@@ -178,11 +179,11 @@ export default function EventSubmissionForm() {
                 type="text"
                 value={formData.eventTitle}
                 onChange={handleInputChange}
-                className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full border border-gray-300 dark:border-gray-700 text-black bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 Event Date
               </label>
               <input
@@ -190,21 +191,21 @@ export default function EventSubmissionForm() {
                 type="date"
                 value={formData.eventDate}
                 onChange={handleInputChange}
-                className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+                className="w-full border border-gray-300 text-black dark:border-gray-700 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none"
               />
             </div>
           </div>
 
-          {/* ✅ Category Dropdown */}
+          {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
               Event Category
             </label>
             <select
               id="category"
               value={formData.category}
               onChange={handleInputChange}
-              className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              className="w-full border border-gray-300 dark:border-gray-700 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none text-black"
             >
               <option value="">Select a Category</option>
               {categories.map((cat) => (
@@ -215,9 +216,9 @@ export default function EventSubmissionForm() {
             </select>
           </div>
 
-          {/* Details */}
+          {/* Event Details */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
               Event Details
             </label>
             <textarea
@@ -225,13 +226,13 @@ export default function EventSubmissionForm() {
               rows={4}
               value={formData.eventDetails}
               onChange={handleInputChange}
-              className="w-full border bg-[rgb(248,250,252)] border-gray-300 rounded-lg px-4 py-2 text-base focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              className="w-full border border-gray-300 dark:border-gray-700 bg-[rgb(248,250,252)] text-black rounded-lg px-4 py-2 focus:ring-2 focus:ring-[var(--main-orange)] focus:outline-none"
             ></textarea>
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
               Event Image (Optional)
             </label>
             <input
@@ -239,22 +240,21 @@ export default function EventSubmissionForm() {
               id="image"
               onChange={handleImageChange}
               accept="image/png, image/jpeg, image/webp"
-              className="w-full text-sm bg-[rgb(248,250,252)] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+              className="w-full text-sm text-gray-500 border border-gray-300 dark:border-gray-700 bg-[rgb(248,250,252)] rounded-lg px-4 py-2 rounded-lg px-4 py-2  dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-[#262626] file:text-[var(--main-orange)] hover:file:bg-orange-100 dark:hover:file:bg-[#333]"
             />
-
             {preview && (
               <div className="mt-3">
-                <p className="text-sm text-gray-600 mb-1">Image Preview:</p>
+                <p className="text-sm text-[var(--muted-text)] mb-1">Image Preview:</p>
                 <img
                   src={preview}
                   alt="Selected event"
-                  className="w-full max-h-64 object-cover rounded-lg border border-gray-200 shadow-sm"
+                  className="w-full max-h-64 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
                 />
               </div>
             )}
           </div>
 
-          {/* ✅ reCAPTCHA */}
+          {/* reCAPTCHA */}
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
@@ -266,15 +266,15 @@ export default function EventSubmissionForm() {
             }
           />
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isPending}
             className={`text-white px-6 py-2 rounded-lg transition w-full flex items-center justify-center space-x-2
               ${
                 isPending
-                  ? "bg-orange-500 cursor-not-allowed"
-                  : "bg-orange-700 cursor-pointer hover:bg-orange-800"
+                  ? "bg-[var(--main-orange)]/60 cursor-not-allowed"
+                  : "bg-[var(--main-orange)] hover:opacity-90"
               }`}
           >
             {isPending ? "Submitting..." : "Submit Event"}

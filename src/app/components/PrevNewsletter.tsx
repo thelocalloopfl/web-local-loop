@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
@@ -23,43 +22,49 @@ export default function PrevNewsletter() {
   useEffect(() => {
     fetch("/api/newsletters")
       .then((res) => res.json())
-      .then((data: Newsletter[]) => {
-        setNewsletters(data || []);
-      })
+      .then((data: Newsletter[]) => setNewsletters(data || []))
       .catch(() => setNewsletters([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = () =>
     startTransition(() => setVisibleCount((prev) => prev + 2));
-  };
 
-  const filtered = Array.isArray(newsletters)
-    ? newsletters.filter(
-        (n) =>
-          n.title?.toLowerCase().includes(search.toLowerCase()) ||
-          (n.date && n.date.toLowerCase().includes(search.toLowerCase()))
-      )
-    : [];
+  const filtered = newsletters.filter(
+    (n) =>
+      n.title?.toLowerCase().includes(search.toLowerCase()) ||
+      n.date?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const visibleNewsletters = filtered.slice(0, visibleCount);
   const allLoaded = visibleCount >= filtered.length;
 
   return (
-    <div className="max-w-6xl mx-auto py-8">
+    <main
+      className="
+        mx-auto max-w-7xl py-10 
+        bg-[var(--background)] text-[var(--foreground)] 
+        transition-colors duration-300
+      "
+    >
       {/* Search */}
       <div className="mb-8 relative w-full">
         <input
           type="text"
-          placeholder="Search newsletters..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setVisibleCount(2);
           }}
-          className="w-full border border-gray-300 rounded-xl px-4 py-2 pl-10 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+          className="
+            w-full border border-gray-300 dark:border-gray-700 
+            rounded-xl px-4 py-2 pl-10 text-base md:text-lg 
+            focus:outline-none focus:ring-2 focus:ring-orange-400
+            bg-[var(--background)] text-[var(--foreground)] 
+            transition-colors duration-300
+          "
         />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -78,33 +83,45 @@ export default function PrevNewsletter() {
       </div>
 
       {/* Newsletter Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2  gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 mb-12">
         {loading ? (
-          <div className="col-span-full text-center text-orange-700 py-12">
+          <div className="col-span-full text-center text-orange-700 dark:text-orange-400 py-12">
             Loading...
           </div>
         ) : visibleNewsletters.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500 py-12">
+          <div className="col-span-full text-center text-gray-500 dark:text-gray-400 py-12">
             No newsletters found.
           </div>
         ) : (
           visibleNewsletters.map((n, idx) => (
             <div
               key={idx}
-              className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col hover:shadow-lg transition duration-200"
+              className="
+                bg-[var(--background)] border border-gray-200 dark:border-gray-700
+                shadow-md rounded-2xl overflow-hidden flex flex-col 
+                hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-500 
+                transition-all duration-300
+              "
             >
-              {n.image && (
+              {n.image ? (
                 <Image
                   src={n.image}
                   alt={n.title}
-                  width={400}   
-                  height={176}     
-                  className="w-full object-cover rounded-md"
+                  width={600}
+                  height={300}
+                  className="w-full h-44 object-cover"
                 />
+              ) : (
+                <div className="w-full h-44 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <span className="text-gray-500 dark:text-gray-300 text-sm">
+                    No Image Available
+                  </span>
+                </div>
               )}
+
               <div className="p-5 flex flex-col flex-grow">
                 {n.date && (
-                  <p className="text-xs md:text-sm text-gray-500 mb-2">
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2">
                     {new Date(n.date).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -112,19 +129,22 @@ export default function PrevNewsletter() {
                     })}
                   </p>
                 )}
-                <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">
+                <h3 className="text-lg md:text-xl font-semibold mb-2">
                   {n.title}
                 </h3>
                 {n.snippet && (
-                  <p className="text-sm text-gray-600 flex-grow mb-4">
-                    {n.snippet.split(" ").slice(0, 12).join(" ")}
-                    {n.snippet.split(" ").length > 12 && "..."}
+                  <p className="text-sm opacity-80 flex-grow mb-4">
+                    {n.snippet.split(" ").slice(0, 15).join(" ")}
+                    {n.snippet.split(" ").length > 15 && "..."}
                   </p>
                 )}
                 <Link
                   href={n.link}
                   target="_blank"
-                  className="inline-flex items-center gap-2 text-orange-700 font-semibold mt-auto hover:gap-3 transition-all duration-200"
+                  className="
+                    inline-flex items-center gap-1 text-orange-700 dark:text-orange-400 
+                    font-semibold mt-auto hover:gap-2 transition-all duration-200
+                  "
                 >
                   View Newsletter
                   <FiArrowRight className="text-lg" />
@@ -140,13 +160,18 @@ export default function PrevNewsletter() {
         <div className="flex justify-center">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-3 bg-orange-700 text-white rounded-xl font-medium flex items-center gap-2 hover:bg-transparent hover:text-orange-800 border border-orange-700 transition disabled:opacity-50 cursor-pointer"
             disabled={isPending}
+            className="
+              px-6 py-3 bg-orange-700 text-white rounded-xl font-medium text-base 
+              flex items-center gap-2 min-w-[180px] justify-center 
+              hover:bg-transparent hover:text-orange-700 dark:hover:text-orange-400 
+              border border-orange-700 transition disabled:opacity-50
+            "
           >
-            {isPending ? "Loading..." : "Load More Newsletters"}
+            {isPending ? "Loading..." : "Load More"}
           </button>
         </div>
       )}
-    </div>
+    </main>
   );
 }

@@ -92,7 +92,7 @@ const LocalSpotlight = async () => {
                 categories={spotlightCategories} all={true} />
 
             {/* Business Featured */}
-            <div className="bg-gradient-to-r from-yellow-100 via-white to-orange-100 rounded-lg shadow p-2 mt-10 py-8 text-center lg:p-8">
+            <div className="bg-gradient-to-r from-yellow-300 via-white to-orange-300 rounded-lg shadow p-2 mt-10 py-8 text-center lg:p-8">
                 <div className="flex justify-center mb-4">
                     <FaBuilding className="h-10 w-10 text-orange-700" />
                 </div>

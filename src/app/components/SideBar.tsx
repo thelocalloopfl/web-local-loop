@@ -17,11 +17,24 @@ interface SideBarProps {
 
 const SideBar: React.FC<SideBarProps> = ({ sidebar }) => {
   return (
-    <aside className="flex flex-row lg:flex-col gap-5 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-x-auto lg:overflow-y-auto">
+    <aside
+      className="
+        flex flex-row lg:flex-col gap-5 p-4 
+        rounded-2xl border shadow-sm 
+        overflow-x-auto lg:overflow-y-auto
+        bg-[var(--background)] border-[color:var(--footer-border)]
+        transition-colors duration-300
+      "
+    >
       {sidebar.map((item) => (
         <div
           key={item._id}
-          className="relative group bg-gray-50 rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300 w-60 lg:w-full flex-shrink-0"
+          className="
+            relative group rounded-xl overflow-hidden shadow 
+            hover:shadow-lg transition-all duration-300 
+            w-60 lg:w-full flex-shrink-0
+            bg-[var(--color-background)]
+          "
         >
           {/* Ad Image */}
           <div className="relative h-36 sm:h-44 w-full">
@@ -42,7 +55,9 @@ const SideBar: React.FC<SideBarProps> = ({ sidebar }) => {
                 : item.title}
             </h3>
             <p className="text-white/80 text-xs mb-3 line-clamp-2">
-              {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
+              {item.text.length > 60
+                ? item.text.slice(0, 60) + "..."
+                : item.text}
             </p>
 
             <div className="flex justify-end">
@@ -50,7 +65,12 @@ const SideBar: React.FC<SideBarProps> = ({ sidebar }) => {
                 href={item.buttonLink ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300"
+                className="
+                  inline-flex items-center gap-1 
+                  bg-[var(--main-orange)] text-white 
+                  px-3 py-1.5 text-xs rounded-full font-semibold shadow
+                  hover:brightness-110 transition-all duration-300
+                "
               >
                 Read More
                 <svg

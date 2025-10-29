@@ -1,37 +1,61 @@
 @import "tailwindcss";
 
+/* ===========================================
+   🌤️ Base Theme Variables (Light Mode)
+=========================================== */
 :root {
   --background: #ffffff;
   --foreground: #171717;
   --main-orange: #f97316;
+
+  /* Footer Colors (Light Mode) */
+  --footer-bg: #f3f4f6;
+  --footer-text: #111827;
+  --footer-border: #d1d5db;
+  --social-icon: #111827;
 }
 
+/* ===========================================
+   🌑 Dark Mode Overrides (.dark class)
+=========================================== */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Footer Colors (Dark Mode) */
+  --footer-bg: #111827;
+  --footer-text: #f3f4f6;
+  --footer-border: #374151;
+  --social-icon: #f3f4f6;
+}
+
+/* ===========================================
+   🎨 Tailwind Theme Variables (Inline Map)
+=========================================== */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* ✅ match RootLayout fonts */
+  /* Font Mapping from RootLayout */
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ===========================================
+   🧭 Global Layout & Transitions
+=========================================== */
 body {
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-.main-header {
-  background: linear-gradient(90deg, var(--main-orange) 0%, #FACC15 100%);
-  width: 100%;
-}
-
+/* ===========================================
+   🧱 Layout Containers
+=========================================== */
 .main-header-inner,
 .main-content,
 .main-footer-inner {
@@ -41,10 +65,32 @@ body {
   width: 100%;
 }
 
-.main-footer {
-  background: #20293a;
+/* ===========================================
+   🚀 Header
+=========================================== */
+.main-header {
+  background: linear-gradient(90deg, var(--main-orange) 0%, #facc15 100%);
+  width: 100%;
 }
 
+/* ===========================================
+   🦶 Footer
+=========================================== */
+.main-footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.dark .main-footer {
+  background: #0f172a; /* Slightly darker footer tone */
+}
+
+/* ===========================================
+   🖼️ Hero Background Image
+=========================================== */
 .hero-bg-image {
   position: relative;
   background-size: cover;
@@ -54,21 +100,33 @@ body {
   border-radius: 10px;
 }
 
+/* ===========================================
+   🟠 Orange Theme Buttons & Links
+=========================================== */
 .btn-orange,
 .filter-orange,
 .link-orange {
-  background-color: var(--main-orange) !important;
-  color: #fff !important;
-  border-color: var(--main-orange) !important;
+  background-color: var(--main-orange) ;
+  color: #fff;
+  border-color: var(--main-orange) ;
 }
 
 .text-orange,
 .filter-orange-text,
 .link-orange-text {
-  color: var(--main-orange) !important;
+  color: var(--main-orange) ;
 }
 
-/* Responsive layout for header, content, and footer */
+.dark .btn-orange,
+.dark .filter-orange,
+.dark .link-orange {
+  background-color: #fb923c ; /* Softer orange in dark mode */
+  border-color: #fb923c ;
+}
+
+/* ===========================================
+   📱 Responsive Layout Adjustments
+=========================================== */
 @media (max-width: 640px) {
   .main-header-inner,
   .main-content,
@@ -76,15 +134,17 @@ body {
     max-width: 640px;
   }
 }
+
 @media (max-width: 768px) {
   .main-header-inner,
   .main-content,
   .main-footer {
     max-width: 768px;
-    padding-left: .5rem;
-    padding-right: .5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
+
 @media (max-width: 1024px) {
   .main-header-inner,
   .main-content,

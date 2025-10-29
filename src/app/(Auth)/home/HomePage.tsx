@@ -38,7 +38,13 @@ export default function HomePage({
   const hasSidebar = sidebar && Array.isArray(sidebar) && sidebar.length > 0;
 
   return (
-    <div className="main-content-area max-w-[1200px] mx-auto">
+    <div
+      className="
+        main-content-area max-w-[1200px] mx-auto
+        transition-colors duration-300
+        bg-[var(--background)] text-[var(--foreground)]
+      "
+    >
       {/* 🔹 Top Banner */}
       {hasTopBanner && (
         <section className="container mx-auto">
@@ -70,18 +76,26 @@ export default function HomePage({
           }}
         />
         <div className="relative z-10 max-w-4xl text-center px-4">
-          <h1 className="text-4xl font-bold mb-4">{banner?.heading}</h1>
+          <h1 className="text-4xl font-bold mb-4 drop-shadow-md">{banner?.heading}</h1>
           <p className="text-lg mb-6">{banner?.subHeading}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/newsletter"
-              className="bg-white text-black px-5 py-2 rounded font-medium"
+              className="
+                bg-white text-black 
+                px-5 py-2 rounded font-medium transition-all duration-200
+                hover:opacity-80
+              "
             >
               Get the Newsletter
             </a>
             <a
               href="/about"
-              className="bg-transparent border border-white px-5 py-2 rounded font-medium"
+              className="
+                bg-transparent border border-white text-white
+                px-5 py-2 rounded font-medium transition-all duration-200
+                hover:bg-white hover:text-black
+              "
             >
               About Us
             </a>
@@ -97,7 +111,13 @@ export default function HomePage({
             hasSidebar ? (sidebarVisible ? "lg:w-[80%]" : "w-full") : "w-full"
           }`}
         >
-          <section className="lg:py-12 py-6 bg-white text-black">
+          <section
+            className="
+              lg:py-12 py-6 
+              bg-[var(--background)] text-[var(--foreground)] 
+              transition-colors duration-300 rounded-xl
+            "
+          >
             <h2 className="text-3xl font-semibold mb-6 text-center">Events</h2>
             <EventSection allEvents={allEvents} categories={categories} all={true} />
           </section>
@@ -108,7 +128,10 @@ export default function HomePage({
             <div className="flex justify-end mb-2 sticky top-30 z-10">
               <button
                 onClick={() => setSidebarVisible(!sidebarVisible)}
-                className="text-gray-600 hover:text-orange-600 cursor-pointer transition rounded-full bg-orange-100 p-3"
+                className="
+                  text-[var(--foreground)] hover:text-[var(--main-orange)] cursor-pointer 
+                  transition rounded-full bg-[var(--footer-bg)] p-3
+                "
                 aria-label="Toggle sidebar"
               >
                 {sidebarVisible ? <FiX className="text-2xl" /> : <FiSidebar className="text-2xl" />}
@@ -140,19 +163,35 @@ export default function HomePage({
       )}
 
       {/* 🔹 Blog Section */}
-      <section className="py-6 lg:py-12 text-black">
+      <section
+        className="
+          py-6 lg:py-12 
+          bg-[var(--background)] text-[var(--foreground)] 
+          transition-colors duration-300 rounded-xl 
+        "
+      >
         <h2 className="text-3xl font-semibold mb-6 text-center">Blog</h2>
         <BlogSection allBlogs={allBlogs} categories={blogCategories} all={false} />
       </section>
 
       {/* 🔹 Local Spotlight */}
-      <section className="py-6 lg:py-12 bg-white text-black">
+      <section
+        className="
+          py-6 lg:py-12 
+          bg-[var(--background)] text-[var(--foreground)] 
+          transition-colors duration-300 rounded-xl 
+        "
+      >
         <h2 className="text-3xl font-semibold mb-6 text-center">Local Spotlight</h2>
-        <SpotlightSection allSpotlights={allSpotlights} categories={spotlightCategories} all={false} />
+        <SpotlightSection
+          allSpotlights={allSpotlights}
+          categories={spotlightCategories}
+          all={false}
+        />
       </section>
 
       {/* 🔹 Bottom Banner */}
-      <section className="container mx-auto flex text-black mt-4 lg:mt-8">
+      <section className="container mx-auto flex mt-4 lg:mt-8">
         <div className="main-content mx-auto flex justify-center items-center rounded-xl bg-gradient-to-r from-[#F97316] to-[#FACC15]">
           <BottomBanner />
         </div>

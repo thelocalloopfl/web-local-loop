@@ -42,9 +42,7 @@ export default function AdvertisePage() {
   const showToast = (message: string, type: string) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,11 +93,7 @@ export default function AdvertisePage() {
 
     startTransition(async () => {
       try {
-        const res = await fetch("/api/advertise-form", {
-          method: "POST",
-          body: formData,
-        });
-
+        const res = await fetch("/api/advertise-form", { method: "POST", body: formData });
         if (res.ok) {
           showToast("Inquiry submitted successfully!", "success");
           setForm({
@@ -125,13 +119,12 @@ export default function AdvertisePage() {
   };
 
   if (!data) return null;
-
   const { sidebar } = data;
   const hasAdv = sidebar && Array.isArray(sidebar) && sidebar.length > 0;
 
   return (
-    <div className="min-h-screen py-12 text-black">
-      {/* ✅ Toast Messages */}
+    <div className="min-h-screen py-12 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300">
+      {/* ✅ Toasts */}
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -141,16 +134,15 @@ export default function AdvertisePage() {
         />
       ))}
 
-      {/* ✅ Advertise Listing - 3 Column Responsive Grid */}
+      {/* ✅ Advertise Grid */}
       {hasAdv && (
         <div className="mt-2 mb-6">
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-[var(--card-bg)] rounded-2xl shadow border border-[var(--border-color)]">
             {sidebar.map((item: any) => (
               <div
                 key={item._id}
-                className="relative group bg-gray-50 rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
+                className="relative group bg-[var(--card-bg)] rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
               >
-                {/* Ad Image */}
                 <div className="relative h-40 sm:h-48 w-full">
                   <Image
                     src={item.imageUrl}
@@ -160,32 +152,22 @@ export default function AdvertisePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 </div>
-
-                {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-4">
-                  <h3 className="text-white text-base font-semibold drop-shadow-md mb-1">
+                  <h3 className="text-white text-base font-semibold mb-1">
                     {item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title}
                   </h3>
                   <p className="text-white/80 text-xs mb-3 line-clamp-2">
                     {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
                   </p>
-
                   <div className="flex justify-end">
                     <Link
                       href={item.buttonLink ?? "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300"
+                      className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition"
                     >
                       Read More
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3.5 w-3.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
@@ -199,25 +181,20 @@ export default function AdvertisePage() {
 
       {/* ✅ Header */}
       <div className="text-center max-w-2xl mx-auto px-4">
-        <div className="flex justify-center mb-2">
-          <FiDollarSign className="w-16 h-16 text-orange-700" />
-        </div>
-        <h1 className="text-4xl font-bold text-orange-700">Advertise With Us</h1>
+        <FiDollarSign className="w-16 h-16 text-[var(--main-orange)] mx-auto mb-2" />
+        <h1 className="text-4xl font-bold text-[var(--main-orange)]">Advertise With Us</h1>
         <p className="mt-4 text-gray-600">
-          Connect with the Winter Garden community and grow your business by partnering with The
-          Local Loop FL.
+          Connect with the Winter Garden community and grow your business by partnering with The Local Loop FL.
         </p>
       </div>
 
       {/* ✅ Why Partner Section */}
       <div className="max-w-6xl mx-auto mt-12 px-4">
-        <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-8">
-          Why Partner with The Local Loop?
-        </h2>
+        <h2 className="text-center text-2xl md:text-3xl font-bold mb-8">Why Partner with The Local Loop?</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {[
             {
-              icon: <FiMail className="w-10 h-10 text-orange-700" />,
+              icon: <FiMail className="w-10 h-10 text-[var(--main-orange)]" />,
               title: "Newsletter Sponsorship",
               desc: "Reach engaged local readers directly in their inbox each week.",
             },
@@ -234,62 +211,57 @@ export default function AdvertisePage() {
           ].map((item, i) => (
             <div
               key={i}
-              className="bg-[#F8FAFC] shadow-md rounded-xl p-6 text-center hover:shadow-lg transition border border-gray-100"
+              className="bg-[var(--card-bg)] border border-[var(--border-color)] shadow-md rounded-xl p-6 text-center hover:shadow-lg transition"
             >
               <div className="flex justify-center mb-4">{item.icon}</div>
               <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-              <p className="text-gray-600 text-sm">{item.desc}</p>
+              <p className="text-[var(--muted-text)] text-sm">{item.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ✅ Form Section */}
-      <div className="mt-16 max-w-2xl mx-auto px-6 bg-white shadow-lg rounded-2xl p-8 space-y-5">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Get in Touch</h2>
-        <p className="text-gray-500 text-center">
+      {/* ✅ Form */}
+      <div className="mt-16 max-w-2xl mx-auto px-6 bg-[var(--card-bg)] border border-[var(--border-color)] shadow-lg rounded-2xl p-8 space-y-5">
+        <h2 className="text-3xl font-bold text-center mb-6">Get in Touch</h2>
+        <p className="text-[var(--muted-text)] text-center">
           Fill out the form below, and we&#39;ll get back to you with ad options and pricing.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Basic Inputs */}
-          {[
+          {[ // Inputs
             { label: "Your Name", name: "name", type: "text" },
             { label: "Business Name", name: "businessName", type: "text" },
             { label: "Email Address", name: "email", type: "email" },
             { label: "Phone Number", name: "phone", type: "tel" },
           ].map(({ label, name, type }) => (
             <div key={name}>
-              <label className="block text-gray-700 font-medium mb-1">{label}</label>
+              <label className="block mb-1 font-medium">{label}</label>
               <input
                 type={type}
                 value={(form as any)[name]}
                 onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+                className="w-full border border-[var(--border-color)] bg-[rgb(248,250,252)] rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-[var(--main-orange)]"
               />
             </div>
           ))}
 
-          {/* Message */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Tell Us About Your Goals</label>
+            <label className="block mb-1 font-medium">Tell Us About Your Goals</label>
             <textarea
               rows={4}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition"
+              className="w-full border border-[var(--border-color)] bg-[rgb(248,250,252)]  rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-[var(--main-orange)] resize-none"
             />
           </div>
 
-          {/* Ad Zone Dropdown */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Ad Zone (Optional)</label>
+            <label className="block text-sm font-semibold mb-2">Ad Zone (Optional)</label>
             <select
               value={form.adZone}
               onChange={(e) => setForm({ ...form, adZone: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] text-gray-700 
-                focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent 
-                hover:bg-white transition-all duration-200 ease-in-out cursor-pointer"
+              className="w-full border border-[var(--border-color)] bg-[rgb(248,250,252)] rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-[var(--main-orange)] cursor-pointer"
             >
               <option value="">Select Zone</option>
               <option value="Top">Top Banner</option>
@@ -298,35 +270,32 @@ export default function AdvertisePage() {
             </select>
           </div>
 
-          {/* File Upload + Preview */}
           <div>
-            <label className="block text-gray-700 font-medium mb-1">Upload Ad (Image or PDF)</label>
+            <label className="block mb-1 font-medium">Upload Ad (Image or PDF)</label>
             <input
               type="file"
               accept="image/*,.pdf"
               onChange={handleFileChange}
-              className="w-full border border-gray-300 rounded-lg p-3 bg-[#F8FAFC] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+              className="w-full border border-[var(--border-color)] rounded-lg p-3 text-[var(--muted-text)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 dark:file:bg-[#262626] file:text-[var(--main-orange)] hover:file:bg-orange-100 dark:hover:file:bg-[#333]"
             />
-
             {previewUrl && (
-              <div className="mt-3 border rounded-lg overflow-hidden">
+              <div className="mt-3 border border-[var(--border-color)] rounded-lg overflow-hidden">
                 {previewUrl === "pdf" ? (
-                  <div className="flex items-center gap-2 p-3 bg-gray-100">
+                  <div className="flex items-center gap-2 p-3 bg-[var(--muted-bg)]">
                     <FaFilePdf className="text-red-600 w-6 h-6" />
-                    <span className="text-sm text-gray-700">{form.file?.name}</span>
+                    <span className="text-sm">{form.file?.name}</span>
                   </div>
                 ) : (
                   <img
                     src={previewUrl}
-                    alt="Selected event"
-                    className="w-full max-h-64 object-cover rounded-lg border border-gray-200 shadow-sm"
+                    alt="preview"
+                    className="w-full max-h-64 object-cover rounded-lg border border-[var(--border-color)] shadow-sm"
                   />
                 )}
               </div>
             )}
           </div>
 
-          {/* reCAPTCHA */}
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
@@ -334,28 +303,22 @@ export default function AdvertisePage() {
             onExpired={() => setForm({ ...form, recaptchaToken: "" })}
           />
 
-          {/* Submit */}
-          <div className="text-center pt-5">
-            <button
-              type="submit"
-              disabled={isPending}
-              className={`text-white px-6 py-3 w-full rounded-lg transition flex items-center justify-center gap-2 font-medium shadow-md
-                ${
-                  isPending
-                    ? "bg-orange-400 cursor-not-allowed"
-                    : "bg-orange-700 hover:bg-orange-800 cursor-pointer"
-                }`}
-            >
-              {isPending ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <FiSend className="w-5 h-5" />
-                  Send Inquiry
-                </>
-              )}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isPending}
+            className={`w-full px-6 py-3 rounded-lg text-white flex items-center justify-center gap-2 font-medium transition ${
+              isPending ? "bg-[var(--main-orange)]/60 cursor-not-allowed" : "bg-[var(--main-orange)] hover:opacity-90"
+            }`}
+          >
+            {isPending ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>
+                <FiSend className="w-5 h-5" />
+                Send Inquiry
+              </>
+            )}
+          </button>
         </form>
       </div>
     </div>

@@ -38,14 +38,14 @@ const NewsletterBox: React.FC = () => {
     <div className="w-full flex flex-col items-center pb-5">
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-[230px] lg:max-w-[300px] bg-white rounded overflow-hidden shadow-md focus-within:ring-2 focus-within:ring-orange-400 transition"
+        className="flex w-full max-w-[230px] lg:max-w-[300px] bg-white dark:bg-gray-800 rounded overflow-hidden shadow-md focus-within:ring-2 focus-within:ring-orange-400 transition"
       >
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex-1 px-4 py-3 text-gray-700 text-sm focus:outline-none min-w-0"
+          className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-200 dark:bg-gray-800 text-sm focus:outline-none min-w-0"
         />
         <button
           type="submit"
@@ -61,8 +61,8 @@ const NewsletterBox: React.FC = () => {
         <p
           className={`mt-3 text-sm font-medium border rounded-md p-3 w-[250px] max-w-md text-center transition-all duration-300 ${
             status === "success"
-              ? "border-green-600 bg-green-100 text-green-700"
-              : "border-red-600 bg-red-100 text-red-700"
+              ? "border-green-600 bg-green-100 dark:bg-green-900/40 dark:border-green-500 text-green-700 dark:text-green-300"
+              : "border-red-600 bg-red-100 dark:bg-red-900/40 dark:border-red-500 text-red-700 dark:text-red-300"
           }`}
         >
           {message}

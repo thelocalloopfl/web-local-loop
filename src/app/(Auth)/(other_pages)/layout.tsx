@@ -16,7 +16,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data once client-side
   useEffect(() => {
     async function loadData() {
       try {
@@ -33,14 +32,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     loadData();
   }, []);
 
-  // ✅ Skeleton loader (no white flash)
+  // ✅ Skeleton loader with theme variables
   if (loading) {
     return (
-      <div className="animate-pulse min-h-screen flex flex-col gap-6 p-5 container mx-auto">
-        <div className="h-48 bg-gray-200 rounded-lg" />
+      <div
+        className="
+          animate-pulse min-h-screen flex flex-col gap-6 p-5 container mx-auto
+          bg-[var(--background)] text-[var(--foreground)]
+        "
+      >
+        <div className="h-48 bg-[var(--skeleton-bg)] rounded-lg" />
         <div className="flex flex-col lg:flex-row gap-5">
-          <div className="flex-1 h-[400px] bg-gray-200 rounded-lg" />
-          <div className="hidden lg:block w-[20%] h-[400px] bg-gray-200 rounded-lg" />
+          <div className="flex-1 h-[400px] bg-[var(--skeleton-bg)] rounded-lg" />
+          <div className="hidden lg:block w-[20%] h-[400px] bg-[var(--skeleton-bg)] rounded-lg" />
         </div>
       </div>
     );
@@ -63,7 +67,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const hasSidebar = sidebar && Array.isArray(sidebar) && sidebar.length > 0;
 
   return (
-    <div className="relative">
+    <div
+      className="
+        relative max-w-[1200px] mx-auto
+        transition-colors duration-300
+        bg-[var(--background)] text-[var(--foreground)]
+      "
+    >
       {/* 🔹 Top Banner Section */}
       {hasTopBanner && (
         <section className="container mx-auto mb-6">
@@ -84,7 +94,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             hasSidebar && sidebarVisible ? "lg:w-[75%]" : "w-full"
           }`}
         >
-          {children}
+          <section
+            className="
+              bg-[var(--background)] text-[var(--foreground)]
+              transition-colors duration-300 rounded-xl
+            "
+          >
+            {children}
+          </section>
         </div>
 
         {/* Sidebar */}
@@ -93,10 +110,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex justify-end mb-2 sticky top-30 z-10">
               <button
                 onClick={() => setSidebarVisible(!sidebarVisible)}
-                className="text-gray-600 hover:text-orange-600 cursor-pointer transition rounded-full bg-orange-100 p-3"
+                className="
+                  text-[var(--foreground)] hover:text-[var(--main-orange)]
+                  cursor-pointer transition rounded-full 
+                  bg-[var(--footer-bg)] p-3
+                "
                 aria-label="Toggle sidebar"
               >
-                {sidebarVisible ? <FiX className="text-2xl" /> : <FiSidebar className="text-2xl" />}
+                {sidebarVisible ? (
+                  <FiX className="text-2xl" />
+                ) : (
+                  <FiSidebar className="text-2xl" />
+                )}
               </button>
             </div>
             <div
