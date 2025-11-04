@@ -7,6 +7,8 @@ import { FaImage, FaFilePdf } from "react-icons/fa";
 import Toast from "./MessageTost";
 import ReCAPTCHA from "react-google-recaptcha";
 import { fetchSideBar } from "@/lib/fetchSidebar";
+import { fetchTopBanner } from "@/lib/fetchAllTopBanner";
+import { fetchMiddleBanner } from "@/lib/fetchAllMiddleBanner";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -17,11 +19,23 @@ export default function AdvertisePage() {
   const [isPending, startTransition] = useTransition();
   const [data, setData] = useState<any>(null);
 
+  // ✅ Fetch and merge data
   useEffect(() => {
     async function loadData() {
-      const [sidebar] = await Promise.all([fetchSideBar()]);
-      setData({ sidebar });
+      const [sidebar, topBanner, middleBanner] = await Promise.all([
+        fetchSideBar(),
+        fetchTopBanner(),
+        fetchMiddleBanner(),
+      ]);
+
+      // Combine sidebar + middleBanner
+      const combinedSection = Array.isArray(sidebar)
+        ? [...sidebar, ...(Array.isArray(middleBanner) ? middleBanner : [middleBanner])]
+        : [sidebar, ...(Array.isArray(middleBanner) ? middleBanner : [middleBanner])];
+
+      setData({ combinedSection, topBanner });
     }
+
     loadData();
   }, []);
 
@@ -119,8 +133,6 @@ export default function AdvertisePage() {
   };
 
   if (!data) return null;
-  const { sidebar } = data;
-  const hasAdv = sidebar && Array.isArray(sidebar) && sidebar.length > 0;
 
   return (
     <div className="min-h-screen py-12 bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300">
@@ -134,11 +146,59 @@ export default function AdvertisePage() {
         />
       ))}
 
-      {/* ✅ Advertise Grid */}
-      {hasAdv && (
-        <div className="mt-2 mb-6">
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-[var(--card-bg)] rounded-2xl shadow border border-[var(--border-color)]">
-            {sidebar.map((item: any) => (
+      {/* ✅ Top Banner (Full Width) */}
+      {data.topBanner && Array.isArray(data.topBanner) && data.topBanner.length > 0 && (
+        <div className="mt-4 mb-8 px-6">
+          {data.topBanner.map((item: any) => (
+            <div
+              key={item._id}
+              className="relative w-full h-60 sm:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-md mb-4  group bg-[var(--card-bg)]   hover:shadow-lg transition-all duration-300"
+            >
+              <Image
+                src={item.imageUrl}
+                alt={item.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                            <div className="absolute inset-0 flex flex-col justify-end p-4">
+                  <h3 className="text-white text-base font-semibold mb-1">
+                    {item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title}
+                  </h3>
+                  <p className="text-white/80 text-xs mb-3 line-clamp-2">
+                    {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
+                  </p>
+                  <div className="flex justify-end">
+                    <Link
+                      href={item.buttonLink ?? "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition"
+                    >
+                      Read More
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ✅ Sidebar + MiddleBanner (3 Grid) */}
+      {data.combinedSection && Array.isArray(data.combinedSection) && data.combinedSection.length > 0 && (
+        <div className="mt-4 mb-12">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-[var(--card-bg)] rounded-2xl shadow">
+            {data.combinedSection.map((item: any) => (
               <div
                 key={item._id}
                 className="relative group bg-[var(--card-bg)] rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
@@ -167,7 +227,14 @@ export default function AdvertisePage() {
                       className="inline-flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 text-xs rounded-full font-semibold shadow hover:from-yellow-500 hover:to-yellow-700 transition"
                     >
                       Read More
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
@@ -221,7 +288,7 @@ export default function AdvertisePage() {
         </div>
       </div>
 
-      {/* ✅ Form */}
+      {/* ✅ Form Section */}
       <div className="mt-16 max-w-2xl mx-auto px-6 bg-[var(--card-bg)] border border-[var(--border-color)] shadow-lg rounded-2xl p-8 space-y-5">
         <h2 className="text-3xl font-bold text-center mb-6">Get in Touch</h2>
         <p className="text-[var(--muted-text)] text-center">
@@ -229,7 +296,7 @@ export default function AdvertisePage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {[ // Inputs
+          {[
             { label: "Your Name", name: "name", type: "text" },
             { label: "Business Name", name: "businessName", type: "text" },
             { label: "Email Address", name: "email", type: "email" },
@@ -252,7 +319,7 @@ export default function AdvertisePage() {
               rows={4}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full border border-[var(--border-color)] bg-[rgb(248,250,252)]  rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-[var(--main-orange)] resize-none"
+              className="w-full border border-[var(--border-color)] bg-[rgb(248,250,252)] rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-[var(--main-orange)] resize-none"
             />
           </div>
 
