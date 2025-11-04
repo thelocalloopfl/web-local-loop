@@ -67,44 +67,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const DirectoryPage = async () => {
   return (
-    <main
-      className="
-        main-content mx-auto max-w-7xl px-5 py-16
-        transition-colors duration-300
-        bg-[var(--background)] text-[var(--foreground)]
-      "
-    >
-      {/* Header */}
-      <header className="text-center mb-12">
-        {/* Icon */}
-        <div className="flex justify-center mb-4">
-          <FiLayers className="h-16 w-16 text-orange-600 dark:text-orange-400" />
-        </div>
-
-        {/* Title */}
-        <h1 className="text-4xl font-bold text-orange-700 dark:text-orange-400">
-          Local Business Directory
-        </h1>
-        <p className="mt-2 mb-6 dark:text-white">
-          Discover great local businesses across Winter Garden, Horizon West, Hamlin, and beyond.
-        </p>
-
-        <a
-          href="/advertise"
-          className="
-            inline-block rounded-2xl px-5 py-3 font-semibold
-            bg-orange-600 text-white hover:bg-orange-700
-            dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200
-            transition-colors duration-300
-          "
-        >
-          Claim Your Listing
-        </a>
-      </header>
-
-      {/* Directory Section */}
+    
+    <>
       <DirectoryPageGoldHeroVariant />
-    </main>
+    </>
   )
 }
 
