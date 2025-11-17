@@ -7,9 +7,9 @@ import TopBannerSections from "../../components/TopBannerSections";
 import MiddelBanner from "../../components/MiddelBanner";
 import SideBar from "../../components/SideBar";
 
-import { fetchTopBanner } from "@/lib/fetchTopBanner";
-import { fetchMiddleBanner } from "@/lib/fetchMiddleBanner";
-import { fetchSideBar } from "@/lib/fetchSidebar";
+import { fetchTopBanner } from "@/lib/fetchAds/fetchTopBanner";
+import { fetchBottomBanner } from "@/lib/fetchAds/fetchBottomBanner";
+import { fetchRailAds } from "@/lib/fetchAds/fetchRailAds";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -21,8 +21,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       try {
         const [topBanner, middleBanner, sidebar] = await Promise.all([
           fetchTopBanner(),
-          fetchMiddleBanner(),
-          fetchSideBar(),
+          fetchBottomBanner(),
+          fetchRailAds(),
         ]);
         setData({ topBanner, middleBanner, sidebar });
       } finally {

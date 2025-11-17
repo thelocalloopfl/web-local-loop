@@ -23,14 +23,10 @@ export default function FooterClient() {
         <h3 className="text-xl font-semibold mb-2">Quick Links</h3>
         <ul className="space-y-2 mt-2">
           {[
-            { name: "Home", href: "/home" },
-            { name: "Blog", href: "/blog" },
-            { name: "Events", href: "/event" },
-            { name: "Local Spotlight", href: "/local-spotlight" },
-            { name: "Advertise", href: "/advertise" },
             { name: "About", href: "/about" },
             { name: "Contact", href: "/contact" },
-            { name: "Directory", href: "/directory" },
+            { name: "Shop", href: "/shop" },
+
           ].map((link) => (
             <li key={link.href}>
               <Link href={link.href} className="hover:underline">
@@ -38,12 +34,6 @@ export default function FooterClient() {
               </Link>
             </li>
           ))}
-          {session && (
-            <>
-              <li><Link href="/newsletter" className="hover:underline">Newsletter</Link></li>
-              <li><Link href="/shop" className="hover:underline">Shop</Link></li>
-            </>
-          )}
         </ul>
       </div>
 

@@ -55,8 +55,8 @@ const SideBar: React.FC<SideBarProps> = ({ sidebar }) => {
                 : item.title}
             </h3>
             <p className="text-white/80 text-xs mb-3 line-clamp-2">
-              {item.text.length > 60
-                ? item.text.slice(0, 60) + "..."
+              {item.text?.length > 60
+                ? item?.text?.slice(0, 60) + "..."
                 : item.text}
             </p>
 

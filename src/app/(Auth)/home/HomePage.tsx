@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { FiSidebar, FiX } from "react-icons/fi";
+import { FaCalendarAlt, FaNewspaper, FaBullhorn } from "react-icons/fa"; // Added icons for fallbacks
 
 // Lazy-load sections
 const EventSection = dynamic(() => import("../../components/EventSection"));
@@ -15,6 +16,23 @@ const MiddelBanner = dynamic(() => import("../../components/MiddelBanner"));
 const BottomBanner = dynamic(() => import("../../components/BottomBanner"));
 const SideBar = dynamic(() => import("../../components/SideBar"));
 const NewsletterBox = dynamic(() => import("../../components/NewsLetterBox"));
+
+// --- Fallback Component ---
+// A reusable component for showing "No Data" content
+const NoDataFallback = ({ title, icon, message }: { title: string, icon: React.ReactNode, message: string }) => (
+  <div className="text-center p-10 border border-dashed border-[var(--border-color)] rounded-lg mx-auto max-w-xl my-8">
+    <div className="text-4xl text-[var(--main-orange)] mx-auto mb-4 w-fit">
+        {icon}
+    </div>
+    <h3 className="text-2xl font-bold mb-2">{title}</h3>
+    <p className="text-[var(--text-muted)]">{message}</p>
+    <a href="/contact" className="mt-4 inline-block bg-[var(--main-orange)] text-white px-4 py-2 rounded transition-opacity hover:opacity-90">
+      Contact Us
+    </a>
+  </div>
+);
+// --- End Fallback Component ---
+
 
 export default function HomePage({
   banner,
@@ -29,6 +47,11 @@ export default function HomePage({
   sidebar,
 }: any) {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  // Check data availability, assuming data is an array
+  const hasEvents = Array.isArray(allEvents) && allEvents.length > 0;
+  const hasBlogs = Array.isArray(allBlogs) && allBlogs.length > 0;
+  const hasSpotlights = Array.isArray(allSpotlights) && allSpotlights.length > 0;
 
   const bgImage = banner?.backgroundImage?.asset?.url || "";
   const hasTopBanner =
@@ -57,7 +80,7 @@ export default function HomePage({
         </section>
       )}
 
-      {/* 🔹 Hero Banner */}
+      {/* 🔹 Hero Banner (no change needed) */}
       <section className="hero-bg-image relative max-w-[1200px] mx-auto flex items-center justify-center text-white px-5 overflow-hidden">
         <Image
           src={bgImage}
@@ -119,7 +142,17 @@ export default function HomePage({
             "
           >
             <h2 className="text-3xl font-semibold mb-6 text-center">Events</h2>
-            <EventSection allEvents={allEvents} categories={categories} all={true} />
+            {/* --- Events Fallback Logic --- */}
+            {hasEvents ? (
+              <EventSection allEvents={allEvents} categories={categories} all={true} />
+            ) : (
+              <NoDataFallback 
+                title="No Events Scheduled Yet"
+                icon={<FaCalendarAlt />}
+                message="We're currently planning new events. Check back soon for exciting updates, or contact us if you'd like to suggest one!"
+              />
+            )}
+            {/* ----------------------------- */}
           </section>
         </div>
 
@@ -171,7 +204,17 @@ export default function HomePage({
         "
       >
         <h2 className="text-3xl font-semibold mb-6 text-center">Blog</h2>
-        <BlogSection allBlogs={allBlogs} categories={blogCategories} all={false} />
+        {/* --- Blog Fallback Logic --- */}
+        {hasBlogs ? (
+          <BlogSection allBlogs={allBlogs} categories={blogCategories} all={false} />
+        ) : (
+          <NoDataFallback 
+            title="No Recent Blog Posts"
+            icon={<FaNewspaper />}
+            message="We're currently drafting new content! Check back soon or subscribe to the newsletter to get the latest articles delivered to your inbox."
+          />
+        )}
+        {/* ------------------------- */}
       </section>
 
       {/* 🔹 Local Spotlight */}
@@ -183,11 +226,21 @@ export default function HomePage({
         "
       >
         <h2 className="text-3xl font-semibold mb-6 text-center">Local Spotlight</h2>
-        <SpotlightSection
-          allSpotlights={allSpotlights}
-          categories={spotlightCategories}
-          all={false}
-        />
+        {/* --- Spotlight Fallback Logic --- */}
+        {hasSpotlights ? (
+          <SpotlightSection
+            allSpotlights={allSpotlights}
+            categories={spotlightCategories}
+            all={false}
+          />
+        ) : (
+          <NoDataFallback 
+            title="No Local Spotlights Available"
+            icon={<FaBullhorn />}
+            message="We love featuring local heroes! If you know someone deserving of a spotlight, please reach out to us."
+          />
+        )}
+        {/* ----------------------------- */}
       </section>
 
       {/* 🔹 Bottom Banner */}

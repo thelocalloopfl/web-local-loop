@@ -9,9 +9,9 @@ import { fetchBlogs } from "../../../lib/fetchBlogs";
 import { fetchBlogCategories } from "../../../lib/fetchBlogCategories";
 import { fetchSpotlights } from "../../../lib/fetchSpotlights";
 import { fetchSpotlightCategories } from "../../../lib/fetchSpotlightCategories";
-import { fetchTopBanner } from "@/lib/fetchTopBanner";
-import { fetchMiddleBanner } from "@/lib/fetchMiddleBanner";
-import { fetchSideBar } from "@/lib/fetchSidebar";
+import { fetchTopBanner } from "@/lib/fetchAds/fetchTopBanner";
+import { fetchBottomBanner } from "@/lib/fetchAds/fetchBottomBanner";
+import { fetchRailAds } from "@/lib/fetchAds/fetchRailAds";
 
 import { EventItem } from "../../../../types/event";
 
@@ -100,8 +100,8 @@ export default async function Page() {
     fetchSpotlights(),
     fetchSpotlightCategories(),
     fetchTopBanner(),
-    fetchMiddleBanner(),
-    fetchSideBar(),
+    fetchBottomBanner(),
+    fetchRailAds(),
   ]);
 
   return (

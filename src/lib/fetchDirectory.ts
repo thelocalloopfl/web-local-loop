@@ -1,42 +1,45 @@
-import { client } from '../../lib/sanity';
+import { client } from '../../lib/sanity'
 
-export type Business = {
-  _id: string;
-  name: string;
-  logo: string;
-  featureImage: string;
-  category?: string;
-  description?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  tier?: string;
-  adLinkUrl?: string;
-  active: boolean;
-  startDate?: string;
-  endDate?: string;
-};
+export type DirectoryListing = {
+  _id: string
+  name: string
+  slug?: { current: string }
+  category?: string
+  blurb?: string
+  url?: string
+  email?: string
+  phone?: string
+  logo?: string
+  featureImage?: string
+  tier: 'hero' | 'pro' | 'standard' | 'basic' | 'free'
+  isActive?: boolean
+  start?: string
+  end?: string
+}
 
-export async function fetchActiveBusinesses(): Promise<Business[]> {
+/**
+ * Fetch all active directory listings
+ */
+export async function fetchActiveBusinesses(): Promise<DirectoryListing[]> {
   const query = `*[
-    _type == "business" &&
-    active == true
+    _type == "directoryListing" &&
+    isActive == true
   ] | order(name asc) {
     _id,
     name,
-    "logo": logo.asset->url,
-    "featureImage": featureImage.asset->url,
+    "slug": slug,
     category,
-    description,
-    website,
+    blurb,
+    url,
     email,
     phone,
+    "logo": logo.asset->url,
+    "featureImage": featureImage.asset->url,
     tier,
-    adLinkUrl,
-    active,
-    startDate,
-    endDate
-  }`;
+    isActive,
+    start,
+    end
+  }`
 
-  return await client.fetch(query);
+  return await client.fetch(query)
 }

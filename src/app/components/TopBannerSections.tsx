@@ -15,7 +15,7 @@ const TopBannerSections: React.FC<TopBannerSectionsProps> = ({
   text,
   viewLink = "https://google.com",
 }) => {
-  const trimmedText = text.length > 120 ? text.substring(0, 120) + "..." : text;
+  const trimmedText = text?.length > 120 ? text.substring(0, 120) + "..." : text;
 
   return (
     <section
