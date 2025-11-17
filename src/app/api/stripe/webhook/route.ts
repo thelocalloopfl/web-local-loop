@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
@@ -33,9 +34,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: msg }, { status: 400 });
     }
 
-    // ✅ Only trigger for successful payments
-    if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
-      console.log("✅ Payment successful:", event.data.object);
+    // ✅ Handle checkout.session.completed & async success
+    if (
+      event.type === "checkout.session.completed" ||
+      event.type === "checkout.session.async_payment_succeeded"
+    ) {
+      console.log("✅ Checkout payment successful:", event.data.object);
 
       const session = await stripe.checkout.sessions.retrieve(
         (event.data.object as Stripe.Checkout.Session).id,
@@ -45,6 +49,39 @@ export async function POST(request: Request) {
       await sendInvoiceEmails(session);
     }
 
+    // ✅ Handle invoice.paid (e.g., for subscriptions or manual invoices)
+    if (event.type === "invoice.paid") {
+      console.log("✅ Invoice paid:", event.data.object);
+
+      const invoice = event.data.object as Stripe.Invoice;
+
+      let customer: Stripe.Customer | null = null;
+      if (invoice.customer) {
+        customer = (await stripe.customers.retrieve(invoice.customer as string)) as Stripe.Customer;
+      }
+
+      const session = {
+        id: invoice.id,
+        amount_total: invoice.amount_paid,
+        currency: invoice.currency,
+        customer_details: {
+          name: customer?.name || "Customer",
+          email: customer?.email || undefined,
+        },
+        line_items: {
+          data:
+            invoice.lines?.data.map((line) => ({
+              description: line.description,
+              quantity: line.quantity,
+              amount_total: line.amount,
+            })) || [],
+        },
+      } as any;
+
+      await sendInvoiceEmails(session);
+    }
+
+    // ❌ Payment failed
     if (event.type === "checkout.session.async_payment_failed") {
       console.log("❌ Payment failed:", event.data.object);
     }
@@ -57,10 +94,10 @@ export async function POST(request: Request) {
   }
 }
 
-async function sendInvoiceEmails(session: Stripe.Checkout.Session) {
+async function sendInvoiceEmails(session: any) {
   if (!session.line_items?.data || !session.customer_details?.email) return;
 
-  const items = session.line_items.data.map((item) => ({
+  const items = session.line_items.data.map((item: any) => ({
     name: item.description || "Product",
     qty: item.quantity || 1,
     price: ((item.amount_total ?? 0) / 100) || 0,

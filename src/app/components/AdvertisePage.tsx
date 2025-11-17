@@ -6,9 +6,8 @@ import { FiDollarSign, FiMail, FiUsers, FiSend } from "react-icons/fi";
 import { FaImage, FaFilePdf } from "react-icons/fa";
 import Toast from "./MessageTost";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchSideBar } from "@/lib/fetchSidebar";
-import { fetchTopBanner } from "@/lib/fetchAllTopBanner";
-import { fetchMiddleBanner } from "@/lib/fetchAllMiddleBanner";
+import { fetchFeaturedAds } from "@/lib/fetchAds/fetchFeaturedAds";
+import { fetchGridAds } from "@/lib/fetchAds/fetchGridAds";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -22,18 +21,12 @@ export default function AdvertisePage() {
   // ✅ Fetch and merge data
   useEffect(() => {
     async function loadData() {
-      const [sidebar, topBanner, middleBanner] = await Promise.all([
-        fetchSideBar(),
-        fetchTopBanner(),
-        fetchMiddleBanner(),
+      const [FeaturedAds, GridAds] = await Promise.all([
+        fetchFeaturedAds(),
+        fetchGridAds(),
       ]);
 
-      // Combine sidebar + middleBanner
-      const combinedSection = Array.isArray(sidebar)
-        ? [...sidebar, ...(Array.isArray(middleBanner) ? middleBanner : [middleBanner])]
-        : [sidebar, ...(Array.isArray(middleBanner) ? middleBanner : [middleBanner])];
-
-      setData({ combinedSection, topBanner });
+      setData({ FeaturedAds, GridAds });
     }
 
     loadData();
@@ -147,16 +140,17 @@ export default function AdvertisePage() {
       ))}
 
       {/* ✅ Top Banner (Full Width) */}
-      {data.topBanner && Array.isArray(data.topBanner) && data.topBanner.length > 0 && (
+      {data.FeaturedAds && Array.isArray(data.FeaturedAds) && data.FeaturedAds.length > 0 && (
         <div className="mt-4 mb-8 px-6">
-          {data.topBanner.map((item: any) => (
+          <h2 className="text-2xl font-semibold mb-3" >FeaturedAds</h2>
+          {data.FeaturedAds.map((item: any) => (
             <div
               key={item._id}
               className="relative w-full h-60 sm:h-72 lg:h-80 rounded-2xl overflow-hidden shadow-md mb-4  group bg-[var(--card-bg)]   hover:shadow-lg transition-all duration-300"
             >
               <Image
-                src={item.imageUrl}
-                alt={item.title}
+                src={item?.imageUrl}
+                alt={item?.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -166,7 +160,7 @@ export default function AdvertisePage() {
                     {item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title}
                   </h3>
                   <p className="text-white/80 text-xs mb-3 line-clamp-2">
-                    {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
+                    {item.text?.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
                   </p>
                   <div className="flex justify-end">
                     <Link
@@ -194,19 +188,20 @@ export default function AdvertisePage() {
         </div>
       )}
 
-      {/* ✅ Sidebar + MiddleBanner (3 Grid) */}
-      {data.combinedSection && Array.isArray(data.combinedSection) && data.combinedSection.length > 0 && (
+      {/* (3 Grid) */}
+      {data.GridAds && Array.isArray(data.GridAds) && data.GridAds.length > 0 && (
         <div className="mt-4 mb-12">
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 bg-[var(--card-bg)] rounded-2xl shadow">
-            {data.combinedSection.map((item: any) => (
+          <h2 className="px-6 text-2xl font-semibold mb-1">StandardAds</h2>
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 pt-3 bg-[var(--card-bg)]">
+            {data.GridAds.map((item: any) => (
               <div
                 key={item._id}
                 className="relative group bg-[var(--card-bg)] rounded-xl overflow-hidden shadow hover:shadow-lg transition-all duration-300"
               >
                 <div className="relative h-40 sm:h-48 w-full">
                   <Image
-                    src={item.imageUrl}
-                    alt={item.title}
+                    src={item?.imageUrl}
+                    alt={item?.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -217,7 +212,7 @@ export default function AdvertisePage() {
                     {item.title.length > 40 ? item.title.slice(0, 40) + "..." : item.title}
                   </h3>
                   <p className="text-white/80 text-xs mb-3 line-clamp-2">
-                    {item.text.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
+                    {item.text?.length > 60 ? item.text.slice(0, 60) + "..." : item.text}
                   </p>
                   <div className="flex justify-end">
                     <Link

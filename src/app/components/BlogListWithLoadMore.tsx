@@ -25,8 +25,22 @@ export default function BlogListWithLoadMore({
     startTransition(() => setVisibleCount((prev) => prev + 3));
   };
 
+  // --- Clean & sort blogs ---
+  const validBlogs = allBlogs
+    .filter(
+      (blog) =>
+        blog.title &&
+        blog.description &&
+        blog.publishedAt &&
+        blog._id // required fields only
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
+
   // --- Filter blogs ---
-  const filteredBlogs = allBlogs.filter((blog) => {
+  const filteredBlogs = validBlogs.filter((blog) => {
     const matchesSearch = blog.title.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = !selectedCategory || blog.category?._id === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -34,6 +48,8 @@ export default function BlogListWithLoadMore({
 
   const blogs = filteredBlogs.slice(0, visibleCount);
   const allLoaded = visibleCount >= filteredBlogs.length;
+
+  const defaultImage = "/default-blog.jpg";
 
   return (
     <main
@@ -54,6 +70,7 @@ export default function BlogListWithLoadMore({
               setSearch(e.target.value);
               setVisibleCount(3);
             }}
+            placeholder="Search blogs..."
             className="
               w-full border border-gray-300 dark:border-gray-700 
               rounded-xl px-4 py-2 pl-10 text-base md:text-lg 
@@ -61,7 +78,6 @@ export default function BlogListWithLoadMore({
               bg-[var(--background)] text-[var(--foreground)] 
               transition-colors duration-300
             "
-            
           />
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
             <svg
@@ -90,7 +106,7 @@ export default function BlogListWithLoadMore({
               w-full md:text-lg px-4 py-2 border border-orange-700 rounded-xl font-semibold 
               bg-[var(--background)] text-orange-700 dark:text-orange-400 dark:border-orange-500 
               hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 
-              transition duration-200 flex items-center justify-center gap-2
+              transition duration-200 flex items-center justify-center gap-1
             "
           >
             <svg
@@ -171,21 +187,13 @@ export default function BlogListWithLoadMore({
                 transition-all duration-300
               "
             >
-              {blog.image ? (
-                <Image
-                  src={blog.image}
-                  alt={blog.title}
-                  width={600}
-                  height={300}
-                  className="w-full h-44 object-cover"
-                />
-              ) : (
-                <div className="w-full h-44 bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">
-                    No Image Available
-                  </span>
-                </div>
-              )}
+              <Image
+                src={blog.image || defaultImage}
+                alt={blog.title}
+                width={600}
+                height={300}
+                className="w-full h-44 object-cover"
+              />
               <div className="p-5 flex flex-col flex-grow">
                 {blog.category && (
                   <span className="text-xs font-medium text-orange-700 dark:text-orange-400 mb-2">

@@ -12,6 +12,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const { id } = await params;
   const blog = await fetchBlogById(id);
 
+  const defaultImage = "https://thelocalloopfl.com/default-blog.jpg";
+
   if (!blog) {
     return {
       title: "Blog Not Found | The Local Loop FL",
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const description =
     blog.description ||
     `Read "${blog.title}" on The Local Loop FL — your source for Winter Garden community stories, restaurant reviews, and local events.`;
-  const imageUrl = blog.imageUrl || "https://thelocalloopfl.com/default-logo.png";
+  const imageUrl = blog.imageUrl || defaultImage;
   const url = `https://thelocalloopfl.com/blog/${id}`;
 
   return {
@@ -55,6 +57,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
   const { id } = await params;
   const blog = await fetchBlogById(id);
+  const defaultImage = "/default-blog.jpg";
 
   if (!blog) {
     return (
@@ -69,6 +72,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
       </div>
     );
   }
+
+  const imageToUse = blog.imageUrl || defaultImage;
 
   return (
     <article
@@ -90,8 +95,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </h1>
 
         {/* Category */}
-        <div className="mb-4 mt-8">
-          {blog.category?.title && (
+        {blog.category?.title && (
+          <div className="mb-4 mt-8">
             <span
               className="
                 px-3 py-1 rounded-full border
@@ -101,8 +106,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
             >
               {blog.category.title}
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Meta info */}
         <div className="flex items-center gap-4 text-sm text-[var(--muted-text)]">
@@ -121,19 +126,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
           </span>
         </div>
 
-        {/* Hero Image */}
-        {blog.imageUrl && (
-          <div className="relative w-full h-96 mt-6">
-            <Image
-              src={blog.imageUrl}
-              alt={blog.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="object-cover rounded-xl shadow"
-              priority
-            />
-          </div>
-        )}
+        {/* Hero Image (with fallback) */}
+        <div className="relative w-full h-96 mt-6">
+          <Image
+            src={imageToUse}
+            alt={blog.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 1200px"
+            className="object-cover rounded-xl shadow"
+            priority
+          />
+        </div>
       </header>
 
       {/* 🟠 Body Section */}

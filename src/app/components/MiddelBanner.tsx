@@ -15,7 +15,7 @@ const MiddelBanner: React.FC<MiddelBannerProps> = ({
   text,
   viewLink = "#",
 }) => {
-  const trimmedText = text.length > 100 ? text.substring(0, 100) + "..." : text;
+  const trimmedText = text?.length > 100 ? text.substring(0, 100) + "..." : text;
   return (
     <section
       className="relative w-full max-w-[1200px] mx-auto rounded-2xl overflow-hidden group"

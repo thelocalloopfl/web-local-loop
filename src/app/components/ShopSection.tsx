@@ -147,14 +147,14 @@ export default function ShopSection({ shopItems }: ShopSectionProps) {
       ))}
 
       {/* Stay Tuned */}
-      <div className="bg-gradient-to-r from-yellow-300 via-white to-orange-300 rounded-2xl shadow p-8 text-center">
+      <div className="bg-gradient-to-r from-yellow-300 via-white to-orange-300 rounded-2xl shadow p-8 text-black text-center">
         <div className="flex justify-center mb-4">
           <FiMail className="h-10 w-10 text-orange-700 dark:text-orange-500" />
         </div>
-        <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-gray-100">
+        <h3 className="text-xl font-bold mb-2 ">
           Stay Tuned for More!
         </h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4 max-w-xl mx-auto">
+        <p className=" mb-4 max-w-xl mx-auto">
           We’re always brewing up new ideas for The Local Loop Shop. Sign up for
           our newsletter to be the first to know about new arrivals and special
           offers.

@@ -23,16 +23,19 @@ export default function HeaderClient() {
     { name: "Events", href: "/event" },
     { name: "Local Spotlight", href: "/local-spotlight" },
     { name: "Advertise", href: "/advertise" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
     { name: "Directory", href: "/directory", icon: false },
-  ];
-
-  const privateMenu = [
     { name: "Newsletter", href: "/newsletter" },
     { name: "Shop", href: "/shop" },
+    { name: "Pricing", href: "/pricing", },
     { name: "", href: "/cart", icon: true },
+
   ];
+
+  // const privateMenu = [
+  //   // { name: "Newsletter", href: "/newsletter" },
+  //   // { name: "Shop", href: "/shop" },
+  //   // { name: "", href: "/cart", icon: true },
+  // ];
 
   const linkClass = (active: boolean) =>
     `px-3 py-1 rounded-md flex items-center gap-1 transition-colors duration-200 ${
@@ -45,7 +48,9 @@ export default function HeaderClient() {
     <>
       {/* 💻 Desktop Menu */}
       <nav className="hidden lg:flex items-center space-x-1 text-sm font-medium">
-        {[...menuItems, ...(session ? privateMenu : [])].map((item) => {
+        {/* {[...menuItems, ...(session ? privateMenu : [])].map((item) => { */}
+        {[...menuItems].map((item) => {
+
           const isActive = pathname.startsWith(item.href);
           return (
             <Link key={item.href} href={item.href} className={linkClass(isActive)}>
@@ -136,7 +141,9 @@ export default function HeaderClient() {
         <div className="flex justify-end">
             <ThemeToggle />
         </div>
-          {[...menuItems, ...(session ? privateMenu : [])].map((item) => {
+          {[...menuItems].map((item) => {
+          // {[...menuItems, ...(session ? privateMenu : [])].map((item) => {
+
             const isActive = pathname.startsWith(item.href);
             return (
               <Link
