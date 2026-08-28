@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   throw new Error('lib/stripe.ts must not be imported in client-side code');
 }
 
-const API_VERSION = '2025-08-27.basil' as const;
+const API_VERSION: Stripe.LatestApiVersion = '2025-07-30.basil';
 
 function buildStripeFromEnv(enableSandbox: boolean | undefined): Stripe {
   const key = enableSandbox
