@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import { getStripeClient } from "../../../../../lib/stripe";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -11,16 +10,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const config = await fetchStripeConfig();
-    const secretKey = config?.enableSandbox
-      ? config.sandboxSecret
-      : config?.liveSecret;
-
-    if (!secretKey) throw new Error("Stripe secret key not found");
-
-    const stripe = new Stripe(secretKey, {
-      apiVersion: "2025-08-27.basil",
-    });
+    const stripe = await getStripeClient();
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["line_items", "line_items.data.price.product"],

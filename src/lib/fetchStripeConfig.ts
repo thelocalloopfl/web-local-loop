@@ -1,22 +1,18 @@
 import { client } from '../../lib/sanity';
 
-export type StripeConfig = {
+export type StripePublicConfig = {
   _id: string;
   enableSandbox?: boolean;
   liveKey?: string;
-  liveSecret?: string;
   sandboxKey?: string;
-  sandboxSecret?: string;
 };
 
-export async function fetchStripeConfig(): Promise<StripeConfig | null> {
+export async function fetchStripePublicConfig(): Promise<StripePublicConfig | null> {
   const query = `*[_type == "stripeConfig"][0]{
     _id,
     enableSandbox,
     liveKey,
-    liveSecret,
-    sandboxKey,
-    sandboxSecret
+    sandboxKey
   }`;
 
   return await client.fetch(query, {});

@@ -1,8 +1,7 @@
-// app/api/stripe/webhook/route.ts
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import type Stripe from "stripe";
+import { getStripeContext } from "../../../../../lib/stripe";
 
 export async function POST(request: Request) {
   try {
@@ -11,17 +10,13 @@ export async function POST(request: Request) {
 
     if (!signature) throw new Error("Missing Stripe signature");
 
-    const config = await fetchStripeConfig();
-    if (!config) throw new Error("Stripe config not found");
+    const { stripe, enableSandbox } = await getStripeContext();
 
-    const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
-    const webhookSecret = config.enableSandbox
+    const webhookSecret = enableSandbox
       ? process.env.STRIPE_WEBHOOK_SECRET_SANDBOX
       : process.env.STRIPE_WEBHOOK_SECRET_LIVE;
 
-    if (!secretKey || !webhookSecret) throw new Error("Stripe secrets missing");
-
-    const stripe = new Stripe(secretKey, { apiVersion: "2025-08-27.basil" });
+    if (!webhookSecret) throw new Error("Missing Stripe webhook secret environment variable");
 
     let event: Stripe.Event;
     try {
@@ -35,10 +30,10 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded":
-        console.log("✅ Payment successful:", event.data.object);
+        console.log("Payment successful:", event.data.object);
         break;
       case "checkout.session.async_payment_failed":
-        console.log("❌ Payment failed:", event.data.object);
+        console.log("Payment failed:", event.data.object);
         break;
       default:
         console.log(`Unhandled event type: ${event.type}`);

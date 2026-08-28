@@ -1,20 +1,36 @@
-import Stripe from "stripe";
-import { fetchStripeConfig } from "../src/lib/fetchStripeConfig";
+import Stripe from 'stripe';
+import { fetchStripePublicConfig } from '../src/lib/fetchStripeConfig';
 
-export async function getStripeClient() {
-  const config = await fetchStripeConfig();
+// Runtime guard: this module must never run in the browser.
+if (typeof window !== 'undefined') {
+  throw new Error('lib/stripe.ts must not be imported in client-side code');
+}
 
-  if (!config) {
-    throw new Error("Stripe configuration not found in Sanity");
+const API_VERSION = '2025-08-27.basil' as const;
+
+function buildStripeFromEnv(enableSandbox: boolean | undefined): Stripe {
+  const key = enableSandbox
+    ? process.env.STRIPE_SECRET_KEY_SANDBOX
+    : process.env.STRIPE_SECRET_KEY_LIVE;
+
+  if (!key) {
+    throw new Error(
+      `Missing server environment variable: ${enableSandbox ? 'STRIPE_SECRET_KEY_SANDBOX' : 'STRIPE_SECRET_KEY_LIVE'}`
+    );
   }
 
-  const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
+  return new Stripe(key, { apiVersion: API_VERSION });
+}
 
-  if (!secretKey) {
-    throw new Error("Stripe secret key is missing in Sanity config");
-  }
+export async function getStripeClient(): Promise<Stripe> {
+  const config = await fetchStripePublicConfig();
+  if (!config) throw new Error('Stripe configuration not found in Sanity');
+  return buildStripeFromEnv(config.enableSandbox);
+}
 
-  return new Stripe(secretKey, {
-    apiVersion: "2025-08-27.basil",
-  });
+export async function getStripeContext(): Promise<{ stripe: Stripe; enableSandbox: boolean }> {
+  const config = await fetchStripePublicConfig();
+  if (!config) throw new Error('Stripe configuration not found in Sanity');
+  const enableSandbox = config.enableSandbox ?? false;
+  return { stripe: buildStripeFromEnv(enableSandbox), enableSandbox };
 }

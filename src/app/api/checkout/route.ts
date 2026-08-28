@@ -1,7 +1,5 @@
-// app/api/checkout/route.ts
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import { getStripeClient } from "../../../../lib/stripe";
 
 type CartItem = {
   name: string;
@@ -11,13 +9,7 @@ type CartItem = {
 
 export async function POST(req: Request) {
   try {
-    const config = await fetchStripeConfig();
-    if (!config) throw new Error("Stripe configuration not found in Sanity");
-
-    const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
-    if (!secretKey) throw new Error("Stripe Secret Key missing");
-
-    const stripe = new Stripe(secretKey, { apiVersion: "2025-08-27.basil" });
+    const stripe = await getStripeClient();
 
     const { cart } = (await req.json()) as { cart: CartItem[] };
     if (!cart || cart.length === 0) {
