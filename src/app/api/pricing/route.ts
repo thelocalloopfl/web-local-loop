@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import { getStripeClient } from "../../../../lib/stripe";
 
 export async function POST(req: Request) {
   try {
@@ -10,13 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing plan or priceId" }, { status: 400 });
     }
 
-    const config = await fetchStripeConfig();
-    if (!config) throw new Error("Stripe configuration not found in Sanity");
-
-    const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
-    if (!secretKey) throw new Error("Stripe Secret Key missing");
-
-    const stripe = new Stripe(secretKey, { apiVersion: "2025-08-27.basil" });
+    const stripe = await getStripeClient();
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

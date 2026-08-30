@@ -1,10 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
-import { invoiceEmailTemplate } from "../../../../../lib/stripeEmailTemplates";
+import type Stripe from "stripe";
 import nodemailer from "nodemailer";
+import { getStripeContext } from "../../../../../lib/stripe";
+import { invoiceEmailTemplate } from "../../../../../lib/stripeEmailTemplates";
+
+type InvoiceItem = {
+  name: string;
+  qty: number;
+  price: number;
+};
+
+type InvoiceEmailData = {
+  id: string;
+  customerName: string;
+  customerEmail: string | null;
+  totalAmount: number;
+  currency: string;
+  items: InvoiceItem[];
+};
 
 export async function POST(request: Request) {
   try {
@@ -13,17 +27,14 @@ export async function POST(request: Request) {
 
     if (!signature) throw new Error("Missing Stripe signature");
 
-    const config = await fetchStripeConfig();
-    if (!config) throw new Error("Stripe config not found");
+    // Stripe client + sandbox flag come from server-only environment config.
+    const { stripe, enableSandbox } = await getStripeContext();
 
-    const secretKey = config.enableSandbox ? config.sandboxSecret : config.liveSecret;
-    const webhookSecret = config.enableSandbox
+    const webhookSecret = enableSandbox
       ? process.env.STRIPE_WEBHOOK_SECRET_SANDBOX
       : process.env.STRIPE_WEBHOOK_SECRET_LIVE;
 
-    if (!secretKey || !webhookSecret) throw new Error("Stripe secrets missing");
-
-    const stripe = new Stripe(secretKey, { apiVersion: "2025-08-27.basil" });
+    if (!webhookSecret) throw new Error("Missing Stripe webhook secret environment variable");
 
     let event: Stripe.Event;
     try {
@@ -34,56 +45,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: msg }, { status: 400 });
     }
 
-    // ✅ Handle checkout.session.completed & async success
-    if (
-      event.type === "checkout.session.completed" ||
-      event.type === "checkout.session.async_payment_succeeded"
-    ) {
-      console.log("✅ Checkout payment successful:", event.data.object);
+    switch (event.type) {
+      // Successful checkout (immediate or delayed async payment) -> send invoice emails.
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
+        console.log("Checkout payment successful:", event.data.object);
 
-      const session = await stripe.checkout.sessions.retrieve(
-        (event.data.object as Stripe.Checkout.Session).id,
-        { expand: ["line_items"] }
-      );
+        const session = await stripe.checkout.sessions.retrieve(
+          (event.data.object as Stripe.Checkout.Session).id,
+          { expand: ["line_items"] }
+        );
 
-      await sendInvoiceEmails(session);
-    }
-
-    // ✅ Handle invoice.paid (e.g., for subscriptions or manual invoices)
-    if (event.type === "invoice.paid") {
-      console.log("✅ Invoice paid:", event.data.object);
-
-      const invoice = event.data.object as Stripe.Invoice;
-
-      let customer: Stripe.Customer | null = null;
-      if (invoice.customer) {
-        customer = (await stripe.customers.retrieve(invoice.customer as string)) as Stripe.Customer;
+        await sendInvoiceEmails(invoiceDataFromSession(session));
+        break;
       }
 
-      const session = {
-        id: invoice.id,
-        amount_total: invoice.amount_paid,
-        currency: invoice.currency,
-        customer_details: {
-          name: customer?.name || "Customer",
-          email: customer?.email || undefined,
-        },
-        line_items: {
-          data:
-            invoice.lines?.data.map((line) => ({
-              description: line.description,
-              quantity: line.quantity,
-              amount_total: line.amount,
-            })) || [],
-        },
-      } as any;
+      // Paid invoice (subscriptions / manually issued invoices) -> send invoice emails.
+      case "invoice.paid": {
+        console.log("Invoice paid:", event.data.object);
 
-      await sendInvoiceEmails(session);
-    }
+        const invoice = event.data.object as Stripe.Invoice;
+        await sendInvoiceEmails(await invoiceDataFromInvoice(stripe, invoice));
+        break;
+      }
 
-    // ❌ Payment failed
-    if (event.type === "checkout.session.async_payment_failed") {
-      console.log("❌ Payment failed:", event.data.object);
+      // Delayed async payment failed -> log only.
+      case "checkout.session.async_payment_failed":
+        console.error("Async checkout payment failed:", event.data.object);
+        break;
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
@@ -94,29 +86,71 @@ export async function POST(request: Request) {
   }
 }
 
-async function sendInvoiceEmails(session: any) {
-  if (!session.line_items?.data || !session.customer_details?.email) return;
-
-  const items = session.line_items.data.map((item: any) => ({
-    name: item.description || "Product",
-    qty: item.quantity || 1,
-    price: ((item.amount_total ?? 0) / 100) || 0,
+function invoiceDataFromSession(session: Stripe.Checkout.Session): InvoiceEmailData {
+  const items: InvoiceItem[] = (session.line_items?.data ?? []).map((lineItem) => ({
+    name: lineItem.description ?? "Product",
+    qty: lineItem.quantity ?? 1,
+    price: (lineItem.amount_total ?? 0) / 100,
   }));
 
-  const totalAmount = (session.amount_total ?? 0) / 100;
-  const currency = session.currency?.toUpperCase() || "USD";
+  return {
+    id: session.id,
+    customerName: session.customer_details?.name ?? "Customer",
+    customerEmail: session.customer_details?.email ?? null,
+    totalAmount: (session.amount_total ?? 0) / 100,
+    currency: (session.currency ?? "usd").toUpperCase(),
+    items,
+  };
+}
+
+async function invoiceDataFromInvoice(
+  stripe: Stripe,
+  invoice: Stripe.Invoice
+): Promise<InvoiceEmailData> {
+  let customer: Stripe.Customer | null = null;
+  if (invoice.customer) {
+    const customerId =
+      typeof invoice.customer === "string" ? invoice.customer : invoice.customer.id;
+    const retrieved = await stripe.customers.retrieve(customerId);
+    if (!("deleted" in retrieved)) customer = retrieved;
+  }
+
+  const items: InvoiceItem[] = invoice.lines.data.map((line) => ({
+    name: line.description ?? "Product",
+    qty: line.quantity ?? 1,
+    price: line.amount / 100,
+  }));
+
+  return {
+    id: invoice.id ?? "",
+    customerName: customer?.name ?? "Customer",
+    customerEmail: customer?.email ?? null,
+    totalAmount: invoice.amount_paid / 100,
+    currency: invoice.currency.toUpperCase(),
+    items,
+  };
+}
+
+async function sendInvoiceEmails(data: InvoiceEmailData) {
+  if (!data.customerEmail || data.items.length === 0) return;
 
   const html = invoiceEmailTemplate(
-    session.customer_details.name || "Customer",
-    session.customer_details.email,
-    session.id,
-    items,
-    totalAmount,
-    currency
+    data.customerName,
+    data.customerEmail,
+    data.id,
+    data.items,
+    data.totalAmount,
+    data.currency
   );
 
-  await sendEmail(session.customer_details.email, "Your Payment Receipt / Invoice", html);
-  await sendEmail(process.env.SMTP_USER!, "New Payment Received", html);
+  // Customer receipt / invoice.
+  await sendEmail(data.customerEmail, "Your Payment Receipt / Invoice", html);
+
+  // Local Loop admin payment notification.
+  const adminEmail = process.env.SMTP_USER;
+  if (adminEmail) {
+    await sendEmail(adminEmail, "New Payment Received", html);
+  }
 }
 
 async function sendEmail(to: string, subject: string, html: string) {
@@ -125,8 +159,8 @@ async function sendEmail(to: string, subject: string, html: string) {
     port: Number(process.env.SMTP_PORT),
     secure: true,
     auth: {
-      user: process.env.SMTP_USER!,
-      pass: process.env.SMTP_PASS!,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 
