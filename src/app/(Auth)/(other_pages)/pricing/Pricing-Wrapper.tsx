@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import { fetchStripePublicConfig } from "@/lib/fetchStripePublicConfig";
 import { fetchPricingPlans, PricingPlan } from "@/lib/fetchPricingPlans";
 import PricingGrid from "../../../components/PricingGrid";
 
@@ -10,7 +10,7 @@ const Pricing_Wrapper = () => {
 
   useEffect(() => {
     async function init() {
-      const config = await fetchStripeConfig();
+      const config = await fetchStripePublicConfig();
       if (!config) return;
       setStripeKey((config.enableSandbox ? config.sandboxKey : config.liveKey) ?? "");
 

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { fetchStripeConfig } from "@/lib/fetchStripeConfig";
+import { getStripeClient } from "../../../../lib/stripe";
 
 export async function POST(req: Request) {
   try {
@@ -10,12 +9,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid customerId" }, { status: 400 });
     }
 
-    const config = await fetchStripeConfig();
-    const secretKey = config?.enableSandbox
-      ? config.sandboxSecret
-      : config?.liveSecret;
-
-    const stripe = new Stripe(secretKey!, { apiVersion: "2025-08-27.basil" });
+    const stripe = await getStripeClient();
 
     const returnUrl = `${process.env.NEXT_PUBLIC_URL}/home`;
 

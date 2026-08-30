@@ -5,7 +5,7 @@ import { useCart } from "../components/Context/Context";
 import Toast from "./MessageTost";
 import { FiShoppingCart } from "react-icons/fi";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
-import { fetchStripeConfig, StripeConfig } from "@/lib/fetchStripeConfig";
+import { fetchStripePublicConfig, StripePublicConfig } from "@/lib/fetchStripePublicConfig";
 
 type ToastType = { id: number; message: string; type: string };
 
@@ -18,7 +18,7 @@ const CartPage: React.FC = () => {
   useEffect(() => {
     async function init() {
       try {
-        const config: StripeConfig | null = await fetchStripeConfig();
+        const config: StripePublicConfig | null = await fetchStripePublicConfig();
         if (!config) return showToast("Stripe configuration not found.", "error");
 
         const publishableKey = config.enableSandbox
