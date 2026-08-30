@@ -21,7 +21,7 @@
     "cheerio": "^1.1.2",
     "groq": "^4.2.0",
     "micro": "^10.0.1",
-    "next": "^15.4.5",
+    "next": "15.5.24",
     "next-auth": "^4.24.11",
     "next-sanity": "^10.0.6",
     "nodemailer": "^6.10.1",
@@ -43,7 +43,7 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "critters": "^0.0.23",
     "eslint": "^9",
-    "eslint-config-next": "^15.4.5",
+    "eslint-config-next": "15.5.24",
     "tailwindcss": "^4",
     "typescript": "^5.9.2"
   }
