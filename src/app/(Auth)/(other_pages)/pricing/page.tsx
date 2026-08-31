@@ -1,6 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
 import Pricing_Wrapper from "./Pricing-Wrapper";
+import { fetchPricingPlans } from "@/lib/fetchPricingPlans";
+import { fetchStripePublicConfig } from "@/lib/fetchStripePublicConfig";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Business Partnership Plans & Pricing",
@@ -32,12 +36,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const page = () => {
-  return (
-    <>
-      <Pricing_Wrapper />
-    </>
-  );
-};
+export default async function PricingPage() {
+  const [plans, config] = await Promise.all([
+    fetchPricingPlans().catch(() => []),
+    fetchStripePublicConfig().catch(() => null),
+  ]);
 
-export default page;
+  const stripePublicKey =
+    (config?.enableSandbox ? config?.sandboxKey : config?.liveKey) ?? "";
+
+  return <Pricing_Wrapper plans={plans} stripePublicKey={stripePublicKey} />;
+}

@@ -1,28 +1,23 @@
-"use client"
-import React, { useEffect, useState } from "react";
-import { fetchStripePublicConfig } from "@/lib/fetchStripePublicConfig";
-import { fetchPricingPlans, PricingPlan } from "@/lib/fetchPricingPlans";
+"use client";
+import React, { useEffect } from "react";
+import { PricingPlan } from "@/lib/fetchPricingPlans";
 import PricingGrid from "../../../components/PricingGrid";
+import { trackPricingView } from "../../../../../lib/gtag";
 
-const Pricing_Wrapper = () => {
-  const [stripeKey, setStripeKey] = useState("");
-  const [plans, setPlans] = useState<PricingPlan[]>([]);
+type Props = {
+  plans: PricingPlan[];
+  stripePublicKey: string;
+};
 
+const Pricing_Wrapper = ({ plans, stripePublicKey }: Props) => {
   useEffect(() => {
-    async function init() {
-      const config = await fetchStripePublicConfig();
-      if (!config) return;
-      setStripeKey((config.enableSandbox ? config.sandboxKey : config.liveKey) ?? "");
-
-      const sanityPlans = await fetchPricingPlans();
-      setPlans(sanityPlans);
-    }
-    init();
+    trackPricingView();
   }, []);
+
   return (
     <PricingGrid
       plans={plans}
-      stripePublicKey={stripeKey}
+      stripePublicKey={stripePublicKey}
       onPlanClick={(plan) => (window.location.href = "/checkout/" + plan)}
     />
   );
