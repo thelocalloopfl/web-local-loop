@@ -19,8 +19,15 @@ export default function Footer() {
         <FooterClient />
       </div>
 
-      <div className="border-t border-[var(--footer-border)] mt-4 pt-4 pb-6 text-center">
-        <span className="text-sm">&copy; 2025 The Local Loop FL. All Rights Reserved.</span>
+      <div className="border-t border-[var(--footer-border)] mt-4 pt-4 pb-6 flex flex-col items-center gap-2 text-center">
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm">
+          <a href="/privacy" className="hover:underline">Privacy Policy</a>
+          <a href="/terms" className="hover:underline">Terms of Service</a>
+          <a href="/contact" className="hover:underline">Contact</a>
+        </div>
+        <span className="text-sm">
+          &copy; {new Date().getFullYear()} The Local Loop FL. All Rights Reserved.
+        </span>
       </div>
     </footer>
   );

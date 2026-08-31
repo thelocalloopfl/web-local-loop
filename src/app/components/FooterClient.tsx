@@ -24,6 +24,11 @@ export default function FooterClient() {
         <ul className="space-y-2 mt-2">
           {[
             { name: "About", href: "/about" },
+            { name: "Events", href: "/event" },
+            { name: "Directory", href: "/directory" },
+            { name: "Blog", href: "/blog" },
+            { name: "Newsletter", href: "/newsletter" },
+            { name: "Advertise", href: "/advertise" },
             { name: "Contact", href: "/contact" },
             { name: "Shop", href: "/shop" },
 
