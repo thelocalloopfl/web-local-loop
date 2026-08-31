@@ -5,6 +5,7 @@ import { fetchActiveBusinesses } from '@/lib/fetchDirectory'
 import { dailyShuffle, isActiveByDate } from '@/lib/rotation'
 import { FaStore } from 'react-icons/fa'
 import Link from 'next/link'
+import { trackDirectoryEngagement } from '../../../../../lib/gtag'
 
 type Tier = 'hero' | 'pro' | 'standard' | 'basic' | 'free'
 
@@ -72,10 +73,18 @@ export default function DirectoryPage() {
     load()
   }, [])
 
-  const now = new Date()
+  // Report searches once the user pauses typing.
+  useEffect(() => {
+    const q = query.trim()
+    if (q.length < 2) return
+    const t = setTimeout(() => trackDirectoryEngagement('search', q), 800)
+    return () => clearTimeout(t)
+  }, [query])
+
   const active = useMemo(
-    () =>
-      listings.filter(
+    () => {
+      const now = new Date()
+      return listings.filter(
         (l) =>
           (l.isActive ?? true) &&
           isActiveByDate(l.start, l.end, now) &&
@@ -84,8 +93,9 @@ export default function DirectoryPage() {
             l.blurb?.toLowerCase().includes(query.toLowerCase())) &&
           (!selectedCategory ||
             l.category?.toLowerCase() === selectedCategory.toLowerCase())
-      ),
-    [listings, query, selectedCategory, now]
+      )
+    },
+    [listings, query, selectedCategory]
   )
 
   const hero = active.find((l) => l.tier === 'hero')
@@ -107,6 +117,7 @@ const renderButtons = (b: DirectoryListing) => (
         href={b.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackDirectoryEngagement('contact_click', `website:${b.name}`)}
         className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 font-medium text-gray-800 dark:text-gray-200 shadow-sm hover:bg-[var(--main-orange)] hover:text-white hover:shadow-md transition-all duration-200"
       >
         Visit Website
@@ -115,6 +126,7 @@ const renderButtons = (b: DirectoryListing) => (
     {b.email && (
       <Link
         href={`mailto:${b.email}`}
+        onClick={() => trackDirectoryEngagement('contact_click', `email:${b.name}`)}
         className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 font-medium text-gray-800 dark:text-gray-200 shadow-sm hover:bg-[var(--main-orange)] hover:text-white hover:shadow-md transition-all duration-200"
       >
         Email
@@ -123,6 +135,7 @@ const renderButtons = (b: DirectoryListing) => (
     {b.phone && (
       <Link
         href={`tel:${b.phone}`}
+        onClick={() => trackDirectoryEngagement('contact_click', `phone:${b.name}`)}
         className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2 font-medium text-gray-800 dark:text-gray-200 shadow-sm hover:bg-[var(--main-orange)] hover:text-white hover:shadow-md transition-all duration-200"
       >
         Call
@@ -185,6 +198,7 @@ const renderButtons = (b: DirectoryListing) => (
                   onClick={() => {
                     setSelectedCategory(cat)
                     setShowCategories(false)
+                    trackDirectoryEngagement('filter_category', cat)
                   }}
                 >
                   {cat}

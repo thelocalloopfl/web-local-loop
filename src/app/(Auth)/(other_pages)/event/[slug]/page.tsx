@@ -2,6 +2,7 @@ import { fetchEventBySlug } from "@/lib/fetchEventBySlug";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import TrackView from "@/app/components/TrackView";
 
 // An event page is public only while the event is upcoming (or ended within the
 // last day). This mirrors the events listing, which hides past events, so stale
@@ -89,6 +90,7 @@ export default async function EventPage({ params }: EventPageProps) {
         transition-colors duration-300
       "
     >
+      <TrackView name="event_view" params={{ slug, title: event.title }} />
       {/* 🟠 Header */}
       <header className="mb-10">
         <h1 className="text-3xl md:text-5xl font-bold text-[var(--main-orange)] mb-3 capitalize">

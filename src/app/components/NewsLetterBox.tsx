@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
+import { trackNewsletterSignup } from "../../../lib/gtag";
 
-const NewsletterBox: React.FC = () => {
+const NewsletterBox: React.FC<{ location?: string }> = ({ location = "footer" }) => {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -22,8 +23,9 @@ const NewsletterBox: React.FC = () => {
 
       if (res.ok) {
         setStatus("success");
-        setMessage("Thank you for subscribing!");
+        setMessage("You're in! Check your inbox to confirm your subscription.");
         setEmail("");
+        trackNewsletterSignup(location);
       } else {
         setStatus("error");
         setMessage(data.error?.message || "Subscription failed. Please try again.");
@@ -45,6 +47,9 @@ const NewsletterBox: React.FC = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          placeholder="you@email.com"
+          aria-label="Email address"
+          autoComplete="email"
           className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-200 dark:bg-gray-800 text-sm focus:outline-none min-w-0"
         />
         <button

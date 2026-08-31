@@ -10,6 +10,7 @@ import { fetchFeaturedAds } from "@/lib/fetchAds/fetchFeaturedAds";
 import { fetchGridAds } from "@/lib/fetchAds/fetchGridAds";
 import Link from "next/link";
 import Image from "next/image";
+import { trackAdvertiseLead } from "../../../lib/gtag";
 
 type ToastType = { id: number; message: string; type: string };
 
@@ -102,7 +103,8 @@ export default function AdvertisePage() {
       try {
         const res = await fetch("/api/advertise-form", { method: "POST", body: formData });
         if (res.ok) {
-          showToast("Inquiry submitted successfully!", "success");
+          trackAdvertiseLead();
+          showToast("Thanks! We got your inquiry and will be in touch within 1–2 business days.", "success");
           setForm({
             name: "",
             businessName: "",

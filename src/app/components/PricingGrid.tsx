@@ -4,6 +4,7 @@ import * as React from "react";
 import { Crown, Star, Sparkles, CheckCircle2 } from "lucide-react";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { PricingPlan } from "@/lib/fetchPricingPlans";
+import { trackSelectPlan, trackBeginCheckout } from "../../../lib/gtag";
 
 export type PlanKey = "founders" | "professional" | "standard" | "basic";
 
@@ -32,30 +33,43 @@ export default function PricingGrid({
   }, [stripePublicKey]);
 
 async function go(plan: PlanKey, priceId: string) {
+  const planPrice = plans.find((p) => p.key === plan)?.price;
+  trackSelectPlan(plan, planPrice);
+
   if (!stripePromise || !priceId) {
     onPlanClick?.(plan);
     console.warn("Missing Stripe price ID for plan:", plan);
     return;
   }
 
-  const stripe = await stripePromise;
+  try {
+    const stripe = await stripePromise;
 
-  // 🔹 Send both plan and priceId
-  const res = await fetch("/api/pricing", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ plan, priceId }),
-  });
+    // 🔹 Send both plan and priceId
+    const res = await fetch("/api/pricing", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan, priceId }),
+    });
 
-  const { sessionId } = await res.json();
+    const { sessionId } = await res.json();
 
-  if (!sessionId) {
-    alert("Could not start checkout. Please try again.");
-    return;
+    if (!sessionId) {
+      alert(
+        "We couldn't start checkout right now. Please try again in a moment, or email hello@thelocalloopfl.com and we'll set you up."
+      );
+      return;
+    }
+
+    trackBeginCheckout("pricing", planPrice, plan);
+
+    const redirectResult = await stripe?.redirectToCheckout({ sessionId });
+    if (redirectResult?.error) alert(redirectResult.error.message);
+  } catch {
+    alert(
+      "Something went wrong starting checkout. Please try again, or email hello@thelocalloopfl.com."
+    );
   }
-
-  const redirectResult = await stripe?.redirectToCheckout({ sessionId });
-  if (redirectResult?.error) alert(redirectResult.error.message);
 }
 
   

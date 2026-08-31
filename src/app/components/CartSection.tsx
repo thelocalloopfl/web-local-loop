@@ -6,6 +6,7 @@ import Toast from "./MessageTost";
 import { FiShoppingCart } from "react-icons/fi";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { fetchStripePublicConfig, StripePublicConfig } from "@/lib/fetchStripePublicConfig";
+import { trackBeginCheckout } from "../../../lib/gtag";
 
 type ToastType = { id: number; message: string; type: string };
 
@@ -69,6 +70,9 @@ const CartPage: React.FC = () => {
 
       const stripe = await stripePromise;
       if (!stripe) return showToast("Stripe failed to load.", "error");
+
+      const cartTotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      trackBeginCheckout("shop", Number(cartTotal.toFixed(2)));
 
       await stripe.redirectToCheckout({ sessionId: data.sessionId });
     } catch (err: unknown) {

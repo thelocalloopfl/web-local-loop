@@ -35,7 +35,7 @@ const Newsletter: React.FC = () => {
           </div>
 
           {/* Subscription Form */}
-          <NewsletterBox />
+          <NewsletterBox location="newsletter_page" />
         </div>
 
         {/* Previous Newsletters */}
