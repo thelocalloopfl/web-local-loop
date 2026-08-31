@@ -26,9 +26,36 @@ const playfair = Playfair_Display({
 
 // ✅ Metadata
 export const metadata: Metadata = {
+  metadataBase: new URL("https://thelocalloopfl.com"),
   title: {
-    default: "The Local Loop FL | Local Events, Blogs & Spotlights",
+    default: "The Local Loop FL | Winter Garden Events, Local Businesses & Community News",
     template: "%s | The Local Loop FL",
+  },
+  description:
+    "Your guide to Winter Garden and West Orange County, Florida. Discover local events, a trusted business directory, community stories, and our newsletter.",
+  applicationName: "The Local Loop FL",
+  keywords: [
+    "Winter Garden",
+    "West Orange County",
+    "Winter Garden events",
+    "Winter Garden businesses",
+    "local news Winter Garden",
+    "The Local Loop FL",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "The Local Loop FL",
+    locale: "en_US",
+    url: "https://thelocalloopfl.com",
+    title: "The Local Loop FL | Winter Garden Events, Local Businesses & Community News",
+    description:
+      "Your guide to Winter Garden and West Orange County, Florida — local events, a business directory, community stories, and our newsletter.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Local Loop FL",
+    description:
+      "Your guide to Winter Garden and West Orange County, Florida — events, local businesses, and community news.",
   },
 };
 

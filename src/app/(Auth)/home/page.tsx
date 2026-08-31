@@ -38,7 +38,9 @@ export async function generateMetadata(): Promise<Metadata> {
     : "https://thelocalloopfl.com/default-logo.png";
 
   return {
-    title: "The Local Loop FL | Local Events, Blogs & Spotlights",
+    title: {
+      absolute: "The Local Loop FL | Winter Garden Events, Local Businesses & Community News",
+    },
     description:
       "Discover the best local events, stories, and businesses in Florida. Stay connected with blogs, spotlights, and community highlights on The Local Loop FL.",
     keywords: [
