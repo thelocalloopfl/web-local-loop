@@ -212,11 +212,11 @@ const renderButtons = (b: DirectoryListing) => (
       {/* 🏪 Directory Results */}
       {!hasListings ? (
         <NoDataFallback
-          title="No Active Listings Found"
+          title="The directory is just getting started"
           icon={<FaStore />}
-          message="We’re updating our local business directory. Please check back soon!"
-          buttonText="Add Your Business"
-          buttonLink="/contact"
+          message="We’re building the Winter Garden business directory right now. If you run a local business, get listed and reach residents from day one."
+          buttonText="List your business"
+          buttonLink="/advertise"
         />
       ) : (
         <>
