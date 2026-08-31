@@ -1,6 +1,19 @@
 import { fetchEventBySlug } from "@/lib/fetchEventBySlug";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Image from "next/image";
+
+// An event page is public only while the event is upcoming (or ended within the
+// last day). This mirrors the events listing, which hides past events, so stale
+// or seed events are not reachable via a direct URL.
+function isEventVisible(publishedAt?: string): boolean {
+  if (!publishedAt) return false;
+  const eventDate = new Date(publishedAt);
+  if (Number.isNaN(eventDate.getTime())) return false;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 1);
+  return eventDate >= cutoff;
+}
 
 interface EventPageProps {
   params: Promise<{ slug: string }>;
@@ -13,7 +26,7 @@ export async function generateMetadata(
   const { slug } = await params;
   const event = await fetchEventBySlug(slug);
 
-  if (!event) {
+  if (!event || !isEventVisible(event.publishedAt)) {
     return {
       title: "Event Not Found | The Local Loop FL",
       description: "The requested event could not be found.",
@@ -64,12 +77,8 @@ export default async function EventPage({ params }: EventPageProps) {
   const { slug } = await params;
   const event = await fetchEventBySlug(slug);
 
-  if (!event) {
-    return (
-      <div className="main-content mx-auto px-5 text-center text-3xl pb-16 text-[var(--foreground)] max-w-7xl transition-colors duration-300">
-        Event not found
-      </div>
-    );
+  if (!event || !isEventVisible(event.publishedAt)) {
+    notFound();
   }
 
   return (
