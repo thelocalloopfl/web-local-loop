@@ -13,46 +13,17 @@ import { fetchRailAds } from "@/lib/fetchAds/fetchRailAds";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [topBanner, setTopBanner] = useState<any>(null);
+  const [middleBanner, setMiddleBanner] = useState<any>(null);
+  const [sidebar, setSidebar] = useState<any>(null);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [topBanner, middleBanner, sidebar] = await Promise.all([
-          fetchTopBanner(),
-          fetchBottomBanner(),
-          fetchRailAds(),
-        ]);
-        setData({ topBanner, middleBanner, sidebar });
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
+    // Ads/banners are optional decoration. Load them in the background and never
+    // let a fetch failure block the page content.
+    fetchTopBanner().then(setTopBanner).catch(() => {});
+    fetchBottomBanner().then(setMiddleBanner).catch(() => {});
+    fetchRailAds().then(setSidebar).catch(() => {});
   }, []);
-
-  // ✅ Skeleton loader with theme variables
-  if (loading) {
-    return (
-      <div
-        className="
-          animate-pulse min-h-screen flex flex-col gap-6 p-5 container mx-auto
-          bg-[var(--background)] text-[var(--foreground)]
-        "
-      >
-        <div className="h-48 bg-[var(--skeleton-bg)] rounded-lg" />
-        <div className="flex flex-col lg:flex-row gap-5">
-          <div className="flex-1 h-[400px] bg-[var(--skeleton-bg)] rounded-lg" />
-          <div className="hidden lg:block w-[20%] h-[400px] bg-[var(--skeleton-bg)] rounded-lg" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) return null;
-
-  const { topBanner, middleBanner, sidebar } = data;
 
   const hasTopBanner =
     topBanner?.title ||
@@ -112,7 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 onClick={() => setSidebarVisible(!sidebarVisible)}
                 className="
                   text-[var(--foreground)] hover:text-[var(--main-orange)]
-                  cursor-pointer transition rounded-full 
+                  cursor-pointer transition rounded-full
                   bg-[var(--footer-bg)] p-3
                 "
                 aria-label="Toggle sidebar"
