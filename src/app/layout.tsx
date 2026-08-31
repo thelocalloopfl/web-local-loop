@@ -75,6 +75,36 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
+        {/* ✅ Organization + WebSite structured data */}
+        <Script id="ld-json-org" type="application/ld+json" strategy="beforeInteractive">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://thelocalloopfl.com/#organization",
+                name: "The Local Loop FL",
+                url: "https://thelocalloopfl.com",
+                description:
+                  "A hyperlocal community platform for Winter Garden and West Orange County, Florida.",
+                areaServed: {
+                  "@type": "City",
+                  name: "Winter Garden",
+                  containedInPlace: { "@type": "State", name: "Florida" },
+                },
+                email: "hello@thelocalloopfl.com",
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://thelocalloopfl.com/#website",
+                url: "https://thelocalloopfl.com",
+                name: "The Local Loop FL",
+                publisher: { "@id": "https://thelocalloopfl.com/#organization" },
+              },
+            ],
+          })}
+        </Script>
+
         {/* ✅ Google Analytics */}
         {GA_MEASUREMENT_ID && (
           <>
